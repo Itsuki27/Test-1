@@ -56,29 +56,39 @@ namespace WebApplication1.Controllers
                 // Check if email is existing 
                 if (db.Users.Any(x => x.Email == user.Email))
                 {
-                    ViewBag.Message = "Email Already Registered";
+                    //ViewBag.Message = "Email Already Registered";
+                    Response.Write("<script>alert('Email Already Registered')</script>");
                     return View(user);
                 }
                 // Check if username is existing
                 if (db.Users.Any(x => x.Username == user.Username))
                 {
-                    ViewBag.Message = "Username Has Been Taken";
+                    //ViewBag.Message = "Username Has Been Taken";
+                    Response.Write("<script>alert('Username Has Been Taken')</script>");
                     return View(user);
                 }
                 // Check for Empty fields
                 if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Email) || string.IsNullOrWhiteSpace(user.PasswordHash))
                 {
-                    ViewBag.Message = "You Need To Type Something";
+                    //ViewBag.Message = "You Need To Type Something";
+                    Response.Write("<script>alert('You Need To Type Something')</script>");
                     return View(user);
                 }
-                
-                //Create An Account
-                else
+
+                //Check if the value is Equal
+                if (user.PasswordHash == user.ConfirmPassword)
                 {
+                    //Create An Account
                     db.Users.Add(user);
                     db.SaveChanges();
-                    Response.Write("<Script>alert('Registration Successful')</Script>");
+                    Response.Write("<script>alert('Registration Successful')</script>");
                     return RedirectToAction("Login");
+                }
+                else
+                {   
+                    
+                    //ViewBag.Message = "Password Does Not Match";
+                    Response.Write("<script>alert('Password Does Not Match')</script>");
                 }
             }
 

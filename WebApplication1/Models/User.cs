@@ -17,6 +17,7 @@ namespace WebApplication1.Models
         public int UserId { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
+        public string ConfirmPassword { get; set; }
         public string Email { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<bool> IsActive { get; set; }
