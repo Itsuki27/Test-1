@@ -47,7 +47,7 @@ namespace WebApplication1.Controllers
         [HttpPost]
 
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive")] User user)
+        public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive")] User user)
         {
 
             
