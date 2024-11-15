@@ -160,21 +160,24 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public ActionResult Login(MyLogin user)
         {
-
+            // Find if the User has already Accounts
             var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == user.Password);
 
+            
             if (query != null)
             {
+                //If it finds the Account the First Condition Will Meet
                 Response.Write("<Script>alert('Login Successful')</Script>");
                 return RedirectToAction("Index");
             }
+           
             else
             {
+                // The user has no Account in The Database
                 Response.Write("<Script>alert('Invalid Account')</Script>");
 
             }
 
-            
             return View();
         }
 
@@ -205,17 +208,20 @@ namespace WebApplication1.Controllers
                         return RedirectToAction("Login");
                     }
                     else
-                    {
+                    {   
+                        //Check if the New password matches the confirmation
                         Response.Write("<script>alert('Password does not match');</script>");
                     }
                 }
                 else
                 {
+                    //Check if the User has no Account
                     Response.Write("<script>alert('Account Not Found');</script>");
                 }
             }
             else
             {
+                //Check if the user Dont add anything and then submitted
                 ViewBag.Message = "You Need To Type Something";
             }
 
