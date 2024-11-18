@@ -4,7 +4,9 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using WebApplication1.Models;
 
@@ -27,11 +29,13 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             User user = db.Users.Find(id);
             if (user == null)
             {
                 return HttpNotFound();
             }
+
             return View(user);
         }
 
@@ -42,53 +46,54 @@ namespace WebApplication1.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive")] User user)
+        public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode")] User user)
         {
-
-            
             if (ModelState.IsValid)
             {
-                // Check if email is existing 
+                #region Generate Activation Code
+                //user.ActivationCode = Guid.NewGuid();
+                #endregion
+
+                #region Password Hashing
+                user.PasswordHash = Crypto.Hash(user.PasswordHash);
+                user.ConfirmPassword = Crypto.Hash(user.ConfirmPassword);
+                #endregion
+
+                // Check if email already exists
                 if (db.Users.Any(x => x.Email == user.Email))
                 {
-                    //ViewBag.Message = "Email Already Registered";
                     Response.Write("<script>alert('Email Already Registered')</script>");
                     return View(user);
                 }
-                // Check if username is existing
+
+                // Check if username already exists
                 if (db.Users.Any(x => x.Username == user.Username))
                 {
-                    //ViewBag.Message = "Username Has Been Taken";
                     Response.Write("<script>alert('Username Has Been Taken')</script>");
                     return View(user);
                 }
-                // Check for Empty fields
+
+                // Check for empty fields
                 if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Email) || string.IsNullOrWhiteSpace(user.PasswordHash))
                 {
-                    //ViewBag.Message = "You Need To Type Something";
                     Response.Write("<script>alert('You Need To Type Something')</script>");
                     return View(user);
                 }
 
-                //Check if the value is Equal
+                // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
-                    //Create An Account
                     db.Users.Add(user);
                     db.SaveChanges();
                     Response.Write("<script>alert('Registration Successful')</script>");
                     return RedirectToAction("Login");
                 }
                 else
-                {   
-                    
-                    //ViewBag.Message = "Password Does Not Match";
+                {
                     Response.Write("<script>alert('Password Does Not Match')</script>");
+                    return View(user);
                 }
             }
 
@@ -102,17 +107,17 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             User user = db.Users.Find(id);
             if (user == null)
             {
                 return HttpNotFound();
             }
+
             return View(user);
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive")] User user)
@@ -123,6 +128,7 @@ namespace WebApplication1.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             return View(user);
         }
 
@@ -133,11 +139,13 @@ namespace WebApplication1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             User user = db.Users.Find(id);
             if (user == null)
             {
                 return HttpNotFound();
             }
+
             return View(user);
         }
 
@@ -161,82 +169,140 @@ namespace WebApplication1.Controllers
             base.Dispose(disposing);
         }
 
+        // GET: Users/Login
         [HttpGet]
         public ActionResult Login()
         {
             return View();
         }
 
+        // POST: Users/Login
         [HttpPost]
         public ActionResult Login(MyLogin user)
         {
-            // Find if the User has already Accounts
             var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == user.Password);
 
-            
             if (query != null)
             {
-                //If it finds the Account the First Condition Will Meet
-                Response.Write("<Script>alert('Login Successful')</Script>");
+                Response.Write("<script>alert('Login Successful')</script>");
                 return RedirectToAction("Index");
             }
-           
             else
             {
-                // The user has no Account in The Database
-                Response.Write("<Script>alert('Invalid Account')</Script>");
-
+                Response.Write("<script>alert('Invalid Account')</script>");
             }
 
             return View();
         }
 
+        // GET: Users/ForgotPassword
         [HttpGet]
-        public ActionResult ForgotPassword(int? id)
+        public ActionResult ForgotPassword()
         {
             return View();
         }
 
+        // POST: Users/ForgotPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ForgotPassword(MyPassword user)
+        public ActionResult ForgotPassword(string Email)
         {
+            string message = "";
+            var account = db.Users.FirstOrDefault(a => a.Email == Email);
+
+            if (account != null)
+            {
+                string resetCode = Guid.NewGuid().ToString();
+                SendVeficationLink(account.Email, resetCode, "ResetPassword");
+                account.ResetPasswordCode = resetCode;
+
+                db.SaveChanges();
+                message = "Reset password link sent successfully.";
+            }
+            else
+            {
+                message = "Account not found.";
+            }
+
+            ViewBag.Message = message;
+            return View();
+        }
+
+        // GET: Users/ResetPassword
+        public ActionResult ResetPassword(string id)
+        {
+            var query = db.Users.FirstOrDefault(x => x.ResetPasswordCode == id);
+
+            if (query != null)
+            {
+                ResetPassword model = new ResetPassword { ResetCode = id };
+                return View(model);
+            }
+
+            return HttpNotFound();
+        }
+
+        // POST: Users/ResetPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ResetPassword(ResetPassword model)
+        {
+            string message = "";
+
             if (ModelState.IsValid)
             {
-                // Find the user by email in the Users table
-                var query = db.Users.FirstOrDefault(x => x.Email == user.Email);
-                if (query != null)
+                var user = db.Users.FirstOrDefault(a => a.ResetPasswordCode == model.ResetCode);
+
+                if (user != null)
                 {
-                    // Check if the new password matches the confirmation
-                    if (user.PasswordHash == user.ConfirmPassword)
-                    {
-                        // Update the password hash 
-                        query.PasswordHash = user.PasswordHash;
-                        db.Entry(query).State = System.Data.Entity.EntityState.Modified;
-                        db.SaveChanges();
-                        Response.Write("<script>alert('Password reset successfully');</script>");
-                        return RedirectToAction("Login");
-                    }
-                    else
-                    {   
-                        //Check if the New password matches the confirmation
-                        Response.Write("<script>alert('Password does not match');</script>");
-                    }
+                    user.PasswordHash = Crypto.Hash(model.PasswordHash);
+                    user.ResetPasswordCode = "";
+                    db.Configuration.ValidateOnSaveEnabled = false;
+                    db.SaveChanges();
+                    message = "New password updated successfully.";
                 }
                 else
                 {
-                    //Check if the User has no Account
-                    Response.Write("<script>alert('Account Not Found');</script>");
+                    message = "Invalid reset link.";
                 }
             }
             else
             {
-                //Check if the user Dont add anything and then submitted
-                ViewBag.Message = "You Need To Type Something";
+                message = "Invalid data.";
             }
 
-            return View(user);
+            ViewBag.Message = message;
+            return View(model);
         }
 
+        public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")
+        {
+            string verifyURL = "/User/" + emailFor + "/" + ActivationCode;
+            string link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyURL);
+
+            var fromEmail = new MailAddress("pobletemar6@gmail.com", "EmailSender");
+            var toEmail = new MailAddress(Email);
+            var fromEmailPassword = "rgyn spwl vops yyoo";
+
+            string subject = emailFor == "VerifyAccount" ? "Your Account is Successfully Created" : "Reset Password";
+            string body = emailFor == "VerifyAccount"
+                ? $"<br/><br/> PH NET<br/>Please click on the link below to verify your account:<br/><a href='{link}'>{link}</a>"
+                : $"Hi,<br/><br/>We received a request to reset your password. Please click the link below:<br/><a href='{link}'>Reset Password Link</a>";
+
+            using (var smtp = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword),
+                EnableSsl = true
+            })
+            using (var message = new MailMessage(fromEmail, toEmail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+            {
+                smtp.Send(message);
+            }
+        }
     }
 }

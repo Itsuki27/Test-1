@@ -6,12 +6,12 @@ using System.Web;
 
 namespace WebApplication1.Models
 {
-    public class MyPassword
-    {   
+    public class ResetPassword
+    {
         [Required]
         public string ResetCode { get; set; }
 
-        [Required(ErrorMessage = "New Password required" , AllowEmptyStrings =false)]
+        [Required(ErrorMessage = "New Password required", AllowEmptyStrings = false)]
         [DataType(DataType.Password)]
         public string PasswordHash { get; set; }
 

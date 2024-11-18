@@ -24,6 +24,12 @@ namespace WebApplication1
                 url: "Users/ForgotPassword",
                 defaults: new { controller = "Users", action = "ForgotPassword", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+               name: "ResetPassword",
+               url: "Users/ResetPassword",
+               defaults: new { controller = "Users", action = "ResetPassword", id = UrlParameter.Optional }
+           );
         }
     }
 }
