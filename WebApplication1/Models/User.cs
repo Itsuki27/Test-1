@@ -11,8 +11,7 @@ namespace WebApplication1.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-
+    
     public partial class User
     {
         public int UserId { get; set; }
@@ -20,21 +19,7 @@ namespace WebApplication1.Models
         public string PasswordHash { get; set; }
         public string ConfirmPassword { get; set; }
         public string Email { get; set; }
-<<<<<<< Updated upstream
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<bool> IsActive { get; set; }
-=======
-
-        [Required(AllowEmptyStrings = false)]
-        public Nullable<System.DateTime> CreatedDate { get; set; } = DateTime.Now;
-        
-        [Required(AllowEmptyStrings = false)]
-        public Nullable<bool> IsActive { get; set; } = true;
-        
-        //public System.Guid ActivationCode { get; set; }
-        //public bool IsEmailVerified { get; set; }
-        public string ConfirmPassword { get; set; }
-        public string ResetPasswordCode { get; set; }
->>>>>>> Stashed changes
     }
 }

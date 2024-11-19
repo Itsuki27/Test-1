@@ -1,70 +1,64 @@
-﻿﻿@model WebApplication1.Models.User
+﻿@model WebApplication1.Models.User
 
 @{
     ViewBag.Title = "Delete";
 }
 
-<div class="form-horizontal d-flex px-5 flex-column">
-    <div class="m-auto bg-warning text-center p-3 mb-2 rounded">
-        <h4 class="m-0">Are you sure you want to DELETE</h4>
-        <h4 class="m-0"> User: <i><u>@Html.DisplayFor(model => model.Username)</u></i> ?</h4>
-    </div>
+<h2>Delete</h2>
 
-    <div class="d-flex flex-column m-auto">
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Username)
+        </dt>
 
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Username)
-            </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Username)
+        </dd>
 
-            <dd>
-                @Html.DisplayFor(model => model.Username)
-            </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PasswordHash)
+        </dt>
 
-            <dt>
-                Password
-                @*@Html.DisplayNameFor(model => model.PasswordHash)*@
-            </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PasswordHash)
+        </dd>
 
-            <dd>
-                @Html.DisplayFor(model => model.PasswordHash)
-            </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Email)
-            </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
 
-            <dd>
-                @Html.DisplayFor(model => model.Email)
-            </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </dt>
 
-            <dt>
-                Date Created
-                @*@Html.DisplayNameFor(model => model.CreatedDate)*@
-            </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CreatedDate)
+        </dd>
 
-            <dd>
-                @Html.DisplayFor(model => model.CreatedDate)
-            </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
 
-            <dd>
-                @Html.DisplayFor(model => model.IsActive)
-            </dd>
+    </dl>
 
-        </dl>
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
 
-        @using (Html.BeginForm())
-        {
-            @Html.AntiForgeryToken()
-
-            <div class="form-actions no-color">
-                <input type="submit" value="Delete" class="btn btn-danger px-4 mx-3" />
-                @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-outline-primary mx-3 px-4" })
-            </div>
-        }
-    </div>
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
 </div>

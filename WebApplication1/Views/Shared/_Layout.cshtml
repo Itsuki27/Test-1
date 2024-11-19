@@ -7,30 +7,33 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body style="background-color: whitesmoke">
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark" style="background-color: darkgreen">
-        <div class="container ms-2 col-md-9">
-            <a href="@Url.Action("Index", "Home")" title="Icon" class="col-sm-1 p-2">
-                <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid" />
-            </a>
-            @Html.ActionLink("CRUD APP", "Index", "Home", new { area = "" }, new { @class = "navbar-brand ms-4 font-monospace fw-bold" })
+<body>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark"style="justify-content: space-around">
+        <div class="container">
+            @Html.ActionLink("Good Morning", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between col-12">
-                <ul class="navbar-nav ms-auto">
+            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+
+                <ul class="navbar-nav flex-grow-1">
+                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                </ul>
+                <div class="navbar-nav ms-auto">
                     <li>@Html.ActionLink("Login", "Login", "Users", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Register", "Create", "Users", new { area = "" }, new { @class = "nav-link" })</li>
-                </ul>
+                </div>
             </div>
         </div>
     </nav>
-    <div>
+    <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer class="d-flex flex-row px-4 mx-4">
-            <p>&copy; @DateTime.Now.Year - CRUD APP</p>
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
 
