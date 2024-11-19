@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication1.Models.User>
+﻿﻿@model IEnumerable<WebApplication1.Models.User>
 
 @{
     ViewBag.Title = "Account List";
@@ -6,55 +6,71 @@
 
 @*<h2>Index</h2>*@
 
-<p style="color:green">
-    @Html.ActionLink("Create New", "Create")
-</p>
-<p style="color:red">
-    @Html.ActionLink("Logout", "Login")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Username)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PasswordHash)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th></th>
-    </tr>
+<div class="form-horizontal p-5">
+    <h2 class="text-center">User Masterlist</h2>
+    <hr />
+    <div class="d-flex gap-2">
+        <p>
+            @Html.ActionLink("Create New User", "Create", new { area = "" }, new { @class = "btn btn-primary" })
+        </p>
+        <p>
+            @Html.ActionLink("Logout", "Login", new { area = "" }, new { @class = "btn btn-danger" })
+        </p>
+    </div>
+    <table class="table table-bordered table-striped table-light">
+        <tr>
+            <th>
+                ID
+                @*@Html.DisplayNameFor(model => model.UserId)*@
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Username)
+            </th>
+            <th>
+                Password
+                @*@Html.DisplayNameFor(model => model.PasswordHash)*@
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                Date Created
+                @*@Html.DisplayNameFor(model => model.CreatedDate)*@
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+            <th>Actions</th>
+        </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Username)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PasswordHash)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.UserId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.UserId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.UserId })
-        </td>
-    </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PasswordHash)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.UserId }, new { @class = "btn btn-success" })
+                    @Html.ActionLink("Details", "Details", new { id = item.UserId }, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.UserId }, new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+        }
 
-</table>
+    </table>
+</div>

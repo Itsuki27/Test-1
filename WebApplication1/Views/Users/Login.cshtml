@@ -1,45 +1,59 @@
 ﻿@model WebApplication1.Models.MyLogin
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>LogIn</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
-            </div>
+
+    <div class="form-horizontal d-flex p-4">
+        <div class="col-7 d-none d-xl-none d-lg-block p-4">
+            <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3 h-100 ">
+        </div>
+        <div class="col-7 d-none d-xl-block p-4">
+            <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3">
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.PasswordFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <div class="m-auto d-sm-block">
+            <h2 class="text-center">User Login</h2>
+            <hr />
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10" style="margin:5px">
-                <input type="submit" value="Login" class="btn btn-outline-success" />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-12 mb-1">
+                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-12 mb-1">
+                    @Html.PasswordFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group d-flex col-md-12 justify-content-center">
+                <div class="m-auto">
+                    <input type="submit" value="Login" class="btn btn-success mt-4 px-4" />
+                </div>
+            </div>
+
+            <div class="d-flex m-auto text-center flex-column">
+                <p></p>
+                @Html.ActionLink("Forgot Password?", "ForgotPassword", "Users")
+                <p></p>
+                <p>
+                    Don't have an account?
+                    @Html.ActionLink("Sign Up", "Create")
+                </p>
+
             </div>
         </div>
     </div>
 }
-
-<div>
-    <h7>Don't Have An Account Yet?</h7>
-    @Html.ActionLink("Register", "Create")
-</div>
-<div>
-    @Html.ActionLink("Forgot Password?", "ForgotPassword", "Users")
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
