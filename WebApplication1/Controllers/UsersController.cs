@@ -12,15 +12,23 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    [Authorize]
     public class UsersController : Controller
     {
         private MyStartDBEntities db = new MyStartDBEntities();
 
         // GET: Users
+        [AllowAnonymous]
         public ActionResult Index()
         {
+            if (Session["Username"] == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            }
             return View(db.Users.ToList());
         }
+
+
 
         // GET: Users/Details/5
         public ActionResult Details(int? id)
@@ -40,6 +48,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/Create
+        [AllowAnonymous]
         public ActionResult Create()
         {
             return View();
@@ -48,6 +57,7 @@ namespace WebApplication1.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode")] User user)
         {
             if (ModelState.IsValid)
@@ -164,6 +174,7 @@ namespace WebApplication1.Controllers
 
         // GET: Users/Login
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Login()
         {
             return View();
@@ -171,14 +182,17 @@ namespace WebApplication1.Controllers
 
         // POST: Users/Login
         [HttpPost]
+        [AllowAnonymous]
         public ActionResult Login(MyLogin user)
         {
             var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == user.Password);
 
             if (query != null)
             {
+                Session["UserId"] = query.UserId.ToString();
+                Session["Username"] = query.Username.ToString();
                 Response.Write("<script>alert('Login Successful')</script>");
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Users");
             }
             else
             {
@@ -190,6 +204,7 @@ namespace WebApplication1.Controllers
 
         // GET: Users/ForgotPassword
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
             return View();
@@ -198,6 +213,7 @@ namespace WebApplication1.Controllers
         // POST: Users/ForgotPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult ForgotPassword(string Email)
         {
             string message = "";
@@ -222,6 +238,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/ResetPassword
+        [AllowAnonymous]
         public ActionResult ResetPassword(string id)
         {
             var query = db.Users.FirstOrDefault(x => x.ResetPasswordCode == id);
@@ -238,6 +255,7 @@ namespace WebApplication1.Controllers
         // POST: Users/ResetPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult ResetPassword(ResetPassword model)
         {
             string message = "";
@@ -269,6 +287,14 @@ namespace WebApplication1.Controllers
             ViewBag.Message = message;
             return View(model);
         }
+
+        public ActionResult Logout()
+        {
+            Session.Clear();    // Clears all session data
+            Session.Abandon();  // Ends the session
+            return RedirectToAction("Login", "Users");
+        }
+
 
         public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")
         {
