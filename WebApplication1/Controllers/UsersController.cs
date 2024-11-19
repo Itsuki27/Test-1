@@ -52,14 +52,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                #region Generate Activation Code
-                //user.ActivationCode = Guid.NewGuid();
-                #endregion
-
-                #region Password Hashing
-                user.PasswordHash = Crypto.Hash(user.PasswordHash);
-                user.ConfirmPassword = Crypto.Hash(user.ConfirmPassword);
-                #endregion
+               
 
                 // Check if email already exists
                 if (db.Users.Any(x => x.Email == user.Email))
@@ -255,11 +248,13 @@ namespace WebApplication1.Controllers
 
                 if (user != null)
                 {
-                    user.PasswordHash = Crypto.Hash(model.PasswordHash);
+                    //user.PasswordHash = Crypto.Hash(model.PasswordHash);
+                    user.PasswordHash = model.PasswordHash;
                     user.ResetPasswordCode = "";
                     db.Configuration.ValidateOnSaveEnabled = false;
                     db.SaveChanges();
-                    message = "New password updated successfully.";
+                    Response.Write("<script>alert('New password updated successfully')</script>");
+                    //message = "New password updated successfully.";
                 }
                 else
                 {
@@ -277,7 +272,7 @@ namespace WebApplication1.Controllers
 
         public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")
         {
-            string verifyURL = "/User/" + emailFor + "/" + ActivationCode;
+            string verifyURL = "/Users/" + emailFor + "/" + ActivationCode;
             string link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyURL);
 
             var fromEmail = new MailAddress("pobletemar6@gmail.com", "EmailSender");

@@ -34,8 +34,7 @@
           <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Precision="3" />
           <Property Name="IsActive" Type="Boolean" />
-          <Property Name="ActivationCode" Type="Guid" Nullable="false" />
-          <Property Name="IsEmailVerified" Type="Boolean" Nullable="false" />
+       
           <Property Name="ResetPasswordCode" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityContainer Name="MyStartDBEntities" annotation:LazyLoadingEnabled="true">

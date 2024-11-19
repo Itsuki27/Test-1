@@ -16,7 +16,7 @@ namespace WebApplication1.Models
         public string PasswordHash { get; set; }
 
         [DataType(DataType.Password)]
-        [Compare("PasswordHash", ErrorMessage = "New Password and Confirm Password does not matchy")]
+        [Compare("PasswordHash", ErrorMessage = "New Password and Confirm Password does not match")]
         public string ConfirmPassword { get; set; }
 
     }
