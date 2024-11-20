@@ -8,29 +8,34 @@ using System.Net.Mail;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Web.Security;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class UsersController : Controller
     {
         private MyStartDBEntities db = new MyStartDBEntities();
 
         // GET: Users
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public ActionResult Index()
         {
             if (Session["Username"] == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                return RedirectToAction("Login", "Users");
             }
+
             return View(db.Users.ToList());
         }
 
 
 
+
         // GET: Users/Details/5
+        //[AllowAnonymous]
+        //[Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -48,7 +53,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/Create
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public ActionResult Create()
         {
             return View();
@@ -57,7 +62,7 @@ namespace WebApplication1.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode")] User user)
         {
             if (ModelState.IsValid)
@@ -104,6 +109,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/Edit/5
+        //[AllowAnonymous]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -123,6 +129,7 @@ namespace WebApplication1.Controllers
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        //[AllowAnonymous]
         public ActionResult Edit([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive")] User user)
         {
             if (ModelState.IsValid)
@@ -136,6 +143,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/Delete/5
+        //[AllowAnonymous]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -155,6 +163,7 @@ namespace WebApplication1.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        //[AllowAnonymous]
         public ActionResult DeleteConfirmed(int id)
         {
             User user = db.Users.Find(id);
@@ -172,17 +181,17 @@ namespace WebApplication1.Controllers
             base.Dispose(disposing);
         }
 
-        // GET: Users/Login
-        [HttpGet]
-        [AllowAnonymous]
+        //GET: Users/Login
+       [HttpGet]
+       //[AllowAnonymous]
         public ActionResult Login()
         {
             return View();
         }
 
-        // POST: Users/Login
-        [HttpPost]
-        [AllowAnonymous]
+        //POST: Users/Login
+       [HttpPost]
+       //[AllowAnonymous]
         public ActionResult Login(MyLogin user)
         {
             var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == user.Password);
@@ -203,8 +212,9 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/ForgotPassword
+
+        //[AllowAnonymous]
         [HttpGet]
-        [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
             return View();
@@ -213,7 +223,7 @@ namespace WebApplication1.Controllers
         // POST: Users/ForgotPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public ActionResult ForgotPassword(string Email)
         {
             string message = "";
@@ -238,7 +248,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/ResetPassword
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public ActionResult ResetPassword(string id)
         {
             var query = db.Users.FirstOrDefault(x => x.ResetPasswordCode == id);
@@ -255,7 +265,7 @@ namespace WebApplication1.Controllers
         // POST: Users/ResetPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public ActionResult ResetPassword(ResetPassword model)
         {
             string message = "";
@@ -290,10 +300,16 @@ namespace WebApplication1.Controllers
 
         public ActionResult Logout()
         {
-            Session.Clear();    // Clears all session data
-            Session.Abandon();  // Ends the session
+            Session.Abandon();
+            Session.Clear();
+
+            //FormsAuthentication.SignOut();
+
             return RedirectToAction("Login", "Users");
         }
+
+
+
 
 
         public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")

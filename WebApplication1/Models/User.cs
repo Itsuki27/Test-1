@@ -11,16 +11,21 @@ namespace WebApplication1.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class User
     {
         public int UserId { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string Email { get; set; }
+
+        //[DisplayFormat(ApplyFormatInEditMode =true, DataFormatString = "{0:yyyy-MM-dd HH:mm}")]
+        //public DateTime? CreatedDate { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
-        public Nullable<bool> IsActive { get; set; }
+        public Nullable<bool> IsActive { get; set; } = true;
         //public System.Guid ActivationCode { get; set; }
+
         //public bool IsEmailVerified { get; set; }
         public string ConfirmPassword { get; set; }
         public string ResetPasswordCode { get; set; }
