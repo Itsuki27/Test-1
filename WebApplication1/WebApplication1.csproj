@@ -120,11 +120,31 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MOVEHISTsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hashing.cs" />
+    <Compile Include="Models\Audit Logs.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Audit Logs.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Audit Logs.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Audit Logs.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Audit Logs.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Audit Logs.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Extended\MOVEHIST.cs" />
+    <Compile Include="Models\MOVEHIST.cs">
+      <DependentUpon>Audit Logs.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MyLogin.cs" />
     <Compile Include="Models\Model1.Context.cs">
       <AutoGen>True</AutoGen>
@@ -168,6 +188,16 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Models\Audit Logs.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Audit Logs.edmx</DependentUpon>
+      <LastGenOutput>Audit Logs.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\Audit Logs.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Audit Logs.edmx</DependentUpon>
+      <LastGenOutput>Audit Logs.cs</LastGenOutput>
+    </Content>
     <Content Include="Models\Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model1.Context.cs</LastGenOutput>
@@ -191,6 +221,13 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <EntityDeploy Include="Models\Audit Logs.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Audit Logs.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Audit Logs.edmx.diagram">
+      <DependentUpon>Audit Logs.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -224,6 +261,11 @@
     <Content Include="Views\Users\Login.cshtml" />
     <Content Include="Views\Users\ForgotPassword.cshtml" />
     <Content Include="Views\Users\ResetPassword.cshtml" />
+    <Content Include="Views\MOVEHISTs\Create.cshtml" />
+    <Content Include="Views\MOVEHISTs\Delete.cshtml" />
+    <Content Include="Views\MOVEHISTs\Details.cshtml" />
+    <Content Include="Views\MOVEHISTs\Edit.cshtml" />
+    <Content Include="Views\MOVEHISTs\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,106 @@
+﻿@model WebApplication1.Models.MOVEHIST
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>MOVEHIST</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.lineno)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.lineno)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TYPE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TYPE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OLD_DATA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OLD_DATA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NEW_DATA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NEW_DATA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OLD_SAL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OLD_SAL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NEW_SAL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NEW_SAL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.D_ACTION)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.D_ACTION)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.T_ACTION)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.T_ACTION)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DESCRIPTION)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DESCRIPTION)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ACTION_BY)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ACTION_BY)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.MOVEHIST_ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
