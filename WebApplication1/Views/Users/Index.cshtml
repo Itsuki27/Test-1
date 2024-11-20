@@ -4,57 +4,75 @@
     ViewBag.Title = "Account List";
 }
 
-@*<h2>Index</h2>*@
-
-<p style="color:green">
-    @Html.ActionLink("Create New", "Create")
-</p>
-<p style="color:red">
-    @Html.ActionLink("Logout", "Login")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Username)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PasswordHash)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Username)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PasswordHash)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.UserId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.UserId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.UserId })
-        </td>
-    </tr>
+@if (Session["UserId"] != null)
+{
+    <h4 style="color:black">Welcome,@Session["Username"].ToString().ToUpper()!</h4>
+}
+else
+{
+    <p><a href="@Url.Action("Login", "Users")"></a></p>
 }
 
-</table>
+<h1 id="reactdiv"></h1>
+
+<div class="form-horizontal p-5">
+    <h2 class="text-center">User Masterlist</h2>
+    <hr />
+    <div class="d-flex gap-2">
+        <p>
+            @Html.ActionLink("Create New User", "Create", new { area = "" }, new { @class = "btn btn-primary" })
+        </p>
+        <p>
+            @Html.ActionLink("Logout", "Login", new { area = "" }, new { @class = "btn btn-danger" })
+        </p>
+    </div>
+    <table id="tblUsers" class="table table-bordered table-striped table-light">
+        <thead>
+            <tr>
+                <th>@Html.DisplayName("ID")</th>
+                <th>@Html.DisplayName("Username")</th>
+                <th>@Html.DisplayName("Password")</th>
+                <th>@Html.DisplayName("Email")</th>
+                <th>@Html.DisplayName("Date Created")</th>
+                <th>@Html.DisplayName("IsActive")</th>
+                <th>@Html.DisplayName("Password Reset Code")</th>
+                <th>@Html.DisplayName("Actions")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.UserId)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                    <td>@Html.DisplayFor(modelItem => item.PasswordHash)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ResetPasswordCode)</td>
+                    <td>
+                        <i></i>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.UserId }, new { @class = "btn btn-sm btn-success" })
+                        @Html.ActionLink("Details", "Details", new { id = item.UserId }, new { @class = "btn btn-sm btn-primary" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.UserId }, new { @class = "btn btn-sm btn-danger" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+
+<script nonce="tblScript">
+    $(document).ready(function () {
+        new DataTable('#tblUsers', {
+
+        });
+
+    });
+</script>
