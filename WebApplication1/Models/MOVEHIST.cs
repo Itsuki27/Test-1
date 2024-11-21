@@ -15,7 +15,7 @@ namespace WebApplication1.Models
     public partial class MOVEHIST
     {
         public long MOVEHIST_ID { get; set; }
-        public long lineno { get; set; }
+        public long MAC_ADDRESS { get; set; }
         public string TYPE { get; set; }
         public string OLD_DATA { get; set; }
         public string NEW_DATA { get; set; }

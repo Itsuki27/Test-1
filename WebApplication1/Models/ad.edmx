@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="AuditLogs.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="MOVEHIST">
+          <Key>
+            <PropertyRef Name="MOVEHIST_ID" />
+          </Key>
+          <Property Name="MOVEHIST_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MAC_ADDRESS" Type="bigint" Nullable="false" />
+          <Property Name="TYPE" Type="varchar" MaxLength="40" Nullable="false" />
+          <Property Name="OLD_DATA" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="NEW_DATA" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="OLD_SAL" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="NEW_SAL" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="D_ACTION" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="T_ACTION" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ACTION_BY" Type="varchar" MaxLength="40" Nullable="false" />
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="AuditLogsStoreContainer">
+          <EntitySet Name="MOVEHIST" EntityType="Self.MOVEHIST" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AuditLogs" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="MOVEHIST">
+          <Key>
+            <PropertyRef Name="MOVEHIST_ID" />
+          </Key>
+          <Property Name="MOVEHIST_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MAC_ADDRESS" Type="Int64" Nullable="false" />
+          <Property Name="TYPE" Type="String" MaxLength="40" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="OLD_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NEW_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="OLD_SAL" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NEW_SAL" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="D_ACTION" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="T_ACTION" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ACTION_BY" Type="String" MaxLength="40" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="MyStartDBEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="MOVEHISTs" EntityType="Self.MOVEHIST" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AuditLogsStoreContainer" CdmEntityContainer="MyStartDBEntities1">
+          <EntitySetMapping Name="MOVEHISTs">
+            <EntityTypeMapping TypeName="AuditLogs.MOVEHIST">
+              <MappingFragment StoreEntitySet="MOVEHIST">
+                <ScalarProperty Name="MOVEHIST_ID" ColumnName="MOVEHIST_ID" />
+                <ScalarProperty Name="MAC_ADDRESS" ColumnName="MAC_ADDRESS" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+                <ScalarProperty Name="OLD_DATA" ColumnName="OLD_DATA" />
+                <ScalarProperty Name="NEW_DATA" ColumnName="NEW_DATA" />
+                <ScalarProperty Name="OLD_SAL" ColumnName="OLD_SAL" />
+                <ScalarProperty Name="NEW_SAL" ColumnName="NEW_SAL" />
+                <ScalarProperty Name="D_ACTION" ColumnName="D_ACTION" />
+                <ScalarProperty Name="T_ACTION" ColumnName="T_ACTION" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="ACTION_BY" ColumnName="ACTION_BY" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

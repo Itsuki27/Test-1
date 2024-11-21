@@ -6,7 +6,7 @@ using System.Web;
 
 namespace WebApplication1
 {
-    public  static class Hashing
+    public class Crypto
     {
         public static string Hash(string value)
         {

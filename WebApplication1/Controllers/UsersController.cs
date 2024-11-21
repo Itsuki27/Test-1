@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Security;
+
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
@@ -30,8 +31,7 @@ namespace WebApplication1.Controllers
             return View(db.Users.ToList());
         }
 
-
-
+      
 
         // GET: Users/Details/5
         //[AllowAnonymous]
@@ -93,6 +93,13 @@ namespace WebApplication1.Controllers
                 // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
+
+                    #region Password Hashing
+                        //user.PasswordHash= Crypto.Hash(user.PasswordHash);
+                        //user.ConfirmPassword= Crypto.Hash(user.ConfirmPassword);
+                    #endregion
+
+
                     db.Users.Add(user);
                     db.SaveChanges();
                     Response.Write("<script>alert('Registration Successful')</script>");
@@ -191,13 +198,44 @@ namespace WebApplication1.Controllers
 
         //POST: Users/Login
        [HttpPost]
-       //[AllowAnonymous]
+        //[AllowAnonymous]
         public ActionResult Login(MyLogin user)
         {
-            var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == user.Password);
+            // Check if the connection is secure (HTTPS)
+            if (!Request.IsSecureConnection)
+            {
+                Response.Write("<script>alert('Login failed: Connection is not secure. Please use HTTPS.')</script>");
+                return View();
+            }
+
+            // Validate the connection string
+            if (!IsConnectionStringValid(db.Database.Connection.ConnectionString))
+            {
+                Response.Write("<script>alert('Login failed: Invalid connection string.')</script>");
+                return View();
+            }
+
+            // Attempt to open the database connection
+            using (var testConnection = db.Database.Connection)
+            {
+                try
+                {
+                    testConnection.Open(); // Open the connection
+                }
+                catch
+                {
+                    Response.Write("<script>alert('Login failed: Unable to connect to the database.')</script>");
+                    return View();
+                }
+            }
+
+            // Verify user credentials in the database
+            var query = db.Users.SingleOrDefault(x =>
+                x.Username == user.Username && x.PasswordHash == user.Password);
 
             if (query != null)
             {
+                // Successful login
                 Session["UserId"] = query.UserId.ToString();
                 Session["Username"] = query.Username.ToString();
                 Response.Write("<script>alert('Login Successful')</script>");
@@ -205,11 +243,69 @@ namespace WebApplication1.Controllers
             }
             else
             {
-                Response.Write("<script>alert('Invalid Account')</script>");
+                // Invalid username or password
+                Response.Write("<script>alert('Invalid Username or Password')</script>");
             }
 
             return View();
         }
+
+        private bool IsConnectionStringValid(string connectionString)
+        {
+            // Define the required substrings for validation
+            string requiredDataSource = @"data source=AINO\MSSQLSERVER2024";
+            string requiredInitialCatalog = @"initial catalog=MyStartDB";
+
+            // Check if the connection string contains the required values
+            return connectionString.ToLower().Contains(requiredDataSource.ToLower()) &&
+                   connectionString.ToLower().Contains(requiredInitialCatalog.ToLower());
+        }
+
+
+
+        //public ActionResult Login(MyLogin user)
+        //{
+        //    // Define the required secure connection string pattern
+        //    string secureConnectionStringPattern = @"data source=AINO\\MSSQLSERVER2024;initial catalog=MyStartDB";
+
+        //    // Validate the connection string against the secure pattern
+        //    if (!db.Database.Connection.ConnectionString.StartsWith(secureConnectionStringPattern, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        // Log the issue for debugging purposes (optional)
+        //        System.Diagnostics.Debug.WriteLine("Invalid or insecure connection string detected.");
+
+        //        // Immediately log out (clear session and redirect)
+        //        Session.Clear();
+        //        Session.Abandon();
+        //        Response.Write("<script>alert('Security policy violation: Invalid connection string. You have been logged out.')</script>");
+        //        return RedirectToAction("Login", "Users");
+        //    }
+
+        //    // Proceed with login logic if the connection string is secure
+        //    string hashedPassword = Crypto.Hash(user.Password);
+
+        //    // Query for user in the database
+        //    var query = db.Users.SingleOrDefault(x =>
+        //        x.Username == user.Username && x.PasswordHash == hashedPassword);
+
+        //    if (query != null)
+        //    {
+        //        // Successful login
+        //        Session["UserId"] = query.UserId.ToString();
+        //        Session["Username"] = query.Username.ToString();
+        //        Response.Write("<script>alert('Login Successful')</script>");
+        //        return RedirectToAction("Index", "Users");
+        //    }
+        //    else
+        //    {
+        //        // Failed login
+        //        Response.Write("<script>alert('Invalid Username or Password')</script>");
+        //    }
+
+        //    return View();
+        //}
+
+
 
         // GET: Users/ForgotPassword
 

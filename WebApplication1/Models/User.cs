@@ -20,10 +20,10 @@ namespace WebApplication1.Models
         public string PasswordHash { get; set; }
         public string Email { get; set; }
 
-        //[DisplayFormat(ApplyFormatInEditMode =true, DataFormatString = "{0:yyyy-MM-dd HH:mm}")]
-        //public DateTime? CreatedDate { get; set; }
-        public Nullable<System.DateTime> CreatedDate { get; set; }
+
+        public Nullable<System.DateTime> CreatedDate { get; set; } = DateTime.Now;
         public Nullable<bool> IsActive { get; set; } = true;
+
         //public System.Guid ActivationCode { get; set; }
 
         //public bool IsEmailVerified { get; set; }
