@@ -26,5 +26,7 @@ namespace WebApplication1.Models
         }
     
         public DbSet<User> Users { get; set; }
+        public DbSet<MOVEHIST> MOVEHISTs { get; set; }
+        public DbSet<sysdiagram> sysdiagrams { get; set; }
     }
 }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Net.NetworkInformation;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -12,18 +14,18 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class UsersController : Controller
     {
         private MyStartDBEntities db = new MyStartDBEntities();
 
         // GET: Users
-        [AllowAnonymous]
+
         public ActionResult Index()
         {
             if (Session["Username"] == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                return RedirectToAction("Login", "Users");
             }
             return View(db.Users.ToList());
         }
@@ -31,7 +33,7 @@ namespace WebApplication1.Controllers
 
 
         // GET: Users/Details/5
-        [AllowAnonymous]
+ 
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -49,7 +51,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/Create
-        [AllowAnonymous]
+  
         public ActionResult Create()
         {
             return View();
@@ -58,12 +60,12 @@ namespace WebApplication1.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
+   
         public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode")] User user)
         {
             if (ModelState.IsValid)
             {
-               
+             
 
                 // Check if email already exists
                 if (db.Users.Any(x => x.Email == user.Email))
@@ -89,9 +91,40 @@ namespace WebApplication1.Controllers
                 // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
+                    //Add User
                     db.Users.Add(user);
                     db.SaveChanges();
+
                     Response.Write("<script>alert('Registration Successful')</script>");
+
+                    //MAC ADDRESS
+                    var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                                   where nic.OperationalStatus == OperationalStatus.Up
+                                   select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+                   
+                    //Audit Logs
+                    //Start Audit
+                    var audit = new MOVEHIST
+                    {
+                        UserId = user.UserId, 
+                        OLD_DATA = "Old data placeholder", 
+                        NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                        D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"), 
+                        T_ACTION = DateTime.Now.ToString("HH:mm:ss"), 
+                        DESCRIPTION = "User creation",
+                        ACTION_BY = "System", 
+                        MAC_ADDRESS = macAddr,
+                        TYPE = "Account Creation", 
+                        //NEW_SAL = "0", 
+                        //OLD_SAL = "0"  
+                    };
+
+                    // Add and save the audit record
+                    db.MOVEHISTs.Add(audit);
+                    db.SaveChanges();
+                    //End Audit
+
                     return RedirectToAction("Login");
                 }
                 else
@@ -105,7 +138,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/Edit/5
-        [AllowAnonymous]
+
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -122,24 +155,46 @@ namespace WebApplication1.Controllers
             return View(user);
         }
 
-        // POST: Users/Edit/5
+      //POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
-        public ActionResult Edit([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive")] User user)
+
+        public ActionResult Edit([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword")] User user)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(user).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+           
+                var existingUser = db.Users.SingleOrDefault(x => x.UserId == x.UserId);
 
+                if (existingUser == null)
+                {
+                    return HttpNotFound("The User record does not exist");
+                }
+
+                
+                    existingUser.Username = user.Username;
+                    existingUser.PasswordHash = user.PasswordHash;
+                    existingUser.Email = user.Email;
+                    existingUser.IsActive = user.IsActive;
+
+                    try
+                    {
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        ModelState.AddModelError("", "Something Went Wrong.");
+                    }
+                
+                
+                    
+                
+            }
             return View(user);
         }
 
         // GET: Users/Delete/5
-        [AllowAnonymous]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -159,7 +214,7 @@ namespace WebApplication1.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
+
         public ActionResult DeleteConfirmed(int id)
         {
             User user = db.Users.Find(id);
@@ -179,7 +234,7 @@ namespace WebApplication1.Controllers
 
         // GET: Users/Login
         [HttpGet]
-        [AllowAnonymous]
+
         public ActionResult Login()
         {
             return View();
@@ -187,15 +242,18 @@ namespace WebApplication1.Controllers
 
         // POST: Users/Login
         [HttpPost]
-        [AllowAnonymous]
+   
         public ActionResult Login(MyLogin user)
         {
+
             var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == user.Password);
 
             if (query != null)
             {
                 Session["UserId"] = query.UserId.ToString();
                 Session["Username"] = query.Username.ToString();
+
+
                 Response.Write("<script>alert('Login Successful')</script>");
                 return RedirectToAction("Index", "Users");
             }
@@ -209,7 +267,7 @@ namespace WebApplication1.Controllers
 
         // GET: Users/ForgotPassword
         [HttpGet]
-        [AllowAnonymous]
+     
         public ActionResult ForgotPassword()
         {
             return View();
@@ -218,7 +276,7 @@ namespace WebApplication1.Controllers
         // POST: Users/ForgotPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
+ 
         public ActionResult ForgotPassword(string Email)
         {
             string message = "";
@@ -243,7 +301,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/ResetPassword
-        [AllowAnonymous]
+
         public ActionResult ResetPassword(string id)
         {
             var query = db.Users.FirstOrDefault(x => x.ResetPasswordCode == id);
@@ -260,7 +318,7 @@ namespace WebApplication1.Controllers
         // POST: Users/ResetPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
+   
         public ActionResult ResetPassword(ResetPassword model)
         {
             string message = "";
@@ -293,13 +351,21 @@ namespace WebApplication1.Controllers
             return View(model);
         }
 
-        [AllowAnonymous]
+
+
         public ActionResult Logout()
         {
-            Session.Clear();    // Clears all session data
-            Session.Abandon();  // Ends the session
+            Session.Clear();    
+            Session.Abandon();  
+
+            // Sign out of forms authentication
+            System.Web.Security.FormsAuthentication.SignOut();
+
+            // Redirect to the login page or any other page
             return RedirectToAction("Login", "Users");
         }
+
+
 
 
         public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")

@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-
+//namespace WebApplication1.Models.Extended
 namespace WebApplication1.Models
 {
-    public class MyLogin
+    [MetadataType(typeof(AuditLogsData))]
+    public partial class MOVEHIST
     {
-
-        
-
-        public string Username { get; set; }
-
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-
+    }
+    public class AuditLogsData
+    {
         public long MOVEHIST_ID { get; set; }
 
         [Display(Name = "MAC ADDRESS")]
@@ -66,6 +62,7 @@ namespace WebApplication1.Models
         [Display(Name = "Id")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Id Required")]
         public string UserId { get; set; }
-    }
 
+        public virtual User User { get; set; }
+    }
 }

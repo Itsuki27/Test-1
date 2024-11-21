@@ -25,6 +25,9 @@ else
         <p>
             @Html.ActionLink("Logout", "Login", new { area = "" }, new { @class = "btn btn-danger" })
         </p>
+        <p>
+            @Html.ActionLink("Audit Logs", "History", "MOVEHISTs", new { area = "" }, new { @class = "btn btn-success" })
+        </p>
     </div>
     <table id="tblUsers" class="table table-bordered table-striped table-light">
         <thead>
@@ -62,16 +65,36 @@ else
     </table>
 </div>
 
+@*Table Design and Features Imports*@
+
 <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 
+@*Excel Export*@
 
-<script nonce="tblScript">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+@*PDF Export*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+@*Export Button Features*@
+
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+
+@*Alerts*@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script nonce="myScript">
     $(document).ready(function () {
         new DataTable('#tblUsers', {
-
+            layout: {
+                top: {
+                    buttons: ['excel', 'pdf']
+                }
+            }
         });
 
     });

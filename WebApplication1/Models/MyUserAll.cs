@@ -11,10 +11,14 @@ namespace WebApplication1.Models
         public int UserId { get; set; }
         public string Username { get; set; }
 
+        [Required(ErrorMessage = "Password is required.")]
         [DataType(DataType.Password)]
+        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string PasswordHash { get; set; }
 
+        [Required(ErrorMessage = "Confirm Password is required.")]
         [DataType(DataType.Password)]
+        [Compare("PasswordHash", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
         public string Email { get; set; }
 

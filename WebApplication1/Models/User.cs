@@ -11,16 +11,27 @@ namespace WebApplication1.Models
 {
     using System;
     using System.Collections.Generic;
-    
-    public class User
+    using System.ComponentModel.DataAnnotations;
+
+    public partial class User
     {
+        public User()
+        {
+            this.MOVEHISTs = new HashSet<MOVEHIST>();
+        }
+    
         public int UserId { get; set; }
         public string Username { get; set; }
+
+   
         public string PasswordHash { get; set; }
         public string Email { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; } = DateTime.Now;
         public Nullable<bool> IsActive { get; set; } = true;
-        public string ConfirmPassword { get; set; }
         public string ResetPasswordCode { get; set; }
+
+ 
+        public string ConfirmPassword { get; set; }
+        public virtual ICollection<MOVEHIST> MOVEHISTs { get; set; }
     }
 }
