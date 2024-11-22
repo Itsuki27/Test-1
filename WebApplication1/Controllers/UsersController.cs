@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.NetworkInformation;
+using System.Security.Policy;
+using System.Security.Principal;
+using System.Text;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -57,6 +62,9 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+    
+
+
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -82,15 +90,28 @@ namespace WebApplication1.Controllers
                 }
 
                 // Check for empty fields
-                if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Email) || string.IsNullOrWhiteSpace(user.PasswordHash))
+                if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.PasswordHash))
                 {
                     Response.Write("<script>alert('Empty field/s')</script>");
                     return View(user);
+                }
+                if (user.PasswordHash.Length < 8 && user.PasswordHash.Length > 12)
+                {
+                    Response.Write("<script>alert('Password must be at least 8 characters or less than 12')</script>");
+
+
                 }
 
                 // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
+
+                    #region Password Hashing
+                    //user.PasswordHash = Crypto.Hash(user.PasswordHash);
+                    //user.ConfirmPassword = Crypto.Hash(user.ConfirmPassword);
+                    #endregion
+
+
                     //Add User
                     db.Users.Add(user);
                     db.SaveChanges();
@@ -133,6 +154,7 @@ namespace WebApplication1.Controllers
                     Response.Write("<script>alert('Password Does Not Match')</script>");
                     return View(user);
                 }
+
             }
 
             return View(user);
@@ -165,6 +187,8 @@ namespace WebApplication1.Controllers
             if (ModelState.IsValid)
             {
                 var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
+                //var existingUser = db.Users.Find(user.UserId);
+
 
                 if (existingUser == null)
                 {
@@ -190,7 +214,7 @@ namespace WebApplication1.Controllers
                                    select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
 
                     // Create audit log
-                    var user_id = (int)Session["UserId"];
+                    var user_id = existingUser.UserId;
 
                     var audit = new MOVEHIST
                     {
@@ -199,7 +223,7 @@ namespace WebApplication1.Controllers
                         NEW_DATA = $"Username={user.Username}, Email={user.Email}",
                         D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                         T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
-                        DESCRIPTION = "Edit Account",
+                        DESCRIPTION = "User Edited",
                         ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
                         MAC_ADDRESS = macAddr,
                         TYPE = "Edit Account",
@@ -253,7 +277,37 @@ namespace WebApplication1.Controllers
             User user = db.Users.Find(id);
             db.Users.Remove(user);
             db.SaveChanges();
+
+            //MAC ADDRESS
+            var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                           where nic.OperationalStatus == OperationalStatus.Up
+                           select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+            var user_id = user.UserId;
+            var audit = new MOVEHIST
+            {
+                Id = user_id,
+                OLD_DATA = "Old data placeholder",
+                NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                DESCRIPTION = "Deleted Account",
+                ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                MAC_ADDRESS = macAddr,
+                TYPE = "Account Delete",
+                NEW_SAL = "0",
+                OLD_SAL = "0"
+            };
+
+            // Add and save the audit record
+            db.MOVEHISTs.Add(audit);
+            db.SaveChanges();
+            //End Audit
+
+
             return RedirectToAction("Index");
+
+
         }
 
         protected override void Dispose(bool disposing)
@@ -274,18 +328,53 @@ namespace WebApplication1.Controllers
         }
 
         // POST: Users/Login
+     
+       
         [HttpPost]
-   
+
         public ActionResult Login(MyLogin user)
         {
 
-            var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == user.Password);
+            
+
+            //string hashedPassword = Hashing.HashWithSalt(user.Password);
+            //var hashedPassword = Hashing.Hash(user.Password);
+            var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == user.PasswordHash);
+
 
             if (query != null)
             {
                 Session["UserId"] = query.UserId.ToString();
                 Session["Username"] = query.Username.ToString();
+                Session["Email"] = query.Email.ToString();
 
+                var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                               where nic.OperationalStatus == OperationalStatus.Up
+                               select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+
+                //Audit Logs
+                //Start Audit
+                var user_id = query.UserId; 
+                var audit = new MOVEHIST
+                {
+                    Id = user_id,
+                    OLD_DATA = "Old data placeholder",
+                    NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                    DESCRIPTION = "User Logged In",
+                    ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                    MAC_ADDRESS = macAddr,
+                    TYPE = "Account Login",
+                    NEW_SAL = "0",
+                    OLD_SAL = "0"
+                };
+
+                // Add and save the audit record
+                db.MOVEHISTs.Add(audit);
+                db.SaveChanges();
+                //End Audit
 
                 Response.Write("<script>alert('Login Successful')</script>");
                 return RedirectToAction("Index", "Users");
@@ -323,6 +412,36 @@ namespace WebApplication1.Controllers
 
                 db.SaveChanges();
                 message = "Password reset link sent successfully.";
+
+
+                var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                               where nic.OperationalStatus == OperationalStatus.Up
+                               select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+
+                //Audit Logs
+                //Start Audit
+                var user_id = account.UserId;
+                var audit = new MOVEHIST
+                {
+                    Id = user_id,
+                    OLD_DATA = "Old data placeholder",
+                    NEW_DATA = $"Username={account.Username}, Email={account.Email}",
+                    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                    DESCRIPTION = "User Change Password",
+                    ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                    MAC_ADDRESS = macAddr,
+                    TYPE = "Account Forgot Password",
+                    NEW_SAL = "0",
+                    OLD_SAL = "0"
+                };
+
+                // Add and save the audit record
+                db.MOVEHISTs.Add(audit);
+                db.SaveChanges();
+                //End Audit
+
             }
             else
             {
@@ -363,12 +482,39 @@ namespace WebApplication1.Controllers
                 if (user != null)
                 {
                     //user.PasswordHash = Crypto.Hash(model.PasswordHash);
-                    user.PasswordHash = model.PasswordHash;
+                    //user.PasswordHash = model.PasswordHash;
                     user.ResetPasswordCode = "";
                     db.Configuration.ValidateOnSaveEnabled = false;
                     db.SaveChanges();
                     Response.Write("<script>alert('New password updated successfully')</script>");
                     //message = "New password updated successfully.";
+
+                    var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                                   where nic.OperationalStatus == OperationalStatus.Up
+                                   select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+                    //Audit Logs
+                    //Start Audit
+                    var user_id = user.UserId;
+                    var audit = new MOVEHIST
+                    {
+                        Id = user_id,
+                        OLD_DATA = "Old data placeholder",
+                        NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                        D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                        T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                        DESCRIPTION = "User Change Password",
+                        ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                        MAC_ADDRESS = macAddr,
+                        TYPE = "Account Forgot Password",
+                        NEW_SAL = "0",
+                        OLD_SAL = "0"
+                    };
+
+                    // Add and save the audit record
+                    db.MOVEHISTs.Add(audit);
+                    db.SaveChanges();
+                    //End Audit
                 }
                 else
                 {
