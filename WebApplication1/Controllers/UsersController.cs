@@ -105,19 +105,20 @@ namespace WebApplication1.Controllers
                    
                     //Audit Logs
                     //Start Audit
+                    var user_id = user.UserId;
                     var audit = new MOVEHIST
                     {
-                        UserId = user.UserId, 
-                        OLD_DATA = "Old data placeholder", 
+                        Id = user_id ,
+                        OLD_DATA = "Old data placeholder",
                         NEW_DATA = $"Username={user.Username}, Email={user.Email}",
-                        D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"), 
-                        T_ACTION = DateTime.Now.ToString("HH:mm:ss"), 
+                        D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                        T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
                         DESCRIPTION = "User creation",
-                        ACTION_BY = "System", 
+                        ACTION_BY = "System",
                         MAC_ADDRESS = macAddr,
-                        TYPE = "Account Creation", 
-                        //NEW_SAL = "0", 
-                        //OLD_SAL = "0"  
+                        TYPE = "Account Creation",
+                        NEW_SAL = "0",
+                        OLD_SAL = "0"
                     };
 
                     // Add and save the audit record
@@ -163,36 +164,68 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-           
-                var existingUser = db.Users.SingleOrDefault(x => x.UserId == x.UserId);
+                var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
 
                 if (existingUser == null)
                 {
                     return HttpNotFound("The User record does not exist");
                 }
 
-                
-                    existingUser.Username = user.Username;
-                    existingUser.PasswordHash = user.PasswordHash;
-                    existingUser.Email = user.Email;
-                    existingUser.IsActive = user.IsActive;
+                // Capture old data for audit
+                var oldData = $"Username={existingUser.Username}, Email={existingUser.Email}";
 
-                    try
+                // Update user details
+                existingUser.Username = user.Username;
+                existingUser.PasswordHash = user.PasswordHash;
+                existingUser.Email = user.Email;
+                existingUser.IsActive = user.IsActive;
+
+                try
+                {
+                    db.SaveChanges();
+
+                    // Capture MAC address
+                    var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                                   where nic.OperationalStatus == OperationalStatus.Up
+                                   select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+                    // Create audit log
+                    var user_id = (int)Session["UserId"];
+
+                    var audit = new MOVEHIST
                     {
-                        db.SaveChanges();
-                        return RedirectToAction("Index");
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        ModelState.AddModelError("", "Something Went Wrong.");
-                    }
-                
-                
-                    
-                
+                        Id = user_id,
+                        OLD_DATA = oldData,
+                        NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                        D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                        T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                        DESCRIPTION = "Edit Account",
+                        ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                        MAC_ADDRESS = macAddr,
+                        TYPE = "Edit Account",
+                        NEW_SAL = "0",
+                        OLD_SAL = "0"
+                    };
+
+                    // Save audit log
+                    db.MOVEHISTs.Add(audit);
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    ModelState.AddModelError("", "A concurrency error occurred while saving changes. Please try again.");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                }
             }
+
             return View(user);
         }
+
 
         // GET: Users/Delete/5
         public ActionResult Delete(int? id)

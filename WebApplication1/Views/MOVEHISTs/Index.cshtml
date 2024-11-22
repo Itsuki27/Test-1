@@ -42,7 +42,7 @@
             @Html.DisplayNameFor(model => model.ACTION_BY)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.User.Username)
+            @Html.DisplayNameFor(model => model.Id)
         </th>
         <th></th>
     </tr>
@@ -80,7 +80,7 @@
             @Html.DisplayFor(modelItem => item.ACTION_BY)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.User.Username)
+            @Html.DisplayFor(modelItem => item.Id)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.MOVEHIST_ID }) |

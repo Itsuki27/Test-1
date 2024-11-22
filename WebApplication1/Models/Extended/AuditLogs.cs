@@ -7,17 +7,17 @@ using System.Web;
 namespace WebApplication1.Models
 {
     [MetadataType(typeof(AuditLogsData))]
-    public partial class MOVEHIST
+    public partial class AuditLogs
     {
     }
     public class AuditLogsData
     {
         public long MOVEHIST_ID { get; set; }
 
-        [Display(Name = "MAC ADDRESS")]
-        [DataType(DataType.PhoneNumber)]
-        [MinLength(10, ErrorMessage = "Minimum Of 6 Characters Required")]
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Line Number Required")]
+        //[Display(Name = "MAC ADDRESS")]
+        //[DataType(DataType.PhoneNumber)]
+        //[MinLength(10, ErrorMessage = "Minimum Of 6 Characters Required")]
+        //[Required(AllowEmptyStrings = false, ErrorMessage = "Line Number Required")]
         public string MAC_ADDRESS { get; set; }
 
         [Display(Name = "Type")]
@@ -61,7 +61,7 @@ namespace WebApplication1.Models
 
         [Display(Name = "Id")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Id Required")]
-        public string UserId { get; set; }
+        public string Id { get; set; }
 
         public virtual User User { get; set; }
     }
