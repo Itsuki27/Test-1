@@ -23,9 +23,11 @@
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between col-12">
                 <ul class="navbar-nav ms-auto">
-                    @if (User.Identity.IsAuthenticated)
+                    @if (Session["UserId"] != null)
                     {
-                        <li>@Html.ActionLink("Logout", "Logout", "Users", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li class="my-auto mx-2 text-light">Welcome, <b>@Session["Username"].ToString()</b>!</li>
+                        <li class="my-auto mx-2 nav-link">|</li>
+                        <li>@Html.ActionLink("Logout", "Logout", "Users", new { area = "" }, new { @class = "nav-link mx-1" })</li>
                     }
                     else
                     {

@@ -8,9 +8,7 @@ namespace WebApplication1.Models
 {
     public class MyLogin
     {
-
-        
-
+        public string Email { get; set; }
         public string Username { get; set; }
 
         [DataType(DataType.Password)]

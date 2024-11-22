@@ -236,12 +236,7 @@
     <Content Include="Views\Users\ForgotPassword.cshtml" />
     <Content Include="Views\Users\ResetPassword.cshtml" />
     <Content Include="Views\Error\NotFound.cshtml" />
-    <Content Include="Views\MOVEHISTs\Create.cshtml" />
-    <Content Include="Views\MOVEHISTs\Delete.cshtml" />
-    <Content Include="Views\MOVEHISTs\Details.cshtml" />
-    <Content Include="Views\MOVEHISTs\Edit.cshtml" />
-    <Content Include="Views\MOVEHISTs\History.cshtml" />
-    <Content Include="Views\MOVEHISTs\Index.cshtml" />
+    <Content Include="Views\MOVEHISTs\AuditLog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

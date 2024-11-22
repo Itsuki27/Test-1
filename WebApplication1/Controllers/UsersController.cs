@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -33,7 +34,7 @@ namespace WebApplication1.Controllers
 
 
         // GET: Users/Details/5
- 
+
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -51,7 +52,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Users/Create
-  
+
         public ActionResult Create()
         {
             return View();
@@ -60,12 +61,12 @@ namespace WebApplication1.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-   
+
         public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode")] User user)
         {
             if (ModelState.IsValid)
             {
-             
+
 
                 // Check if email already exists
                 if (db.Users.Any(x => x.Email == user.Email))
@@ -91,6 +92,12 @@ namespace WebApplication1.Controllers
                 // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
+
+                    #region Password Hashing
+                    user.PasswordHash = Crypto.Hash(user.PasswordHash);
+                    user.ConfirmPassword = Crypto.Hash(user.ConfirmPassword);
+                    #endregion
+
                     //Add User
                     db.Users.Add(user);
                     db.SaveChanges();
@@ -102,13 +109,13 @@ namespace WebApplication1.Controllers
                                    where nic.OperationalStatus == OperationalStatus.Up
                                    select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
 
-                   
+
                     //Audit Logs
                     //Start Audit
                     var user_id = user.UserId;
                     var audit = new MOVEHIST
                     {
-                        Id = user_id ,
+                        Id = user_id,
                         OLD_DATA = "Old data placeholder",
                         NEW_DATA = $"Username={user.Username}, Email={user.Email}",
                         D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
@@ -156,7 +163,7 @@ namespace WebApplication1.Controllers
             return View(user);
         }
 
-      //POST: Users/Edit/5
+        //POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
 
@@ -165,6 +172,8 @@ namespace WebApplication1.Controllers
             if (ModelState.IsValid)
             {
                 var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
+                //var existingUser = db.Users.Find(user.UserId);
+
 
                 if (existingUser == null)
                 {
@@ -190,7 +199,7 @@ namespace WebApplication1.Controllers
                                    select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
 
                     // Create audit log
-                    var user_id = (int)Session["UserId"];
+                    var user_id = existingUser.UserId;
 
                     var audit = new MOVEHIST
                     {
@@ -199,7 +208,7 @@ namespace WebApplication1.Controllers
                         NEW_DATA = $"Username={user.Username}, Email={user.Email}",
                         D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                         T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
-                        DESCRIPTION = "Edit Account",
+                        DESCRIPTION = "User Edited",
                         ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
                         MAC_ADDRESS = macAddr,
                         TYPE = "Edit Account",
@@ -253,7 +262,37 @@ namespace WebApplication1.Controllers
             User user = db.Users.Find(id);
             db.Users.Remove(user);
             db.SaveChanges();
+
+            //MAC ADDRESS
+            var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                           where nic.OperationalStatus == OperationalStatus.Up
+                           select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+            var user_id = user.UserId;
+            var audit = new MOVEHIST
+            {
+                Id = user_id,
+                OLD_DATA = "Old data placeholder",
+                NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                DESCRIPTION = "Deleted Account",
+                ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                MAC_ADDRESS = macAddr,
+                TYPE = "Account Delete",
+                NEW_SAL = "0",
+                OLD_SAL = "0"
+            };
+
+            // Add and save the audit record
+            db.MOVEHISTs.Add(audit);
+            db.SaveChanges();
+            //End Audit
+
+
             return RedirectToAction("Index");
+
+
         }
 
         protected override void Dispose(bool disposing)
@@ -275,7 +314,7 @@ namespace WebApplication1.Controllers
 
         // POST: Users/Login
         [HttpPost]
-   
+
         public ActionResult Login(MyLogin user)
         {
 
@@ -285,7 +324,35 @@ namespace WebApplication1.Controllers
             {
                 Session["UserId"] = query.UserId.ToString();
                 Session["Username"] = query.Username.ToString();
+                Session["Email"] = query.Email.ToString();
 
+                var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                               where nic.OperationalStatus == OperationalStatus.Up
+                               select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+
+                //Audit Logs
+                //Start Audit
+                var user_id = query.UserId;
+                var audit = new MOVEHIST
+                {
+                    Id = user_id,
+                    OLD_DATA = "Old data placeholder",
+                    NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                    DESCRIPTION = "User Logged In",
+                    ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                    MAC_ADDRESS = macAddr,
+                    TYPE = "Account Login",
+                    NEW_SAL = "0",
+                    OLD_SAL = "0"
+                };
+
+                // Add and save the audit record
+                db.MOVEHISTs.Add(audit);
+                db.SaveChanges();
+                //End Audit
 
                 Response.Write("<script>alert('Login Successful')</script>");
                 return RedirectToAction("Index", "Users");
@@ -300,7 +367,7 @@ namespace WebApplication1.Controllers
 
         // GET: Users/ForgotPassword
         [HttpGet]
-     
+
         public ActionResult ForgotPassword()
         {
             return View();
@@ -309,7 +376,7 @@ namespace WebApplication1.Controllers
         // POST: Users/ForgotPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
- 
+
         public ActionResult ForgotPassword(string Email)
         {
             string message = "";
@@ -351,7 +418,7 @@ namespace WebApplication1.Controllers
         // POST: Users/ResetPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-   
+
         public ActionResult ResetPassword(ResetPassword model)
         {
             string message = "";
@@ -388,8 +455,8 @@ namespace WebApplication1.Controllers
 
         public ActionResult Logout()
         {
-            Session.Clear();    
-            Session.Abandon();  
+            Session.Clear();
+            Session.Abandon();
 
             // Sign out of forms authentication
             System.Web.Security.FormsAuthentication.SignOut();
@@ -432,3 +499,4 @@ namespace WebApplication1.Controllers
         }
     }
 }
+

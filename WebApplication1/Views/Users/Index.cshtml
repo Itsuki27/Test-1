@@ -4,42 +4,19 @@
     ViewBag.Title = "Account List";
 }
 
-@if (Session["UserId"] != null)
-{
-    <h4 style="color:black">Welcome,@Session["Username"].ToString().ToUpper()!</h4>
-}
-else
-{
-    <p><a href="@Url.Action("Login", "Users")"></a></p>
-}
-
-<h1 id="reactdiv"></h1>
-
-<div class="form-horizontal p-5">
+<div class="form-horizontal d-flex flex-column p-5">
     <h2 class="text-center">User Masterlist</h2>
     <hr />
-    <div class="d-flex gap-2">
-        <p>
-            @Html.ActionLink("Create New User", "Create", new { area = "" }, new { @class = "btn btn-primary" })
-        </p>
-        <p>
-            @Html.ActionLink("Logout", "Login", new { area = "" }, new { @class = "btn btn-danger" })
-        </p>
-        <p>
-            @Html.ActionLink("Audit Logs", "History", "MOVEHISTs", new { area = "" }, new { @class = "btn btn-success" })
-        </p>
-    </div>
-    <table id="tblUsers" class="table table-bordered table-striped table-light">
+    <table id="tblUsers" class="table table-bordered table-striped table-light small">
         <thead>
             <tr>
                 <th>@Html.DisplayName("ID")</th>
-                <th>@Html.DisplayName("Username")</th>
-                <th>@Html.DisplayName("Password")</th>
-                <th>@Html.DisplayName("Email")</th>
-                <th>@Html.DisplayName("Date Created")</th>
-                <th>@Html.DisplayName("IsActive")</th>
-                <th>@Html.DisplayName("Password Reset Code")</th>
-                <th>@Html.DisplayName("Actions")</th>
+                <th>@Html.DisplayName("USERNAME")</th>
+                <th>@Html.DisplayName("PASSWORD")</th>
+                <th>@Html.DisplayName("EMAIL")</th>
+                <th>@Html.DisplayName("DATE_CREATED")</th>
+                <th>@Html.DisplayName("ISACTIVE")</th>
+                <th>@Html.DisplayName("ACTIONS")</th>
             </tr>
         </thead>
         <tbody>
@@ -52,17 +29,30 @@ else
                     <td>@Html.DisplayFor(modelItem => item.Email)</td>
                     <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
                     <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ResetPasswordCode)</td>
                     <td>
-                        <i></i>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.UserId }, new { @class = "btn btn-sm btn-success" })
-                        @Html.ActionLink("Details", "Details", new { id = item.UserId }, new { @class = "btn btn-sm btn-primary" })
-                        @Html.ActionLink("Delete", "Delete", new { id = item.UserId }, new { @class = "btn btn-sm btn-danger" })
+                        @Html.ActionLink("Edit", "Edit", new { id = item.UserId }, new { @class = "btn btn-success" })
+                        @Html.ActionLink("Details", "Details", new { id = item.UserId }, new { @class = "btn btn-primary" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.UserId }, new { @class = "btn btn-danger" })
                     </td>
                 </tr>
             }
         </tbody>
+        <tfoot>
+            <tr>
+                <th>@Html.DisplayName("ID")</th>
+                <th>@Html.DisplayName("USERNAME")</th>
+                <th>@Html.DisplayName("PASSWORD")</th>
+                <th>@Html.DisplayName("EMAIL")</th>
+                <th>@Html.DisplayName("DATE_CREATED")</th>
+                <th>@Html.DisplayName("ISACTIVE")</th>
+                <th>@Html.DisplayName("ACTIONS")</th>
+            </tr>
+        </tfoot>
     </table>
+
+    <p class="mx-auto">
+        @Html.ActionLink("Audit Log", "AuditLog", "MOVEHISTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
+    </p>
 </div>
 
 @*Table Design and Features Imports*@
@@ -91,9 +81,15 @@ else
     $(document).ready(function () {
         new DataTable('#tblUsers', {
             layout: {
-                top: {
-                    buttons: ['excel', 'pdf']
-                }
+                top: 'pageLength',
+                topStart: {
+                    buttons: [
+
+                        { extend: 'excel', className: 'btn btn-outline-success btn-sm px-3 py-2' },
+                        { extend: 'pdf', orientation: 'landscape', className: 'btn btn-outline-danger btn-sm px-3 py-2 mx-1' }
+
+                    ],
+                },
             }
         });
 
