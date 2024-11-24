@@ -15,12 +15,12 @@ namespace WebApplication1
     {
 
         
-        SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["MyStartDBEntities"].ConnectionString);
+        SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString);
 
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            var context = new MyStartDBEntities();
+            //var context = new MyStartDBEntities();
             Conn.Open();
             if (Conn.State == System.Data.ConnectionState.Open)
             {
@@ -33,24 +33,5 @@ namespace WebApplication1
                 Conn.Close();
             }
         }
-
-        //public void ConnectDB()
-        //{
-        //    SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["MyStartDBEntities"].ConnectionString);
-
-        //    Conn.Open();
-        //    if (Conn.State == System.Data.ConnectionState.Open)
-        //    {
-        //        DisplayMessage(this, "Connection to the Database Successful");
-        //    }
-
-        //}
-        //static public void DisplayMessage(Control page, string msg)
-        //{
-        //    string myScript = String.Format("alert('{0}')", msg);
-        //    ScriptManager.RegisterStartupScript(page, page.GetType(), "myScript", myScript, true);
-        //}
-
-
     }
 }

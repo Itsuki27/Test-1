@@ -20,6 +20,8 @@ namespace WebApplication1.Models
 
         public string Email { get; set; }
 
+        //public string hashedPassword { get; set; }
+
         //[Display(Name = "MAC ADDRESS")]
         //[DataType(DataType.PhoneNumber)]
         //[MinLength(10, ErrorMessage = "Minimum Of 6 Characters Required")]
@@ -68,6 +70,7 @@ namespace WebApplication1.Models
         //[Display(Name = "Id")]
         //[Required(AllowEmptyStrings = false, ErrorMessage = "Id Required")]
         public string UserId { get; set; }
+        
     }
 
 }

@@ -11,20 +11,15 @@ namespace WebApplication1.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
-
+    
     public partial class User
     {
-        
         public int UserId { get; set; }
         public string Username { get; set; }
-
-        [NotMapped]
         public string PasswordHash { get; set; }
-
-        [NotMapped]
         public string ConfirmPassword { get; set; }
         public string Email { get; set; }
+
         public Nullable<System.DateTime> CreatedDate { get; set; } = DateTime.Now;
         public Nullable<bool> IsActive { get; set; } = true;
         public string ResetPasswordCode { get; set; }

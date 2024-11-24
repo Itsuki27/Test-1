@@ -32,8 +32,8 @@ namespace WebApplication1
            );
             routes.MapRoute(
                 name: "History",
-                url: "MOVEHISTs/History",
-                defaults: new { controller = "MOVEHISTs", action = "History", id = UrlParameter.Optional }
+                url: "MOVEHISTs/Index",
+                defaults: new { controller = "MOVEHISTs", action = "Index", id = UrlParameter.Optional }
             );
         }
     }
