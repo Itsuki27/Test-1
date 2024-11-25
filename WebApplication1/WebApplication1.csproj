@@ -106,6 +106,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -118,6 +121,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\FontAwesomeBundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MOVEHISTsController.cs" />
@@ -174,6 +178,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\fontawesome\font-awesome.css" />
+    <Content Include="Content\fontawesome\font-awesome.min.css" />
+    <Content Include="Content\fonts\fontawesome-webfont.svg" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -187,8 +194,19 @@
       <DependentUpon>Model1.edmx</DependentUpon>
       <LastGenOutput>Model1.cs</LastGenOutput>
     </Content>
+    <Content Include="Resources\edit_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\home_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\imgHandshake.jpg" />
     <Content Include="Resources\imgLaptop.png" />
+    <Content Include="Resources\keyboard_arrow_down_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\library_books_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\logout_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\manage_search_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\menu_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\menu_book_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\Sidebar.css" />
+    <Content Include="Resources\Sidebar.js" />
+    <Content Include="Resources\view_timeline_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -202,6 +220,10 @@
     <Content Include="Models\Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
+    <Content Include="Content\fonts\FontAwesome.otf" />
+    <Content Include="Content\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\fonts\fontawesome-webfont.eot" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -237,6 +259,7 @@
     <Content Include="Views\Users\ResetPassword.cshtml" />
     <Content Include="Views\Error\NotFound.cshtml" />
     <Content Include="Views\MOVEHISTs\AuditLog.cshtml" />
+    <Content Include="Views\Home\Reports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

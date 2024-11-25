@@ -8,6 +8,8 @@
 {
     @Html.AntiForgeryToken()
 
+
+
     <div class="form-horizontal d-flex p-4">
         <div class="col-7 d-none d-xl-none d-lg-block p-4">
             <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3 h-100 ">
@@ -18,7 +20,9 @@
 
         <div class="m-auto d-sm-block">
             <h2 class="text-center">User Login</h2>
-            <hr />
+
+
+            @Html.Raw(TempData["message"])
 
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
@@ -40,7 +44,7 @@
 
             <div class="form-group d-flex col-md-12 justify-content-center">
                 <div class="m-auto">
-                    <input type="submit" value="Login" class="btn btn-success mt-4 px-4" />
+                    <input type="submit" value="Login" class="btn btn-success mt-4 px-4" id="btLogin" />
                 </div>
             </div>
 
@@ -56,5 +60,52 @@
 }
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+
+    @if (TempData["UserCreate"] != null)
+    {
+        @Html.Raw(TempData["UserCreate"])
+    }
 }
+
+@*<script>
+        btLogin = document.getElementById('btLogin');
+
+        btLogin.addEventListener('click', function (e) {
+            e.preventDefault();
+            var form = $(this).parents('form');
+        });
+
+
+    </script>*@
+
+@*if (@TempData != null) {
+    <script>
+        Swal.fire({
+            icon: 'success',
+            text: 'error',
+            title: 'Invalid credentials!'
+        )};
+    </script>
+    }*@
+
+@*@if (ViewBag.LoginError != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '@ViewBag.LoginError'
+            });
+        </script>
+    }
+    else
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Success!',
+            });
+        </script>
+    }*@
+
+

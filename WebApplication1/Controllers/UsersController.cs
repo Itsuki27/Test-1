@@ -61,13 +61,11 @@ namespace WebApplication1.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-
+        [Authorize]
         public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode")] User user)
         {
             if (ModelState.IsValid)
             {
-
-
                 // Check if email already exists
                 if (db.Users.Any(x => x.Email == user.Email))
                 {
@@ -133,13 +131,17 @@ namespace WebApplication1.Controllers
                     db.SaveChanges();
                     //End Audit
 
+                    TempData["UserCreate"] = "<script>Swal.fire({icon: 'success', title: 'Login Success!'});</script>";
+
                     return RedirectToAction("Login");
+
                 }
                 else
                 {
                     Response.Write("<script>alert('Password Does Not Match')</script>");
                     return View(user);
                 }
+
             }
 
             return View(user);
@@ -289,9 +291,7 @@ namespace WebApplication1.Controllers
             db.SaveChanges();
             //End Audit
 
-
             return RedirectToAction("Index");
-
 
         }
 
@@ -359,7 +359,7 @@ namespace WebApplication1.Controllers
             }
             else
             {
-                Response.Write("<script>alert('Invalid Account')</script>");
+                ViewBag.LoginError = "Invalid credentials!";
             }
 
             return View();
