@@ -93,10 +93,10 @@ namespace WebApplication1.Controllers
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
 
-                    #region Password Hashing
-                    user.PasswordHash = Crypto.Hash(user.PasswordHash);
-                    user.ConfirmPassword = Crypto.Hash(user.ConfirmPassword);
-                    #endregion
+                    //#region Password Hashing
+                    //user.PasswordHash = Crypto.Hash(user.PasswordHash);
+                    //user.ConfirmPassword = Crypto.Hash(user.ConfirmPassword);
+                    //#endregion
 
                     //Add User
                     db.Users.Add(user);
@@ -378,8 +378,11 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
 
         public ActionResult ForgotPassword(string Email)
+
         {
+
             string message = "";
+
             var account = db.Users.FirstOrDefault(a => a.Email == Email);
 
             if (account != null)
@@ -387,18 +390,55 @@ namespace WebApplication1.Controllers
                 string resetCode = Guid.NewGuid().ToString();
                 SendVeficationLink(account.Email, resetCode, "ResetPassword");
                 account.ResetPasswordCode = resetCode;
-
                 db.SaveChanges();
                 message = "Password reset link sent successfully.";
+                var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                               where nic.OperationalStatus == OperationalStatus.Up
+                               select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+                //Audit Logs
+
+                //Start Audit
+
+                var user_id = account.UserId;
+                var audit = new MOVEHIST
+                {
+                    Id = user_id,
+                    OLD_DATA = "Old data placeholder",
+                    NEW_DATA = $"Username={account.Username}, Email={account.Email}",
+                    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                    DESCRIPTION = "User Change Password",
+                    ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                    MAC_ADDRESS = macAddr,
+                    TYPE = "Account Forgot Password",
+                    NEW_SAL = "0",
+                    OLD_SAL = "0"
+                };
+
+                // Add and save the audit record
+
+                db.MOVEHISTs.Add(audit);
+                db.SaveChanges();
+
+                //End Audit
+
             }
+
             else
+
             {
+
                 message = "Account not found.";
+
             }
 
             ViewBag.Message = message;
+
             return View();
+
         }
+
 
         // GET: Users/ResetPassword
 
