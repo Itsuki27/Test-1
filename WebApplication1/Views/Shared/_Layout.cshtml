@@ -22,18 +22,27 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between col-12">
-                <ul class="navbar-nav ms-auto">
-                    @if (User.Identity.IsAuthenticated)
+                <ul class="navbar-nav ms-auto" style="float:right !important">
+                    @if (Session["Username"] != null)
                     {
-                        <li>@Html.ActionLink("Logout", "Logout", "Users", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li class="nav-item d-flex align-items-center">
+                            <p style="color:#fff; margin:0; margin-right:10px;">Welcome, @Session["Username"].ToString().ToUpper()!</p>
+                            @Html.ActionLink("Logout", "Login", "Users", new { area = "" }, new { @class = "nav-link text-white", style = "padding:0;" })
+                        </li>
                     }
                     else
                     {
-                        <li>@Html.ActionLink("Login", "Login", "Users", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Register", "Create", "Users", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Login", "Login", "Users", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Register", "Create", "Users", new { area = "" }, new { @class = "nav-link" })
+                        </li>
                     }
                 </ul>
             </div>
+
+
         </div>
     </nav>
     <div>

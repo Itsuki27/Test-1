@@ -31,7 +31,7 @@ namespace WebApplication1
                defaults: new { controller = "Users", action = "ResetPassword", id = UrlParameter.Optional }
            );
             routes.MapRoute(
-                name: "History",
+                name: "Index",
                 url: "MOVEHISTs/Index",
                 defaults: new { controller = "MOVEHISTs", action = "Index", id = UrlParameter.Optional }
             );

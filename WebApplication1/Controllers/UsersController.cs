@@ -14,6 +14,7 @@ using System.Security.Policy;
 using System.Security.Principal;
 using System.Text;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using WebApplication1.Models;
@@ -107,7 +108,7 @@ namespace WebApplication1.Controllers
                 // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
-
+                    
                     #region Password Hashing
                     user.PasswordHash = Hashing.Hash(user.PasswordHash);
                     user.ConfirmPassword = Hashing.Hash(user.ConfirmPassword);
@@ -132,7 +133,7 @@ namespace WebApplication1.Controllers
                     var audit = new MOVEHIST
                     {
                         Id = audit_id ,
-                        OLD_DATA = "None",
+                        OLD_DATA = $"Username={user.Username}, Email={user.Email}",
                         NEW_DATA = $"Username={user.Username}, Email={user.Email}",
                         D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                         T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
@@ -176,37 +177,65 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
+            user.ConfirmPassword = user.PasswordHash;
 
             return View(user);
         }
 
-      //POST: Users/Edit/5
+        //POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public ActionResult Edit([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword")] User user)
         {
             if (ModelState.IsValid)
             {
+                // check if it matches an ID
                 var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
-                //var existingUser = db.Users.Find(user.UserId);
-
 
                 if (existingUser == null)
                 {
                     return HttpNotFound("The User record does not exist");
                 }
-
-
+                // Check if the username is duplicated
                 if (db.Users.Any(x => x.Username == user.Username && x.UserId != user.UserId))
                 {
                     Response.Write("<script>alert('Username already exists')</script>");
                     return View(user);
                 }
+                // Check if the email is duplicated
                 if (db.Users.Any(x => x.Email == user.Email && x.UserId != user.UserId))
                 {
                     Response.Write("<script>alert('Email already exists')</script>");
                     return View(user);
+                }
+                // Empty Fields
+                if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email))
+                {
+                    Response.Write("<script>alert('One or more fields are empty. Please fill in all required fields.')</script>");
+                    return View(user);
+                }
+
+                // Check if the password is being updated
+                if (user.PasswordHash != user.ConfirmPassword)
+                {
+                    Response.Write("<script>alert('Passwords do not match.')</script>");
+                    return View(user);
+                }
+                else
+                {
+
+                    if (!string.IsNullOrEmpty(user.PasswordHash) && user.PasswordHash != existingUser.PasswordHash)
+                    {
+                        // Validate the new password
+                        if (user.PasswordHash.Length < 8 || user.PasswordHash.Length > 12)
+                        {
+                            Response.Write("<script>alert('Password must be between 8 and 12 characters.')</script>");
+                            return View(user);
+                        }
+
+                        // Update the password if valid
+                        existingUser.PasswordHash = Hashing.Hash(user.PasswordHash);
+                    }
                 }
 
                 // Capture old data for audit
@@ -216,57 +245,38 @@ namespace WebApplication1.Controllers
                 existingUser.Username = user.Username;
                 existingUser.Email = user.Email;
                 existingUser.IsActive = user.IsActive;
-                if (!string.IsNullOrEmpty(user.PasswordHash))
+
+                db.SaveChanges();
+
+                // Audit log
+                var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                               where nic.OperationalStatus == OperationalStatus.Up
+                               select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+                var audit = new MOVEHIST
                 {
-                    existingUser.PasswordHash = Hashing.Hash(user.PasswordHash);
-                }
+                    Id = existingUser.UserId,
+                    OLD_DATA = oldData,
+                    NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                    DESCRIPTION = "User Edited",
+                    ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                    MAC_ADDRESS = macAddr,
+                    TYPE = "Account Edit",
+                    NEW_SAL = "0",
+                    OLD_SAL = "0"
+                };
 
+                db.MOVEHISTs.Add(audit);
+                db.SaveChanges();
 
-                try
-                {
-                    db.SaveChanges();
-
-                    // Capture MAC address
-                    var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
-                                   where nic.OperationalStatus == OperationalStatus.Up
-                                   select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
-
-                    // Create audit log
-                    var user_id = existingUser.UserId;
-
-                    var audit = new MOVEHIST
-                    {
-                        Id = user_id,
-                        OLD_DATA = oldData,
-                        NEW_DATA = $"Username={user.Username}, Email={user.Email}",
-                        D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
-                        T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
-                        DESCRIPTION = "User Edited",
-                        ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
-                        MAC_ADDRESS = macAddr,
-                        TYPE = "Account Edit",
-                        NEW_SAL = "0",
-                        OLD_SAL = "0"
-                    };
-
-                    // Save audit log
-                    db.MOVEHISTs.Add(audit);
-                    db.SaveChanges();
-
-                    return RedirectToAction("Index");
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    ModelState.AddModelError("", "A concurrency error occurred while saving changes. Please try again.");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-                }
+                return RedirectToAction("Index");
             }
 
             return View(user);
         }
+
 
 
         // GET: Users/Delete/5
@@ -305,7 +315,7 @@ namespace WebApplication1.Controllers
             var audit = new MOVEHIST
             {
                 Id = user_id,
-                OLD_DATA = "Old data placeholder",
+                OLD_DATA = $"Username={user.Username}, Email={user.Email}",
                 NEW_DATA = $"Username={user.Username}, Email={user.Email}",
                 D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                 T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
@@ -353,6 +363,33 @@ namespace WebApplication1.Controllers
         public ActionResult Login([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword")] MyLogin user)
         {
 
+            try
+            {
+                // Ensure that you use the correct connection string name
+                using (var connection = new SqlConnection(WebConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString))
+                {
+                    connection.Open();
+
+                    // If the connection is open, it means connection is successful
+                    if (connection.State == ConnectionState.Open)
+                    {
+                        // Success (connection opened)
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Connection Error! Invalid Database";
+                        return View();
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                // If a connection error occurs, display an alert with the message
+                Response.Write("<script>alert('Wrong Connection Error! Invalid Database')</script>");
+                return View();
+            }
+
+
             //Hash the entered password
             var hashedPassword = Hashing.Hash(user.PasswordHash);
 
@@ -361,14 +398,14 @@ namespace WebApplication1.Controllers
 
             if (query != null)
             {
-                // Capture old data (existing Username and Email from the database)
+                // Capture old data 
                 var oldData = $"Username={query.Username}, Email={query.Email}";
 
-                // Set the session variables
+
                 Session["UserId"] = query.UserId.ToString();
                 Session["Username"] = query.Username.ToString();
 
-                // Get the MAC address of the current device
+                //MAC address 
                 var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
                                where nic.OperationalStatus == OperationalStatus.Up
                                select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
@@ -378,7 +415,7 @@ namespace WebApplication1.Controllers
                 var audit = new MOVEHIST
                 {
                     Id = user_id,
-                    OLD_DATA = oldData,  // Set the OLD_DATA with the captured old values
+                    OLD_DATA = oldData,
                     NEW_DATA = $"Username={query.Username}, Email={query.Email}",
                     D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                     T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
@@ -390,25 +427,25 @@ namespace WebApplication1.Controllers
                     OLD_SAL = "0"
                 };
 
-                // Add and save the audit record
+                // 
                 db.MOVEHISTs.Add(audit);
                 db.SaveChanges();
 
-                // Inform the user and redirect to another page
+                // 
                 Response.Write("<script>alert('Login Successful')</script>");
                 return RedirectToAction("Index", "Users");
             }
             else
             {
-                // If no matching user found, show an error
+                //
                 Response.Write("<script>alert('Invalid Account')</script>");
             }
             return View();
         }
 
 
-        // GET: Users/ForgotPassword
-        [HttpGet]
+            // GET: Users/ForgotPassword
+            [HttpGet]
      
         public ActionResult ForgotPassword()
         {
@@ -445,7 +482,7 @@ namespace WebApplication1.Controllers
                 var audit = new MOVEHIST
                 {
                     Id = user_id,
-                    OLD_DATA = "Old data placeholder",
+                    OLD_DATA = $"Username={account.Username}, Email={account.Email}",
                     NEW_DATA = $"Username={account.Username}, Email={account.Email}",
                     D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                     T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
@@ -501,39 +538,13 @@ namespace WebApplication1.Controllers
 
                 if (user != null)
                 {
+
                     user.PasswordHash = Hashing.Hash(model.PasswordHash);
                     user.ResetPasswordCode = "";
                     db.Configuration.ValidateOnSaveEnabled = false;
                     db.SaveChanges();
                     Response.Write("<script>alert('New password updated successfully')</script>");
                     //message = "New password updated successfully.";
-
-                    var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
-                                   where nic.OperationalStatus == OperationalStatus.Up
-                                   select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
-
-                    //Audit Logs
-                    //Start Audit
-                    var user_id = user.UserId;
-                    var audit = new MOVEHIST
-                    {
-                        Id = user_id,
-                        OLD_DATA = "Old data placeholder",
-                        NEW_DATA = $"Username={user.Username}, Email={user.Email}",
-                        D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
-                        T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
-                        DESCRIPTION = "User Change Password",
-                        ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
-                        MAC_ADDRESS = macAddr,
-                        TYPE = "Account Forgot Password",
-                        NEW_SAL = "0",
-                        OLD_SAL = "0"
-                    };
-
-                    // Add and save the audit record
-                    db.MOVEHISTs.Add(audit);
-                    db.SaveChanges();
-                    //End Audit
                 }
                 else
                 {
@@ -549,23 +560,21 @@ namespace WebApplication1.Controllers
             return View(model);
         }
 
-
-
-        public ActionResult Logout(int id)
+        public ActionResult Logout(int id, User user)
         {
-            User user = db.Users.Find(id);
+            var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
 
+            // Get the MAC address
             var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
                            where nic.OperationalStatus == OperationalStatus.Up
                            select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
 
-            //Audit Logs
-            //Start Audit
+            // Audit Logs
             var user_id = user.UserId;
             var audit = new MOVEHIST
             {
                 Id = user_id,
-                OLD_DATA = "Old data placeholder",
+                OLD_DATA = $"Username={user.Username}, Email={user.Email}",
                 NEW_DATA = $"Username={user.Username}, Email={user.Email}",
                 D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                 T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
@@ -577,21 +586,22 @@ namespace WebApplication1.Controllers
                 OLD_SAL = "0"
             };
 
-            // Add and save the audit record
+            // Save the audit record before clearing the session
             db.MOVEHISTs.Add(audit);
             db.SaveChanges();
-            //End Audit
 
-            Session.Clear();    
-            Session.Abandon();  
+            // Clear session
+            Session.Clear();
+            // Optionally abandon session
+            Session.Abandon();
 
-            // Sign out of forms authentication
-            System.Web.Security.FormsAuthentication.SignOut();
-
-            // Redirect to the login page or any other page
-
+            // Redirect to the login page, ensuring the session is cleared
             return RedirectToAction("Login", "Users");
         }
+
+
+
+
 
 
 

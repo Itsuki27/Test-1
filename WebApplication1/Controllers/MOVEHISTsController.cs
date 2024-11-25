@@ -17,8 +17,33 @@ namespace WebApplication1.Controllers
         // GET: MOVEHISTs
         public ActionResult Index()
         {
+            // Check if the session username is null before using it.
+            //var sessionUsername = Session["Username"]?.ToString();
+
+            //if (string.IsNullOrEmpty(sessionUsername))
+            //{
+            //    return RedirectToAction("Login", "Users");
+            //}
+
+            ////  username exists
+            //var userFromDb = db.Users.SingleOrDefault(x => x.Username == sessionUsername);
+            //if (userFromDb == null)
+            //{
+            //    return RedirectToAction("Login", "Users");
+            //}
+
+            //// Session
+            //Session["UserId"] = userFromDb.UserId.ToString();
+            //Session["Username"] = userFromDb.Username;
+
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
             return View(db.MOVEHISTs.ToList());
         }
+
 
         // GET: MOVEHISTs/Details/5
         public ActionResult Details(long? id)

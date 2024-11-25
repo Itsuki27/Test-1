@@ -4,10 +4,19 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Audit Logs</h2>
+
+@if (Session["UserId"] != null)
+{
+    <h4 style="color:black">Welcome,@Session["Username"].ToString().ToUpper()!</h4>
+}
+else
+{
+    <p><a href="@Url.Action("Login", "Users")"></a></p>
+}
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Back to List", "Index", "Users")
 </p>
 <table class="table">
     <tr>
@@ -47,47 +56,48 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.MAC_ADDRESS)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TYPE)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OLD_DATA)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.NEW_DATA)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OLD_SAL)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.NEW_SAL)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.D_ACTION)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.T_ACTION)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DESCRIPTION)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ACTION_BY)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Id)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.MOVEHIST_ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.MOVEHIST_ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.MOVEHIST_ID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MAC_ADDRESS)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TYPE)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OLD_DATA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NEW_DATA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OLD_SAL)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NEW_SAL)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.D_ACTION)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.T_ACTION)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DESCRIPTION)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ACTION_BY)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            @*<td>
+                    @Html.ActionLink("Edit", "Edit", new { id=item.MOVEHIST_ID }) |
+                    @Html.ActionLink("Details", "Details", new { id=item.MOVEHIST_ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.MOVEHIST_ID })
+                </td>*@
+        </tr>
+    }
 
 </table>

@@ -23,10 +23,10 @@ else
             @Html.ActionLink("Create New User", "Create", new { area = "" }, new { @class = "btn btn-primary" })
         </p>
         <p>
-            @Html.ActionLink("Logout", "Login", new { area = "" }, new { @class = "btn btn-danger" })
+            @Html.ActionLink("Logout", "Login", "Users", new { area = "" }, new { @class = "btn btn-danger" })
         </p>
         <p>
-            @Html.ActionLink("Audit Logs", "History", "MOVEHISTs", new { area = "" }, new { @class = "btn btn-success" })
+            @Html.ActionLink("Audit Logs", "Index", "MOVEHISTs", new { area = "" }, new { @class = "btn btn-success" })
         </p>
     </div>
     <table id="tblUsers" class="table table-bordered table-striped table-light">
@@ -34,11 +34,11 @@ else
             <tr>
                 <th>@Html.DisplayName("ID")</th>
                 <th>@Html.DisplayName("Username")</th>
-                <th>@Html.DisplayName("Password")</th>
+                @*<th>@Html.DisplayName("Password")</th>*@
                 <th>@Html.DisplayName("Email")</th>
                 <th>@Html.DisplayName("Date Created")</th>
                 <th>@Html.DisplayName("IsActive")</th>
-                <th>@Html.DisplayName("Password Reset Code")</th>
+                @*<th>@Html.DisplayName("Password Reset Code")</th>*@
                 <th>@Html.DisplayName("Actions")</th>
             </tr>
         </thead>
@@ -48,11 +48,11 @@ else
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.UserId)</td>
                     <td>@Html.DisplayFor(modelItem => item.Username)</td>
-                    <td>@Html.DisplayFor(modelItem => item.PasswordHash)</td>
+                    @*<td>@Html.DisplayFor(modelItem => item.PasswordHash)</td>*@
                     <td>@Html.DisplayFor(modelItem => item.Email)</td>
                     <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
                     <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ResetPasswordCode)</td>
+                    @*<td>@Html.DisplayFor(modelItem => item.ResetPasswordCode)</td>*@
                     <td>
                         <i></i>
                         @Html.ActionLink("Edit", "Edit", new { id = item.UserId }, new { @class = "btn btn-sm btn-success" })
