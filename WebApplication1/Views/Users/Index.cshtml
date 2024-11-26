@@ -6,6 +6,7 @@
 
 <div class="form-horizontal d-flex flex-column p-5">
     <h2 class="text-center">User Masterlist</h2>
+
     <hr />
     <table id="tblUsers" class="table table-bordered table-striped table-light small">
         <thead>
@@ -51,6 +52,25 @@
         @Html.ActionLink("Audit Log", "AuditLog", "MOVEHISTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
     </p>
 </div>
+
+@section Scripts{
+
+    @if (TempData["UserLogin"] != null)
+    {
+        @Html.Raw(TempData["UserLogin"])
+    }
+
+    @if (TempData["UserEdit"] != null)
+    {
+        @Html.Raw(TempData["UserEdit"])
+    }
+
+    @if (TempData["UserDelete"] != null)
+    {
+        @Html.Raw(TempData["UserDelete"])
+    }
+
+}
 
 @*Table Design and Features Imports*@
 

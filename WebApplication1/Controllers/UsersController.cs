@@ -61,7 +61,6 @@ namespace WebApplication1.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode")] User user)
         {
             if (ModelState.IsValid)
@@ -131,7 +130,7 @@ namespace WebApplication1.Controllers
                     db.SaveChanges();
                     //End Audit
 
-                    TempData["UserCreate"] = "<script>Swal.fire({icon: 'success', title: 'Login Success!'});</script>";
+                    TempData["UserCreate"] = "<script>Swal.fire({icon: 'success', title: 'Account Creation Success!'});</script>";
 
                     return RedirectToAction("Login");
 
@@ -222,6 +221,8 @@ namespace WebApplication1.Controllers
                     db.MOVEHISTs.Add(audit);
                     db.SaveChanges();
 
+                    TempData["UserEdit"] = "<script>Swal.fire({icon: 'success', title: 'User Updated!'});</script>";
+
                     return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
@@ -291,6 +292,8 @@ namespace WebApplication1.Controllers
             db.SaveChanges();
             //End Audit
 
+            TempData["UserDelete"] = "<script>Swal.fire({icon: 'success', title: 'User Deleted!'});</script>";
+
             return RedirectToAction("Index");
 
         }
@@ -354,7 +357,8 @@ namespace WebApplication1.Controllers
                 db.SaveChanges();
                 //End Audit
 
-                Response.Write("<script>alert('Login Successful')</script>");
+                TempData["UserLogin"] = "<script>Swal.fire({icon: 'success', title: 'Login Success!'});</script>";
+
                 return RedirectToAction("Index", "Users");
             }
             else

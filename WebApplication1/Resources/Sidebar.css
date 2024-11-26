@@ -1,16 +1,17 @@
 ﻿:root {
-    --base-clr: #11121a;
-    --line-clr: #42434a;
-    --hover-clr: #222533;
+    /* --base-clr: #11121a;
+    --line-clr: #42434a; */
+    --hover-clr: #088b2f;
     --text-clr: #e6e6ef;
-    --accent-clr: #5e63ff;
-    --secondary-text-clr: #b0b3c1;
+    /* --accent-clr: #5e63ff;
+    --secondary-text-clr: #b0b3c1; */
 }
 
 *{
     margin: 0;
     padding: 0;
 }
+
 body{
     display: grid;
     grid-template-columns: auto 1fr;
@@ -18,7 +19,7 @@ body{
 
 #sidebar{
     box-sizing: border-box;
-    height: 100vh;
+    height: 200vh;
     width: 250px;
     padding: 3px 1em;
     background-color: darkgreen;
@@ -27,10 +28,18 @@ body{
     position: sticky;
     top: 0;
     align-self: start;
+
+    transition: 300ms ease-in-out;
+}
+
+#sidebar svg{
+    flex-shrink: 0;
+    fill: var(--text-clr);
 }
 
 #sidebar ul{
     list-style: none;
+    padding: 0;
 }
 
 #sidebar > ul > li:first-child{
@@ -87,8 +96,39 @@ body{
 
 #sidebar .sub-menu.show{
     grid-template-rows: 1fr;
+    background-color: seagreen;
+}
+
+#sidebar .sub-menu{
+    padding-left: 4em;
+    align-items: start;
+    display: flex;
+    flex-direction: column;
+}
+
+#sidebar .sub-menu a{
+    margin-bottom: 10px;
+    padding: 0.5em;
 }
 
 .disappear{
     display: none;
+}
+
+/* wip */
+.rotate{
+    rotate: 180deg;
+}
+
+.revert{
+    rotate: 0deg;
+}
+
+#toggle-btn{
+    margin-left: auto;
+    padding: 1em;
+    border: none;
+    border-radius: .5em;
+    background: none;
+    cursor: pointer;
 }

@@ -21,9 +21,6 @@
         <div class="m-auto d-sm-block">
             <h2 class="text-center">User Login</h2>
 
-
-            @Html.Raw(TempData["message"])
-
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
             <div class="form-group">
@@ -42,17 +39,19 @@
                 </div>
             </div>
 
+            <span style="color: red" class="col-md-12 fst-italic fw-bold">@ViewBag.LoginError</span>
+
             <div class="form-group d-flex col-md-12 justify-content-center">
                 <div class="m-auto">
                     <input type="submit" value="Login" class="btn btn-success mt-4 px-4" id="btLogin" />
                 </div>
             </div>
 
-            <div class="d-flex col-md-7 m-auto text-center flex-column">
+            <div class="d-flex col-md-12 m-auto text-center flex-column">
                 <p></p>
                 @Html.ActionLink("Forgot Password?", "ForgotPassword", "Users")
                 <p></p>
-                @Html.ActionLink("Don't have an account? Click here to Sign Up", "Create")
+                <span>Don't have an account? <br /> @Html.ActionLink("Sign Up", "Create")</span>
 
             </div>
         </div>
@@ -65,47 +64,9 @@
     {
         @Html.Raw(TempData["UserCreate"])
     }
-}
 
-@*<script>
-        btLogin = document.getElementById('btLogin');
-
-        btLogin.addEventListener('click', function (e) {
-            e.preventDefault();
-            var form = $(this).parents('form');
-        });
-
-
-    </script>*@
-
-@*if (@TempData != null) {
-    <script>
-        Swal.fire({
-            icon: 'success',
-            text: 'error',
-            title: 'Invalid credentials!'
-        )};
-    </script>
-    }*@
-
-@*@if (ViewBag.LoginError != null)
+    @if (TempData["UserLoginError"] != null)
     {
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: '@ViewBag.LoginError'
-            });
-        </script>
+        @Html.Raw(TempData["UserLoginError"])
     }
-    else
-    {
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Login Success!',
-            });
-        </script>
-    }*@
-
-
+}
