@@ -1,9 +1,189 @@
-﻿@{
-    ViewBag.Title = "About";
-}
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
+﻿@model DataSet
+@using System.Data
 
-    <p>Use this area to provide additional information.</p>
-</main>
+
+@{
+    ViewBag.Title = "Bank Account Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<section class="content-header">
+    <div class="row">
+        <div class="col-sm-6">
+            <h4>
+                <u><strong>@ViewBag.Title</strong></u>
+            </h4>
+        </div>
+        <div class="col-lg-6 col-sm-6 d-flex align-items-center justify-content-end mt-2">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">Dashboard</li>
+                <li class="breadcrumb-item">Reports</li>
+                <li class="breadcrumb-item">Employee</li>
+                <li class="breadcrumb-item">@ViewBag.Title</li>
+            </ol>
+        </div>
+    </div>
+</section>
+<br />
+
+
+
+<div class="box box-primary main-table ml-xl-3 mr-xl-3 ml-lg-3 mr-lg-3">
+    <div class="box-header with-border">
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="form-group  ">
+                    <label class="control-label">Department</label>
+                    <span id="dept" class="form control"></span>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-group  ">
+                    <label class="control-label">Position</label>
+                    <span id="position" class="form control"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap">
+            <table id="bankTable" class="table table-bordered table-hover dataTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayName("No")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Emp No")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Department")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Position")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Account Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Account Number")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Bank")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Bank Type")
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow row in Model.Tables[0].Rows)
+                    {
+                        <tr>
+                            <td></td>
+                            <td>
+                                @row["EMPNO"]
+                            </td>
+                            <td>
+                                @row["FNAME"], @row["GNAME"]
+                            </td>
+                            <td>@row["DEPT"]</td>
+                            <td>@row["POS"]</td>
+                            <td>
+                                @row["BANK_ACC"]
+                            </td>
+                            <td>
+                                @row["BANKACC"]
+                            </td>
+                            <td>
+                                @row["BANKNAME"]
+                            </td>
+                            <td>
+                                @row["BANKTYPE"]
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script nonce="MyScript">
+        var date = new Date();
+        $(document).ready(function () {
+
+            var table = $('#bankTable').DataTable({
+                dom: "<'row'<'col-sm-4'B> <'col-sm-4 text-center 'l><'col-sm-4'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+                //Order base on Department
+                order: [[3, 'asc']],
+                //Export Option
+                buttons: ['excel', 'pdf'],
+                initComplete: function () {
+                    //Department Filter
+                    this.api().columns([3]).every(function () {
+                        var column2 = this;
+
+                        var select2 = $('<select class="form-control form-control-sm"><option value="">Show All</option></select>')
+                            .appendTo($('#dept').empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column2
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column2.data().unique().sort().each(function (d, j) {
+                            var val = $('<div/>').html(d).text();
+                            select2.append('<option value="' + val + '">' + val + '</option>');
+                        });
+                    });
+
+                    //Position Filter
+                    this.api().columns([4]).every(function () {
+                        var column2 = this;
+
+                        var select2 = $('<select class="form-control form-control-sm"><option value="">Show All</option></select>')
+                            .appendTo($('#position').empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column2
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column2.data().unique().sort().each(function (d, j) {
+                            var val = $('<div/>').html(d).text();
+                            select2.append('<option value="' + val + '">' + val + '</option>');
+                        });
+                    });
+
+                }
+            });
+
+            // The global search bar (from DataTables by default) will search across all columns
+            table.on('order.dt search.dt', function () {
+                table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                    table.cell(cell).invalidate('dom');
+                });
+            }).draw();
+        });
+    </script>
+}
+

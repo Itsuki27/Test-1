@@ -32,5 +32,10 @@ namespace WebApplication1.Controllers
 
             return View();
         }
+        public ActionResult Reports()
+        {
+
+            return View();
+        }
     }
 }
