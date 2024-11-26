@@ -219,7 +219,7 @@ namespace WebApplication1.Controllers
                     return View(user);
                 }
                 // Empty Fields
-                if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email) || user.DEPT_ID == null || user.DEPT_ID == 0)
+                if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email))
                 {
                     Response.Write("<script>alert('One or more fields are empty. Please fill in all required fields.')</script>");
                     return View(user);
@@ -255,7 +255,7 @@ namespace WebApplication1.Controllers
                 existingUser.Username = user.Username;
                 existingUser.Email = user.Email;
                 existingUser.IsActive = user.IsActive;
-                existingUser.DEPT_ID = user.DEPT_ID;
+                //existingUser.DEPT_ID = user.DEPT_ID;
 
                 db.SaveChanges();
 
@@ -414,6 +414,8 @@ namespace WebApplication1.Controllers
 
             // Find the user by matching Username and PasswordHash
             var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == hashedPassword);
+
+
 
             if (query != null)
             {

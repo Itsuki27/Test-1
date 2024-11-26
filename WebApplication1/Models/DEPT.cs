@@ -20,7 +20,7 @@ namespace WebApplication1.Models
         {
             this.Users = new HashSet<User>();
         }
-    
+
         public int DEPT_ID { get; set; }
 
 
@@ -43,3 +43,6 @@ namespace WebApplication1.Models
         public virtual ICollection<User> Users { get; set; }
     }
 }
+
+
+
