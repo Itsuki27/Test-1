@@ -10,114 +10,140 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    public class MOVEHISTsController : Controller
+    public class DEPTsController : Controller
     {
         private MyStartDBEntities db = new MyStartDBEntities();
 
-        // GET: MOVEHISTs
+        // GET: DEPTs
         public ActionResult Index()
         {
- 
-            if (Session["Username"] == null)
-            {
-                return RedirectToAction("Login", "Users");
-            }
-
-            return View(db.MOVEHISTs.ToList());
+            return View(db.DEPTS.ToList());
         }
 
-
-        // GET: MOVEHISTs/Details/5
-        public ActionResult Details(long? id)
+        // GET: DEPTs/Details/5
+        public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MOVEHIST mOVEHIST = db.MOVEHISTs.Find(id);
-            if (mOVEHIST == null)
+            DEPT dEPT = db.DEPTS.Find(id);
+            if (dEPT == null)
             {
                 return HttpNotFound();
             }
-            return View(mOVEHIST);
+            return View(dEPT);
         }
 
-        // GET: MOVEHISTs/Create
+        // GET: DEPTs/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: MOVEHISTs/Create
+        // POST: DEPTs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "MOVEHIST_ID,MAC_ADDRESS,TYPE,OLD_DATA,NEW_DATA,OLD_SAL,NEW_SAL,D_ACTION,T_ACTION,DESCRIPTION,ACTION_BY,Id")] MOVEHIST mOVEHIST)
+        public ActionResult Create([Bind(Include = "DEPT_ID,DEPT1,DEPT_DESC,DEPT_BLDG,DEPT_FLOOR")] DEPT dEPT, User user)
         {
             if (ModelState.IsValid)
             {
-                db.MOVEHISTs.Add(mOVEHIST);
+
+                db.DEPTS.Add(dEPT);
                 db.SaveChanges();
+
+
+                //var id = user.UserId;
+                //var department = new User
+                //{
+                //    DEPT_ID = dEPT.DEPT_ID
+                //}
+
+
+               
                 return RedirectToAction("Index");
             }
 
-            return View(mOVEHIST);
+            return View(dEPT);
         }
 
-        // GET: MOVEHISTs/Edit/5
-        public ActionResult Edit(long? id)
+
+        //var audit_id = user.UserId;
+        //var audit = new MOVEHIST
+        //{
+        //    Id = audit_id,
+        //    OLD_DATA = $"Username={user.Username}, Email={user.Email}",
+        //    NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+        //    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+        //    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+        //    DESCRIPTION = "User creation",
+        //    ACTION_BY = "System",
+        //    MAC_ADDRESS = macAddr,
+        //    TYPE = "Account Creation",
+        //    NEW_SAL = "0",
+        //    OLD_SAL = "0"
+        //};
+
+        //// Add and save the audit record
+        //db.MOVEHISTs.Add(audit);
+        //            db.SaveChanges();
+        //            //End Audit
+
+        // GET: DEPTs/Edit/5
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MOVEHIST mOVEHIST = db.MOVEHISTs.Find(id);
-            if (mOVEHIST == null)
+            DEPT dEPT = db.DEPTS.Find(id);
+            if (dEPT == null)
             {
                 return HttpNotFound();
             }
-            return View(mOVEHIST);
+            return View(dEPT);
         }
 
-        // POST: MOVEHISTs/Edit/5
+        // POST: DEPTs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "MOVEHIST_ID,MAC_ADDRESS,TYPE,OLD_DATA,NEW_DATA,OLD_SAL,NEW_SAL,D_ACTION,T_ACTION,DESCRIPTION,ACTION_BY,Id")] MOVEHIST mOVEHIST)
+        public ActionResult Edit([Bind(Include = "DEPT_ID,DEPT1,DEPT_DESC,DEPT_BLDG,DEPT_FLOOR")] DEPT dEPT)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(mOVEHIST).State = System.Data.Entity.EntityState.Modified;
+                db.Entry(dEPT).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(mOVEHIST);
+            return View(dEPT);
         }
 
-        // GET: MOVEHISTs/Delete/5
-        public ActionResult Delete(long? id)
+        // GET: DEPTs/Delete/5
+        public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MOVEHIST mOVEHIST = db.MOVEHISTs.Find(id);
-            if (mOVEHIST == null)
+            DEPT dEPT = db.DEPTS.Find(id);
+            if (dEPT == null)
             {
                 return HttpNotFound();
             }
-            return View(mOVEHIST);
+            return View(dEPT);
         }
 
-        // POST: MOVEHISTs/Delete/5
+        // POST: DEPTs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(long id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            MOVEHIST mOVEHIST = db.MOVEHISTs.Find(id);
-            db.MOVEHISTs.Remove(mOVEHIST);
+            DEPT dEPT = db.DEPTS.Find(id);
+            db.DEPTS.Remove(dEPT);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -35,6 +35,7 @@ namespace WebApplication1
                 url: "MOVEHISTs/Index",
                 defaults: new { controller = "MOVEHISTs", action = "Index", id = UrlParameter.Optional }
             );
+
         }
     }
 }

@@ -34,6 +34,7 @@ namespace WebApplication1.Controllers
             {
                 return RedirectToAction("Login", "Users");
             }
+
             return View(db.Users.ToList());
         }
 
@@ -179,18 +180,27 @@ namespace WebApplication1.Controllers
             }
             user.ConfirmPassword = user.PasswordHash;
 
+
+            PopulateDropDown();
+
             return View(user);
         }
 
         //POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword")] User user)
+        public ActionResult Edit([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword,DEPT_ID,DEPT1")] User user)
         {
             if (ModelState.IsValid)
             {
                 // check if it matches an ID
                 var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
+
+                // Fetch the list of departments
+                List<DEPT> deptList = db.DEPTS.ToList();
+                // Map DEPT_ID to DEPT name
+                ViewBag.DropUser = new SelectList(deptList, "DEPT_ID", "DEPT1"); 
+
 
                 if (existingUser == null)
                 {
@@ -209,7 +219,7 @@ namespace WebApplication1.Controllers
                     return View(user);
                 }
                 // Empty Fields
-                if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email))
+                if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email) || user.DEPT_ID == null || user.DEPT_ID == 0)
                 {
                     Response.Write("<script>alert('One or more fields are empty. Please fill in all required fields.')</script>");
                     return View(user);
@@ -245,6 +255,7 @@ namespace WebApplication1.Controllers
                 existingUser.Username = user.Username;
                 existingUser.Email = user.Email;
                 existingUser.IsActive = user.IsActive;
+                existingUser.DEPT_ID = user.DEPT_ID;
 
                 db.SaveChanges();
 
@@ -271,14 +282,24 @@ namespace WebApplication1.Controllers
                 db.MOVEHISTs.Add(audit);
                 db.SaveChanges();
 
+                TempData["UserEdit"] = "<script>Swal.fire({icon: 'success', title: 'User Updated!'});</script>";
+
                 return RedirectToAction("Index");
+                
+
             }
 
             return View(user);
+
         }
 
+        private void PopulateDropDown()
+        {
+            List<DEPT> deptList = db.DEPTS.ToList();
+            ViewBag.DropUser = new SelectList(deptList, "DEPT_ID", "DEPT1");
+        }
 
-
+       
         // GET: Users/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -365,12 +386,11 @@ namespace WebApplication1.Controllers
 
             try
             {
-                // Ensure that you use the correct connection string name
                 using (var connection = new SqlConnection(WebConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString))
                 {
                     connection.Open();
 
-                    // If the connection is open, it means connection is successful
+                    
                     if (connection.State == ConnectionState.Open)
                     {
                         // Success (connection opened)
@@ -384,7 +404,6 @@ namespace WebApplication1.Controllers
             }
             catch (SqlException ex)
             {
-                // If a connection error occurs, display an alert with the message
                 Response.Write("<script>alert('Wrong Connection Error! Invalid Database')</script>");
                 return View();
             }

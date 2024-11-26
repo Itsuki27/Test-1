@@ -28,6 +28,9 @@ else
         <p>
             @Html.ActionLink("Audit Logs", "Index", "MOVEHISTs", new { area = "" }, new { @class = "btn btn-success" })
         </p>
+        <p>
+            @Html.ActionLink("Department", "Create", "DEPTs", new { area = "" }, new { @class = "btn btn-success" })
+        </p>
     </div>
     <table id="tblUsers" class="table table-bordered table-striped table-light">
         <thead>
@@ -39,7 +42,9 @@ else
                 <th>@Html.DisplayName("Date Created")</th>
                 <th>@Html.DisplayName("IsActive")</th>
                 @*<th>@Html.DisplayName("Password Reset Code")</th>*@
+                <th>@Html.DisplayName("Department")</th>
                 <th>@Html.DisplayName("Actions")</th>
+
             </tr>
         </thead>
         <tbody>
@@ -53,7 +58,9 @@ else
                     <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
                     <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
                     @*<td>@Html.DisplayFor(modelItem => item.ResetPasswordCode)</td>*@
+                    <td>@Html.DisplayFor(modelItem => item.DEPT.DEPT1)</td>
                     <td>
+
                         <i></i>
                         @Html.ActionLink("Edit", "Edit", new { id = item.UserId }, new { @class = "btn btn-sm btn-success" })
                         @Html.ActionLink("Details", "Details", new { id = item.UserId }, new { @class = "btn btn-sm btn-primary" })
@@ -99,3 +106,12 @@ else
 
     });
 </script>
+
+@section Scripts{
+
+    @if (TempData["UserEdit"] != null)
+    {
+        @Html.Raw(TempData["UserEdit"])
+    }
+
+}
