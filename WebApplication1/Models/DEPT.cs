@@ -7,6 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Security.Policy;
+
 namespace WebApplication1.Models
 {
     using System;
@@ -20,7 +22,6 @@ namespace WebApplication1.Models
         {
             this.Users = new HashSet<User>();
         }
-    
         public int DEPT_ID { get; set; }
 
 

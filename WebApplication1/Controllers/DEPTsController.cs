@@ -46,50 +46,17 @@ namespace WebApplication1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DEPT_ID,DEPT1,DEPT_DESC,DEPT_BLDG,DEPT_FLOOR")] DEPT dEPT, User user)
+        public ActionResult Create([Bind(Include = "DEPT_ID,DEPT1,DEPT_DESC,DEPT_BLDG,DEPT_FLOOR")] DEPT dEPT)
         {
             if (ModelState.IsValid)
             {
-
                 db.DEPTS.Add(dEPT);
                 db.SaveChanges();
-
-
-                //var id = user.UserId;
-                //var department = new User
-                //{
-                //    DEPT_ID = dEPT.DEPT_ID
-                //}
-
-
-               
                 return RedirectToAction("Index");
             }
 
             return View(dEPT);
         }
-
-
-        //var audit_id = user.UserId;
-        //var audit = new MOVEHIST
-        //{
-        //    Id = audit_id,
-        //    OLD_DATA = $"Username={user.Username}, Email={user.Email}",
-        //    NEW_DATA = $"Username={user.Username}, Email={user.Email}",
-        //    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
-        //    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
-        //    DESCRIPTION = "User creation",
-        //    ACTION_BY = "System",
-        //    MAC_ADDRESS = macAddr,
-        //    TYPE = "Account Creation",
-        //    NEW_SAL = "0",
-        //    OLD_SAL = "0"
-        //};
-
-        //// Add and save the audit record
-        //db.MOVEHISTs.Add(audit);
-        //            db.SaveChanges();
-        //            //End Audit
 
         // GET: DEPTs/Edit/5
         public ActionResult Edit(int? id)

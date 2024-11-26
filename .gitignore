@@ -361,5 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/WebApplication1/Models/MyUserAll.cs
-/WebApplication1/App_Start/RouteConfig.cs

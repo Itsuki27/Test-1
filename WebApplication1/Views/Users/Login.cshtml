@@ -32,10 +32,9 @@
             </div>
 
             <div class="form-group">
-                @*@Html.LabelFor(model => model.PasswordHash, htmlAttributes: new { @class = "control-label col-md-2" })*@
-                <label for="PasswordHash">Password</label>
+                <label for="PasswordHash" class="control-label col-md-2">Password</label>
                 <div class="col-md-12 mb-1">
-                    @Html.EditorFor(model => model.PasswordHash, new { htmlAttributes = new { @class = "form-control", type = "password" } })
+                    @Html.EditorFor(model => model.PasswordHash, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.PasswordHash, "", new { @class = "text-danger" })
                 </div>
             </div>

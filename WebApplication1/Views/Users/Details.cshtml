@@ -3,14 +3,6 @@
 @{
     ViewBag.Title = "Details";
 }
-@if (Session["UserId"] != null)
-{
-    <h4 style="color:black">Welcome,@Session["Username"].ToString().ToUpper()!</h4>
-}
-else
-{
-    <p><a href="@Url.Action("Login", "Users")"></a></p>
-}
 
 <div class="form-horizontal d-flex p-4">
     <div class="col-7 d-none d-xl-none d-lg-block p-4">
@@ -32,14 +24,14 @@ else
                 @Html.DisplayFor(model => model.Username)
             </dd>
 
-            <!--<dt>
-                Password-->
+            <dt>
+                Password
                 @*@Html.DisplayNameFor(model => model.PasswordHash)*@
-            <!--</dt>-->
+            </dt>
 
-            @*<dd>
+            <dd>
                 @Html.DisplayFor(model => model.PasswordHash)
-            </dd>*@
+            </dd>
 
             <dt>
                 @Html.DisplayNameFor(model => model.Email)

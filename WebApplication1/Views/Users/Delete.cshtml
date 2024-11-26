@@ -4,15 +4,6 @@
     ViewBag.Title = "Delete";
 }
 
-@if (Session["UserId"] != null)
-{
-    <h4 style="color:black">Welcome,@Session["Username"].ToString().ToUpper()!</h4>
-}
-else
-{
-    <p><a href="@Url.Action("Login", "Users")"></a></p>
-}
-
 <div class="form-horizontal d-flex p-5 flex-column">
     <div class="m-auto bg-warning text-center p-3 mb-2 rounded">
         <h4 class="m-0">Are you sure you want to DELETE</h4>
@@ -30,15 +21,14 @@ else
                 @Html.DisplayFor(model => model.Username)
             </dd>
 
-            @*
             <dt>
                 Password
-            @Html.DisplayNameFor(model => model.PasswordHash)
-            </dt>*@
+                @*@Html.DisplayNameFor(model => model.PasswordHash)*@
+            </dt>
 
-            @*<dd>
-            @Html.DisplayFor(model => model.PasswordHash)
-        </dd>*@
+            <dd>
+                @Html.DisplayFor(model => model.PasswordHash)
+            </dd>
 
             <dt>
                 @Html.DisplayNameFor(model => model.Email)
@@ -80,8 +70,7 @@ else
 </div>
 
 
-<script>
-    var btDelete = document.getElementById("btDelete");
+<script>var btDelete = document.getElementById("btDelete");
 
     btDelete.addEventListener('click', function (e) {
         e.preventDefault();

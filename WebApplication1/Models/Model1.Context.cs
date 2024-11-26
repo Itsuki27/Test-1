@@ -27,7 +27,6 @@ namespace WebApplication1.Models
     
         public virtual DbSet<DEPT> DEPTS { get; set; }
         public virtual DbSet<MOVEHIST> MOVEHISTs { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<User> Users { get; set; }
     }
 }
