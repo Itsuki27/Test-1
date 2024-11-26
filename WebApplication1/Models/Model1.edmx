@@ -5,6 +5,16 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
       <Schema Namespace="MyStartDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="DEPTS">
+          <Key>
+            <PropertyRef Name="DEPT_ID" />
+          </Key>
+          <Property Name="DEPT_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DEPT" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DEPT_DESC" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DEPT_BLDG" Type="nvarchar" MaxLength="100" />
+          <Property Name="DEPT_FLOOR" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="MOVEHIST">
           <Key>
             <PropertyRef Name="MOVEHIST_ID" />
@@ -43,17 +53,46 @@
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="IsActive" Type="bit" />
           <Property Name="ResetPasswordCode" Type="nvarchar" MaxLength="100" />
+          <Property Name="DEPT_ID" Type="int" />
         </EntityType>
+        <Association Name="FK_DeptUserId">
+          <End Role="DEPTS" Type="Self.DEPTS" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DEPTS">
+              <PropertyRef Name="DEPT_ID" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="DEPT_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="MyStartDBModelStoreContainer">
+          <EntitySet Name="DEPTS" EntityType="Self.DEPTS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MOVEHIST" EntityType="Self.MOVEHIST" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_DeptUserId" Association="Self.FK_DeptUserId">
+            <End Role="DEPTS" EntitySet="DEPTS" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MyStartDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="DEPT">
+          <Key>
+            <PropertyRef Name="DEPT_ID" />
+          </Key>
+          <Property Name="DEPT_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DEPT1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DEPT_DESC" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DEPT_BLDG" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DEPT_FLOOR" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_DeptUserId" FromRole="DEPTS" ToRole="Users" />
+        </EntityType>
         <EntityType Name="MOVEHIST">
           <Key>
             <PropertyRef Name="MOVEHIST_ID" />
@@ -92,11 +131,30 @@
           <Property Name="CreatedDate" Type="DateTime" Precision="3" />
           <Property Name="IsActive" Type="Boolean" />
           <Property Name="ResetPasswordCode" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DEPT_ID" Type="Int32" />
+          <NavigationProperty Name="DEPT" Relationship="Self.FK_DeptUserId" FromRole="Users" ToRole="DEPTS" />
         </EntityType>
+        <Association Name="FK_DeptUserId">
+          <End Role="DEPTS" Type="Self.DEPT" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DEPTS">
+              <PropertyRef Name="DEPT_ID" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="DEPT_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="MyStartDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DEPTS" EntityType="Self.DEPT" />
           <EntitySet Name="MOVEHISTs" EntityType="Self.MOVEHIST" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <EntitySet Name="Users" EntityType="Self.User" />
+          <AssociationSet Name="FK_DeptUserId" Association="Self.FK_DeptUserId">
+            <End Role="DEPTS" EntitySet="DEPTS" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
@@ -104,6 +162,17 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="MyStartDBModelStoreContainer" CdmEntityContainer="MyStartDBEntities">
+          <EntitySetMapping Name="DEPTS">
+            <EntityTypeMapping TypeName="MyStartDBModel.DEPT">
+              <MappingFragment StoreEntitySet="DEPTS">
+                <ScalarProperty Name="DEPT_ID" ColumnName="DEPT_ID" />
+                <ScalarProperty Name="DEPT1" ColumnName="DEPT" />
+                <ScalarProperty Name="DEPT_DESC" ColumnName="DEPT_DESC" />
+                <ScalarProperty Name="DEPT_BLDG" ColumnName="DEPT_BLDG" />
+                <ScalarProperty Name="DEPT_FLOOR" ColumnName="DEPT_FLOOR" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="MOVEHISTs">
             <EntityTypeMapping TypeName="MyStartDBModel.MOVEHIST">
               <MappingFragment StoreEntitySet="MOVEHIST">
@@ -143,6 +212,7 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="ResetPasswordCode" ColumnName="ResetPasswordCode" />
+                <ScalarProperty Name="DEPT_ID" ColumnName="DEPT_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
