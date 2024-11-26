@@ -4,11 +4,17 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography;
+using System.Security.Policy;
+using System.Security.Principal;
+using System.Text;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using WebApplication1.Models;
@@ -160,6 +166,9 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
+            user.ConfirmPassword = user.PasswordHash;
+
+            PopulateDropDown();
 
             return View(user);
         }
@@ -167,18 +176,63 @@ namespace WebApplication1.Controllers
         //POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        public ActionResult Edit([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword")] User user)
+        public ActionResult Edit([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword,DEPT_ID,DEPT1")] User user)
         {
             if (ModelState.IsValid)
             {
+                // check if it matches an ID
                 var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
-                //var existingUser = db.Users.Find(user.UserId);
+
+                // Fetch the list of departments
+                List<DEPT> deptList = db.DEPTS.ToList();
+                // Map DEPT_ID to DEPT name
+                ViewBag.DropUser = new SelectList(deptList, "DEPT_ID", "DEPT1");
 
 
                 if (existingUser == null)
                 {
                     return HttpNotFound("The User record does not exist");
+                }
+                // Check if the username is duplicated
+                if (db.Users.Any(x => x.Username == user.Username && x.UserId != user.UserId))
+                {
+                    Response.Write("<script>alert('Username already exists')</script>");
+                    return View(user);
+                }
+                // Check if the email is duplicated
+                if (db.Users.Any(x => x.Email == user.Email && x.UserId != user.UserId))
+                {
+                    Response.Write("<script>alert('Email already exists')</script>");
+                    return View(user);
+                }
+                // Empty Fields
+                if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email))
+                {
+                    Response.Write("<script>alert('One or more fields are empty. Please fill in all required fields.')</script>");
+                    return View(user);
+                }
+
+                // Check if the password is being updated
+                if (user.PasswordHash != user.ConfirmPassword)
+                {
+                    Response.Write("<script>alert('Passwords do not match.')</script>");
+                    return View(user);
+                }
+                else
+                {
+
+                    if (!string.IsNullOrEmpty(user.PasswordHash) && user.PasswordHash != existingUser.PasswordHash)
+                    {
+                        // Validate the new password
+                        if (user.PasswordHash.Length < 8 || user.PasswordHash.Length > 12)
+                        {
+                            Response.Write("<script>alert('Password must be between 8 and 12 characters.')</script>");
+                            return View(user);
+                        }
+
+                        // Update the password if valid
+                        existingUser.PasswordHash = Hashing.Hash(user.PasswordHash);
+                    }
                 }
 
                 // Capture old data for audit
@@ -186,57 +240,53 @@ namespace WebApplication1.Controllers
 
                 // Update user details
                 existingUser.Username = user.Username;
-                existingUser.PasswordHash = user.PasswordHash;
                 existingUser.Email = user.Email;
                 existingUser.IsActive = user.IsActive;
+                existingUser.DEPT_ID = user.DEPT_ID;
 
-                try
+                db.SaveChanges();
+
+                // Audit log
+                var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                               where nic.OperationalStatus == OperationalStatus.Up
+                               select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+                var audit = new MOVEHIST
                 {
-                    db.SaveChanges();
+                    Id = existingUser.UserId,
+                    OLD_DATA = oldData,
+                    NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                    DESCRIPTION = "User Edited",
+                    ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                    MAC_ADDRESS = macAddr,
+                    TYPE = "Account Edit",
+                    NEW_SAL = "0",
+                    OLD_SAL = "0"
+                };
 
-                    // Capture MAC address
-                    var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
-                                   where nic.OperationalStatus == OperationalStatus.Up
-                                   select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+                db.MOVEHISTs.Add(audit);
+                db.SaveChanges();
 
-                    // Create audit log
-                    var user_id = existingUser.UserId;
+                TempData["UserEdit"] = "<script>Swal.fire({icon: 'success', title: 'User Updated!'});</script>";
 
-                    var audit = new MOVEHIST
-                    {
-                        Id = user_id,
-                        OLD_DATA = oldData,
-                        NEW_DATA = $"Username={user.Username}, Email={user.Email}",
-                        D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
-                        T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
-                        DESCRIPTION = "User Edited",
-                        ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
-                        MAC_ADDRESS = macAddr,
-                        TYPE = "Edit Account",
-                        NEW_SAL = "0",
-                        OLD_SAL = "0"
-                    };
+                return RedirectToAction("Index");
 
-                    // Save audit log
-                    db.MOVEHISTs.Add(audit);
-                    db.SaveChanges();
 
-                    TempData["UserEdit"] = "<script>Swal.fire({icon: 'success', title: 'User Updated!'});</script>";
-
-                    return RedirectToAction("Index");
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    ModelState.AddModelError("", "A concurrency error occurred while saving changes. Please try again.");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-                }
             }
 
             return View(user);
+
         }
+
+        private void PopulateDropDown()
+        {
+            List<DEPT> deptList = db.DEPTS.ToList();
+            ViewBag.DropUser = new SelectList(deptList, "DEPT_ID", "DEPT1");
+        }
+
+
 
 
         // GET: Users/Delete/5
@@ -318,10 +368,34 @@ namespace WebApplication1.Controllers
         // POST: Users/Login
         [HttpPost]
 
-        public ActionResult Login(MyLogin user)
+        public ActionResult Login([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword")] MyLogin user)
         {
+            try
+            {
+                using (var connection = new SqlConnection(WebConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString))
+                {
+                    connection.Open();
 
-            var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == user.Password);
+
+                    if (connection.State == ConnectionState.Open)
+                    {
+                        // Success (connection opened)
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Connection Error! Invalid Database";
+                        return View();
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Response.Write("<script>alert('Wrong Connection Error! Invalid Database')</script>");
+                return View();
+            }
+
+            var hashedPassword = Hashing.Hash(user.PasswordHash);
+            var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == hashedPassword);
 
             if (query != null)
             {

@@ -16,6 +16,7 @@
                 <th>@Html.DisplayName("EMAIL")</th>
                 <th>@Html.DisplayName("DATE_CREATED")</th>
                 <th>@Html.DisplayName("ISACTIVE")</th>
+                <th>@Html.DisplayName("Department")</th>
                 <th>@Html.DisplayName("ACTIONS")</th>
             </tr>
         </thead>
@@ -28,11 +29,13 @@
                     <td>@Html.DisplayFor(modelItem => item.Email)</td>
                     <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
                     <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DEPT.DEPT1)</td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.UserId }, new { @class = "btn btn-success" })
                         @Html.ActionLink("Details", "Details", new { id = item.UserId }, new { @class = "btn btn-primary" })
                         @Html.ActionLink("Delete", "Delete", new { id = item.UserId }, new { @class = "btn btn-danger" })
                     </td>
+
                 </tr>
             }
         </tbody>

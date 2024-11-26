@@ -19,9 +19,10 @@ namespace WebApplication1.Models
         public string PasswordHash { get; set; }
         public string ConfirmPassword { get; set; }
         public string Email { get; set; }
-
         public Nullable<System.DateTime> CreatedDate { get; set; } = DateTime.Now;
-        public Nullable<bool> IsActive { get; set; } = true;
-        public string ResetPasswordCode { get; set; }
+        public Nullable<bool> IsActive { get; set; } = true; public string ResetPasswordCode { get; set; }
+        public Nullable<int> DEPT_ID { get; set; }
+    
+        public virtual DEPT DEPT { get; set; }
     }
 }

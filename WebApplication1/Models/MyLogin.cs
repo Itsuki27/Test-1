@@ -12,7 +12,7 @@ namespace WebApplication1.Models
         public string Username { get; set; }
 
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
 
         public long MOVEHIST_ID { get; set; }
 

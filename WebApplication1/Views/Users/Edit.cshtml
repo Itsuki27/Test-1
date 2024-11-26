@@ -1,7 +1,16 @@
-﻿@model WebApplication1.Models.User
+﻿﻿@model WebApplication1.Models.User
 
 @{
     ViewBag.Title = "Edit";
+}
+
+@if (Session["UserId"] != null)
+{
+    <h4 style="color:black">Welcome,@Session["Username"].ToString().ToUpper()!</h4>
+}
+else
+{
+    <p><a href="@Url.Action("Login", "Users")"></a></p>
 }
 
 @using (Html.BeginForm())
@@ -17,6 +26,7 @@
         </div>
 
         <div class="m-auto">
+            @Html.HiddenFor(model => model.UserId)
             <h2 class="text-center">Edit User</h2>
             <hr />
             <div class="d-flex flex-row">
@@ -29,13 +39,21 @@
                         </div>
                     </div>
 
-                    
+
 
                     <div class="form-group">
                         <label for="PasswordHash">Password</label>
                         <div class="col-md-12 mb-2">
                             @Html.EditorFor(model => model.PasswordHash, new { htmlAttributes = new { @class = "form-control", type = "password" } })
                             @Html.ValidationMessageFor(model => model.PasswordHash, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ConfirmPassword">Confirm Password</label>
+                        <div class="col-md-12 mb-1 px-6">
+                            @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", type = "password" } })
+                            @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
@@ -50,14 +68,14 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        Date Created
-                        @*@Html.LabelFor(model => model.CreatedDate, htmlAttributes: new { @class = "control-label col-md-2" })*@
-                        <div class="col-md-12 mb-2">
-                            @Html.EditorFor(model => model.CreatedDate, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.CreatedDate, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
+                    @*<div class="form-group">
+                            Date Created
+                            @Html.LabelFor(model => model.CreatedDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-12 mb-2">
+                                @Html.EditorFor(model => model.CreatedDate, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.CreatedDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>*@
 
                     <div class="form-group">
                         @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -68,6 +86,19 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label for="Department">Department</label>
+                        <div class="col-md-12 mb-1 px-6">
+                            @Html.DropDownListFor(model => model.DEPT_ID,
+                                (IEnumerable<SelectListItem>)ViewBag.DropUser,
+                                "--Select Department--",
+                                new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.DEPT_ID, "", new { @class = "text-danger" })
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
