@@ -35,6 +35,11 @@ namespace WebApplication1
                 url: "MOVEHISTs/AuditLog",
                 defaults: new { controller = "MOVEHISTs", action = "AuditLog", id = UrlParameter.Optional }
             );
+            routes.MapRoute(
+                name: "Reports",
+                url: "Users/Reports",
+                defaults: new { controller = "Users", action = "Reports", id = UrlParameter.Optional }
+            );
         }
     }
 }

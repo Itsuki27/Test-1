@@ -1,94 +1,53 @@
-﻿@model IEnumerable<WebApplication1.Models.MOVEHIST>
+﻿@model IEnumerable<WebApplication1.Models.User>
 
 @{
-    ViewBag.Title = "Audit Logs";
+    ViewBag.Title = "Reports";
 }
 
-@*<h2>Audit Logs</h2>*@
-
 <div class="form-horizontal d-flex flex-column p-5">
-    <h2 class="text-center">Audit Log</h2>
+    <h2 class="text-center">Reports</h2>
+
     <hr />
-
-    <div class="d-flex flex-column small">
-        <h6 class="text-center">Table Filters</h6>
-        <div class="filters d-flex flex-row gap-1 col-12 small justify-content-center">
-            <p class="col-1" id="tbId">ID</p>
-            <p class="col-2" id="tbMac">MAC ADDRESS</p>
-            <p class="col-2" id="tbType">TYPE</p>
-            @*<p id="tbOld">@Html.DisplayNameFor(model => model.OLD_DATA)</p>
-                <p id="tbNew">@Html.DisplayNameFor(model => model.NEW_DATA)</p>*@
-            <p class="col-2" id="tbDate">@Html.DisplayNameFor(model => model.D_ACTION)</p>
-            <p class="col-2" id="tbTime">@Html.DisplayNameFor(model => model.T_ACTION)</p>
-            <p class="col-2" id="tbBy">@Html.DisplayNameFor(model => model.ACTION_BY)</p>
-            <p class="col-1" id="tbUid">UID</p>
-        </div>
-    </div>
-
-    <table id="tblAudit" class="table table-bordered table-striped table-light small dataTable">
-
+    <table id="tblUsers" class="table table-bordered table-striped table-light small">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>MAC_ADD</th>
-                <th>@Html.DisplayNameFor(model => model.TYPE)</th>
-                <th>@Html.DisplayNameFor(model => model.OLD_DATA)</th>
-                <th>@Html.DisplayNameFor(model => model.NEW_DATA)</th>
-                <th>@Html.DisplayNameFor(model => model.OLD_SAL)</th>
-                <th>@Html.DisplayNameFor(model => model.NEW_SAL)</th>
-                <th>@Html.DisplayNameFor(model => model.D_ACTION)</th>
-                <th>@Html.DisplayNameFor(model => model.T_ACTION)</th>
-                <th>@Html.DisplayNameFor(model => model.DESCRIPTION)</th>
-                <th>@Html.DisplayNameFor(model => model.ACTION_BY)</th>
-                <th>UID</th>
+                <th>@Html.DisplayName("ID")</th>
+                <th>@Html.DisplayName("USERNAME")</th>
+                <th>@Html.DisplayName("EMAIL")</th>
+                <th>@Html.DisplayName("DATE_CREATED")</th>
+                <th>@Html.DisplayName("ISACTIVE")</th>
+                <th>@Html.DisplayName("Department")</th>
             </tr>
         </thead>
-
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => item.MOVEHIST_ID)</td>
-                    <td>@Html.DisplayFor(modelItem => item.MAC_ADDRESS)</td>
-                    <td>@Html.DisplayFor(modelItem => item.TYPE)</td>
-                    <td>@Html.DisplayFor(modelItem => item.OLD_DATA)</td>
-                    <td>@Html.DisplayFor(modelItem => item.NEW_DATA)</td>
-                    <td>@Html.DisplayFor(modelItem => item.OLD_SAL)</td>
-                    <td>@Html.DisplayFor(modelItem => item.NEW_SAL)</td>
-                    <td>@Html.DisplayFor(modelItem => item.D_ACTION)</td>
-                    <td>@Html.DisplayFor(modelItem => item.T_ACTION)</td>
-                    <td>@Html.DisplayFor(modelItem => item.DESCRIPTION)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ACTION_BY)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                    <td>@Html.DisplayFor(modelItem => item.UserId)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DEPT.DEPT1)</td>
                 </tr>
             }
         </tbody>
-
         <tfoot>
             <tr>
-                <th>ID</th>
-                <th>MAC_ADD</th>
-                <th>@Html.DisplayNameFor(model => model.TYPE)</th>
-                <th>@Html.DisplayNameFor(model => model.OLD_DATA)</th>
-                <th>@Html.DisplayNameFor(model => model.NEW_DATA)</th>
-                <th>@Html.DisplayNameFor(model => model.OLD_SAL)</th>
-                <th>@Html.DisplayNameFor(model => model.NEW_SAL)</th>
-                <th>@Html.DisplayNameFor(model => model.D_ACTION)</th>
-                <th>@Html.DisplayNameFor(model => model.T_ACTION)</th>
-                <th>@Html.DisplayNameFor(model => model.DESCRIPTION)</th>
-                <th>@Html.DisplayNameFor(model => model.ACTION_BY)</th>
-                <th>UID</th>
+                <th>@Html.DisplayName("ID")</th>
+                <th>@Html.DisplayName("USERNAME")</th>
+                <th>@Html.DisplayName("EMAIL")</th>
+                <th>@Html.DisplayName("DATE_CREATED")</th>
+                <th>@Html.DisplayName("ISACTIVE")</th>
+                <th>@Html.DisplayName("Department")</th>
             </tr>
         </tfoot>
-
     </table>
+
     <p class="mx-auto">
-        @Html.ActionLink("User Masterlist", "Index", "Users", new { area = "" }, new { @class = "btn btn-outline-primary" })
+        @Html.ActionLink("Audit Log", "AuditLog", "MOVEHISTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
     </p>
 </div>
-
-
-<link href="~/Resources/Sidebar.css" rel="stylesheet" />
 
 @*Table Design and Features Imports*@
 
@@ -121,7 +80,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script nonce="myScript">
-
     var tbId = document.getElementById('tbId');
     var tbMac = document.getElementById('tbMac');
     var tbType = document.getElementById('tbType');
@@ -345,5 +303,4 @@
             }
         });
 
-    });
-</script>
+    });</script>

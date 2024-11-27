@@ -207,6 +207,7 @@
     <Content Include="Resources\menu_book_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\Sidebar.css" />
     <Content Include="Resources\Sidebar.js" />
+    <Content Include="Resources\summarize_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\view_timeline_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -267,6 +268,7 @@
     <Content Include="Views\DEPTs\Details.cshtml" />
     <Content Include="Views\DEPTs\Edit.cshtml" />
     <Content Include="Views\DEPTs\Index.cshtml" />
+    <Content Include="Views\Users\Reports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

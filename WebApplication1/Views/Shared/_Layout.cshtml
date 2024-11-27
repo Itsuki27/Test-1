@@ -37,24 +37,30 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a onclick="goUsers()">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M560-564v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-600q-38 0-73 9.5T560-564Zm0 220v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-380q-38 0-73 9t-67 27Zm0-110v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-490q-38 0-73 9.5T560-454ZM260-320q47 0 91.5 10.5T440-278v-394q-41-24-87-36t-93-12q-36 0-71.5 7T120-692v396q35-12 69.5-18t70.5-6Zm260 42q44-21 88.5-31.5T700-320q36 0 70.5 6t69.5 18v-396q-33-14-68.5-21t-71.5-7q-47 0-93 12t-87 36v394Zm-40 118q-48-38-104-59t-116-21q-42 0-82.5 11T100-198q-21 11-40.5-1T40-234v-482q0-11 5.5-21T62-752q46-24 96-36t102-12q58 0 113.5 15T480-740q51-30 106.5-45T700-800q52 0 102 12t96 36q11 5 16.5 15t5.5 21v482q0 23-19.5 35t-40.5 1q-37-20-77.5-31T700-240q-60 0-116 21t-104 59ZM280-494Z" /></svg>
-                        <span>USER LIST</span>
+                        <span>USERS LIST</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a onclick="goAudit()">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M400-400h160v-80H400v80Zm0-120h320v-80H400v80Zm0-120h320v-80H400v80Zm-80 400q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z" /></svg>
                         <span>AUDIT LOG</span>
+                    </a>
+                </li>
+                <li>
+                    <a onclick="goReports()">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M320-600q17 0 28.5-11.5T360-640q0-17-11.5-28.5T320-680q-17 0-28.5 11.5T280-640q0 17 11.5 28.5T320-600Zm0 160q17 0 28.5-11.5T360-480q0-17-11.5-28.5T320-520q-17 0-28.5 11.5T280-480q0 17 11.5 28.5T320-440Zm0 160q17 0 28.5-11.5T360-320q0-17-11.5-28.5T320-360q-17 0-28.5 11.5T280-320q0 17 11.5 28.5T320-280ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h440l200 200v440q0 33-23.5 56.5T760-120H200Zm0-80h560v-400H600v-160H200v560Zm0-560v160-160 560-560Z" /></svg>
+                        <span>REPORTS</span>
                     </a>
                 </li>
                 <li>
                     <button onclick="toggleSub()" class="dropdown-btn ddClick">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M80-200v-80h400v80H80Zm0-200v-80h200v80H80Zm0-200v-80h200v80H80Zm744 400L670-354q-24 17-52.5 25.5T560-320q-83 0-141.5-58.5T360-520q0-83 58.5-141.5T560-720q83 0 141.5 58.5T760-520q0 29-8.5 57.5T726-410l154 154-56 56ZM560-400q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" /></svg>
                         <span>ACCOUNT</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" class="ddIcon" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" class="rotate" /></svg>
                     </button>
-                    <ul class="sub-menu">
+                    <ul class="sub-menu disappear">
                         <li class="col-12">
                             <a href="#">
                                 <span>VIEW PROFILE</span>
@@ -70,9 +76,11 @@
                 </li>
 
             </ul>
-            <div class="d-flex flex-column">
 
-            </div>
+            @Html.ActionLink("USERS LIST", "Index", "Users", new { area = "" }, new { @class = "d-none btUsers" })
+            @Html.ActionLink("AUDIT LOG", "AuditLog", "MOVEHISTs", new { area = "" }, new { @class = "d-none btAudit" })
+            @Html.ActionLink("REPORTS", "Reports", "Users", new { area = "" }, new { @class = "d-none btReports" })
+
         </nav>
 
 
@@ -138,6 +146,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link href="~/Resources/Sidebar.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Styles.Render("~/Content/fontawesome")
@@ -145,7 +154,7 @@
 
     @RenderSection("scripts", required: false)
 
-<script>
+    <script>
         const subMenu = document.querySelector('.sub-menu')
         const toggleBtn = document.querySelector('#toggle-btn')
         const sideBar = document.querySelector('#sidebar')
@@ -153,6 +162,9 @@
         const headLogo = document.querySelector(".headLogoNone")
         const btLogout = document.querySelector('.btLogout')
         const hideLogout = document.querySelector('.hideLogout')
+        const btUsers = document.querySelector('.btUsers')
+        const btAudit = document.querySelector('.btAudit')
+        const btReports = document.querySelector('.btReports')
 
         let shown = false;
         let sideShown = true;
@@ -167,13 +179,13 @@
         function toggleSub() {
             if (shown == true) {
                 subMenu.setAttribute("class", "disappear");
-                //ddIcon.setAttribute("class", ".revert")
+                //ddIcon.setAttribute("class", "rotate");
                 shown = false;
                 console.log(shown);
             } else {
-                subMenu.setAttribute("class", "sub-menu");
+                subMenu.setAttribute("class", "show");
+                //ddIcon.setAttribute("class", "revert");
                 shown = true;
-                //ddIcon.setAttribute("class", ".rotate")
                 console.log(shown);
             }
 
@@ -195,7 +207,7 @@
             }
         }
 
-        btLogout.addEventListener('click', function (e){
+        btLogout.addEventListener('click', function (e) {
             e.preventDefault();
             var form = $(this).parents('form');
             Swal.fire({
@@ -210,9 +222,21 @@
             });
         })
 
+        function goUsers() {
+            btUsers.click();
+        }
+
+        function goAudit() {
+            btAudit.click();
+        }
+
+        function goReports() {
+            btReports.click();
+        }
 
 
-</script>
+
+    </script>
 
 </body>
 </html>

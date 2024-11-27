@@ -627,6 +627,17 @@ namespace WebApplication1.Controllers
                 smtp.Send(message);
             }
         }
+
+        // GET: Users
+
+        public ActionResult Reports()
+        {
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+            return View(db.Users.ToList());
+        }
     }
 }
 
