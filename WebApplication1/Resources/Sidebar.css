@@ -20,8 +20,8 @@ body{
 #sidebar{
     box-sizing: border-box;
     height: 200vh;
-    width: 250px;
     padding: 3px 1em;
+    padding-top: 10px;
     background-color: darkgreen;
     border-right: 1px solid var(--line-clr);
 
@@ -31,6 +31,36 @@ body{
 
     transition: 300ms ease-in-out;
 }
+
+.sidebar-full{
+    width: 250px;
+    transition: 300ms ease-in-out;
+}
+
+.sidebar-small{
+    width: 85px;
+    transition: 300ms ease-in-out;
+}
+
+.sidebar-small ul li span{
+    display: none;
+    transition: 300ms ease-in-out;
+}
+
+.logoNone{
+    display: none;
+    transition: 300ms ease-in-out;
+}
+
+.sidebar-small .ddIcon{
+    display: none;
+    transition: 300ms ease-in-out;
+}
+
+/* #sidebar.close{
+    padding: 5px;
+    width: 60px;
+} */
 
 #sidebar svg{
     flex-shrink: 0;
@@ -52,7 +82,7 @@ body{
     color: var(--accent-clr);
 }
 
-#sidebar a, #sidebar .dropdown-btn, #sidebar .logo{
+#sidebar a, #sidebar .dropdown-btn{
     border-radius: .5em;
     padding: .85em;
     text-decoration: none;
@@ -60,6 +90,20 @@ body{
     display: flex;
     align-items: center;
     gap: 1em;
+
+    transition: 300ms ease-in-out;
+}
+
+#sidebar .logo{
+    border-radius: .5em;
+    padding-left: .85em;
+    text-decoration: none;
+    color: var(--text-clr);
+    display: flex;
+    align-items: center;
+    gap: 1em;
+
+    transition: 300ms ease-in-out;
 }
 
 .dropdown-btn{
@@ -125,10 +169,27 @@ body{
 }
 
 #toggle-btn{
+    margin-top: 0;
     margin-left: auto;
     padding: 1em;
     border: none;
     border-radius: .5em;
     background: none;
     cursor: pointer;
+}
+
+#toggle-btn:hover{
+    background-color: var(--hover-clr);
+}
+
+.headLogoNone{
+    display: none;
+}
+
+.headLogo{
+    display: inline-flex;
+}
+
+.headLogo img{
+    margin: auto;
 }

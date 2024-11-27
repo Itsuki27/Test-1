@@ -102,7 +102,8 @@ namespace WebApplication1.Controllers
                 {
 
                     //#region Password Hashing
-                   
+                    user.PasswordHash = Hashing.Hash(user.PasswordHash);
+                    user.ConfirmPassword = Hashing.Hash(user.ConfirmPassword);
                     //#endregion
 
                     //Add User
@@ -584,6 +585,8 @@ namespace WebApplication1.Controllers
         {
             Session.Clear();
             Session.Abandon();
+
+            TempData["UserLogout"] = "<script>Swal.fire({icon: 'success', title: 'Successfully Logged Out!'});</script>";
 
             // Sign out of forms authentication
             System.Web.Security.FormsAuthentication.SignOut();

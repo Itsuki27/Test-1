@@ -77,84 +77,9 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 }
 
-@*<script type="text/javascript">
-
-        toastr.success('@TempData["message"]');
-
-    </script>*@
-
 <script>
 
     let response = @TempData["message"];
     let btCreate = document.getElementById("btCreate");
 
-    btCreate.addEventListener('click', function (e) {
-        alert("aaaa");
-        e.preventDefault();
-        var form = $(this).parents('form');
-        if (response != null) {
-            popSuccess();
-            form.submit();
-        } else {
-            popFail();
-        };
-    });
-
-    function popSuccess() {
-        swal.fire({
-            icon: 'success',
-            text: 'success',
-            title: 'New User Succesfully Registered!'
-        });
-
-    };
-
-    function popFail() {
-        swal.fire({
-            icon: 'error',
-            text: 'error',
-            title: 'Invalid input/s!'
-        });
-    };
-
-    function popVerify(){
-        e.preventDefault();
-        var form = $(this).parents('form');
-
-        if (response == null)
-        {
-            popSuccess();
-        }
-        else
-        {
-            popFail();            
-        }
-    };
-
-    </script>
-
-@*form.submit();
-    };
-            let btLogin = document.getElementById('btLogin');
-            btLogin.addEventListener('click', function (e) {
-                e.preventDefault();
-                var form = $(this).parents('form');*@
-
-@*@if (TempData["message"] == null)
-{
-    <script>
-        popSuccess();
-    </script>
-}
-else
-{
-    var loginSuccess = false;
-}*@
-
-                @*form.submit();
-
-            });
-
-    if (loginSuccess == true) {
-
-    }*@
+</script>
