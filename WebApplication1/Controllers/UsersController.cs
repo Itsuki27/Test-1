@@ -92,13 +92,17 @@ namespace WebApplication1.Controllers
                     return View(user);
                 }
 
+                if (user.PasswordHash.Length < 8 || user.PasswordHash.Length > 12)
+                {
+                    Response.Write("<script>alert('Password must be at least 8 characters or less than 12')</script>");
+                    return View(user);
+                }
                 // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
 
                     //#region Password Hashing
-                    //user.PasswordHash = Crypto.Hash(user.PasswordHash);
-                    //user.ConfirmPassword = Crypto.Hash(user.ConfirmPassword);
+                   
                     //#endregion
 
                     //Add User
@@ -394,6 +398,12 @@ namespace WebApplication1.Controllers
                 return View();
             }
 
+            if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.PasswordHash))
+            {
+                Response.Write("<script>alert('One or more fields are empty. Please fill in all required fields.')</script>");
+                return View();
+            }
+
             var hashedPassword = Hashing.Hash(user.PasswordHash);
             var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == hashedPassword);
 
@@ -401,7 +411,6 @@ namespace WebApplication1.Controllers
             {
                 Session["UserId"] = query.UserId.ToString();
                 Session["Username"] = query.Username.ToString();
-                Session["Email"] = query.Email.ToString();
 
                 var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
                                where nic.OperationalStatus == OperationalStatus.Up
