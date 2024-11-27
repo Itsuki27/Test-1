@@ -17,6 +17,10 @@ namespace WebApplication1.Controllers
         // GET: MOVEHISTs
         public ActionResult AuditLog()
         {
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             return View(db.MOVEHISTs.ToList());
         }
 
@@ -43,3 +47,5 @@ namespace WebApplication1.Controllers
 
     }
 }
+
+

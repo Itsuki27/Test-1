@@ -17,6 +17,11 @@ namespace WebApplication1.Controllers
         // GET: DEPTs
         public ActionResult Index()
         {
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
             return View(db.DEPTS.ToList());
         }
 
@@ -32,12 +37,21 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             return View(dEPT);
         }
 
         // GET: DEPTs/Create
         public ActionResult Create()
         {
+
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             return View();
         }
 
@@ -48,6 +62,17 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "DEPT_ID,DEPT1,DEPT_DESC,DEPT_BLDG,DEPT_FLOOR")] DEPT dEPT)
         {
+
+            bool Duplicate = db.DEPTS.Any(x => x.DEPT1 == dEPT.DEPT1 && x.DEPT_ID != dEPT.DEPT_ID);
+
+            if (Duplicate == true)
+            {
+                //ModelState.AddModelError("DEPT1", "Department already exists");
+                //ModelState.AddModelError("DEPT1", "Department already exists");
+                Response.Write("<script>alert('Department already exists')</script>");
+                return View(dEPT);
+            }
+
             if (ModelState.IsValid)
             {
                 db.DEPTS.Add(dEPT);
@@ -70,6 +95,11 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
+
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
             return View(dEPT);
         }
 
@@ -80,12 +110,22 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "DEPT_ID,DEPT1,DEPT_DESC,DEPT_BLDG,DEPT_FLOOR")] DEPT dEPT)
         {
+
+            bool Duplicate = db.DEPTS.Any(x => x.DEPT1 == dEPT.DEPT1 && x.DEPT_ID != dEPT.DEPT_ID);
+
+            if (Duplicate == true)
+            {
+                Response.Write("<script>alert('Department already exists')</script>");
+                return View(dEPT);
+            }
+
             if (ModelState.IsValid)
             {
                 db.Entry(dEPT).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "DEPTs");
             }
+
             return View(dEPT);
         }
 
@@ -100,6 +140,11 @@ namespace WebApplication1.Controllers
             if (dEPT == null)
             {
                 return HttpNotFound();
+            }
+
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
             }
             return View(dEPT);
         }
@@ -125,3 +170,5 @@ namespace WebApplication1.Controllers
         }
     }
 }
+
+

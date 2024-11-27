@@ -1,58 +1,61 @@
 ﻿@model WebApplication1.Models.DEPT
 
 @{
-    Layout = null;
+    ViewBag.Title = "Details";
 }
 
-<!DOCTYPE html>
+@*<h2>Details</h2>*@
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Details</title>
-</head>
-<body>
-    <div>
-        <h4>DEPT</h4>
+<div class="form-horizontal d-flex p-4">
+    <div class="col-7 d-none d-xl-none d-lg-block p-4">
+        <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3 h-100 ">
+    </div>
+    <div class="col-7 d-none d-xl-block p-4">
+        <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3">
+    </div>
+    <div class="m-auto">
+
+        <h4>Department Information</h4>
         <hr />
         <dl class="dl-horizontal">
             <dt>
                 @Html.DisplayNameFor(model => model.DEPT1)
             </dt>
-    
+
             <dd>
                 @Html.DisplayFor(model => model.DEPT1)
             </dd>
-    
+
             <dt>
                 @Html.DisplayNameFor(model => model.DEPT_DESC)
             </dt>
-    
+
             <dd>
                 @Html.DisplayFor(model => model.DEPT_DESC)
             </dd>
-    
+
             <dt>
                 @Html.DisplayNameFor(model => model.DEPT_BLDG)
             </dt>
-    
+
             <dd>
                 @Html.DisplayFor(model => model.DEPT_BLDG)
             </dd>
-    
+
             <dt>
                 @Html.DisplayNameFor(model => model.DEPT_FLOOR)
             </dt>
-    
+
             <dd>
                 @Html.DisplayFor(model => model.DEPT_FLOOR)
             </dd>
-    
+            <p>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.DEPT_ID }, new { @class = "btn btn-outline-success px-4" }) |
+                @Html.ActionLink("Back to List", "Index", "DEPTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
+            </p>
         </dl>
     </div>
-    <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.DEPT_ID }) |
-        @Html.ActionLink("Back to List", "Index")
-    </p>
-</body>
-</html>
+</div>
+
+
+

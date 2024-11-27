@@ -54,6 +54,11 @@ namespace WebApplication1.Controllers
                 return HttpNotFound();
             }
 
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
             return View(user);
         }
 
@@ -92,17 +97,13 @@ namespace WebApplication1.Controllers
                     return View(user);
                 }
 
-                if (user.PasswordHash.Length < 8 || user.PasswordHash.Length > 12)
-                {
-                    Response.Write("<script>alert('Password must be at least 8 characters or less than 12')</script>");
-                    return View(user);
-                }
                 // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
 
                     //#region Password Hashing
                     user.PasswordHash = Hashing.Hash(user.PasswordHash);
+                    user.ConfirmPassword = Hashing.Hash(user.ConfirmPassword);
                     user.ConfirmPassword = Hashing.Hash(user.ConfirmPassword);
                     //#endregion
 
@@ -124,12 +125,12 @@ namespace WebApplication1.Controllers
                     var audit = new MOVEHIST
                     {
                         Id = user_id,
-                        OLD_DATA = "Old data placeholder",
+                        OLD_DATA = $"Username={user.Username}, Email={user.Email}",
                         NEW_DATA = $"Username={user.Username}, Email={user.Email}",
                         D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                         T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
                         DESCRIPTION = "User creation",
-                        ACTION_BY = "System",
+                        ACTION_BY = user.Username,
                         MAC_ADDRESS = macAddr,
                         TYPE = "Account Creation",
                         NEW_SAL = "0",
@@ -171,6 +172,12 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
+
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
             user.ConfirmPassword = user.PasswordHash;
 
             PopulateDropDown();
@@ -307,6 +314,10 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
 
             return View(user);
         }
@@ -334,7 +345,7 @@ namespace WebApplication1.Controllers
                 NEW_DATA = $"Username={user.Username}, Email={user.Email}",
                 D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                 T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
-                DESCRIPTION = "Deleted Account",
+                DESCRIPTION = "User Deleted",
                 ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
                 MAC_ADDRESS = macAddr,
                 TYPE = "Account Delete",
@@ -346,6 +357,15 @@ namespace WebApplication1.Controllers
             db.MOVEHISTs.Add(audit);
             db.SaveChanges();
             //End Audit
+
+            // Check if the deleted user is the same as the currently logged-in user
+            if (Session["Username"] != null && Session["Username"].ToString() == user.Username)
+            {
+                // Clear session and redirect to login
+                Session.Clear();
+                //TempData["UserDelete"] = "<script>Swal.fire({icon: 'success', title: 'Your account has been deleted!'});</script>";
+                return RedirectToAction("Login", "Users");
+            }
 
             TempData["UserDelete"] = "<script>Swal.fire({icon: 'success', title: 'User Deleted!'});</script>";
 
@@ -412,6 +432,7 @@ namespace WebApplication1.Controllers
             {
                 Session["UserId"] = query.UserId.ToString();
                 Session["Username"] = query.Username.ToString();
+                Session["Email"] = query.Email.ToString();
 
                 var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
                                where nic.OperationalStatus == OperationalStatus.Up
@@ -424,8 +445,8 @@ namespace WebApplication1.Controllers
                 var audit = new MOVEHIST
                 {
                     Id = user_id,
-                    OLD_DATA = "Old data placeholder",
-                    NEW_DATA = $"Username={user.Username}, Email={user.Email}",
+                    OLD_DATA = $"Username={query.Username}, Email={query.Email}",
+                    NEW_DATA = $"Username={query.Username}, Email={query.Email}",
                     D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                     T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
                     DESCRIPTION = "User Logged In",
@@ -492,7 +513,7 @@ namespace WebApplication1.Controllers
                 var audit = new MOVEHIST
                 {
                     Id = user_id,
-                    OLD_DATA = "Old data placeholder",
+                    OLD_DATA = $"Username={account.Username}, Email={account.Email}",
                     NEW_DATA = $"Username={account.Username}, Email={account.Email}",
                     D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
                     T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
@@ -557,8 +578,7 @@ namespace WebApplication1.Controllers
 
                 if (user != null)
                 {
-                    //user.PasswordHash = Crypto.Hash(model.PasswordHash);
-                    user.PasswordHash = model.PasswordHash;
+                    user.PasswordHash = Hashing.Hash(model.PasswordHash);
                     user.ResetPasswordCode = "";
                     db.Configuration.ValidateOnSaveEnabled = false;
                     db.SaveChanges();
@@ -581,22 +601,61 @@ namespace WebApplication1.Controllers
 
 
 
-        public ActionResult Logout()
+        public ActionResult Logout([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword,DEPT_ID,DEPT1")] User user)
         {
+            var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
+
+            // Get the MAC address
+            var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                           where nic.OperationalStatus == OperationalStatus.Up
+                           select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+            // Audit Logs
+            var user_id = user.UserId;
+            var displayEmail = user.Email;
+            var displayUsername = user.Username;
+
+            var audit = new MOVEHIST
+            {
+                Id = user_id,
+                OLD_DATA = $"Username={displayUsername}, Email={displayEmail}",
+                NEW_DATA = $"Username={displayUsername}, Email={displayEmail}",
+                D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                DESCRIPTION = "User Has Logout",
+                ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                MAC_ADDRESS = macAddr,
+                TYPE = "Account Logout",
+                NEW_SAL = "0",
+                OLD_SAL = "0"
+            };
+
+            // Save the audit record before clearing the session
+            db.MOVEHISTs.Add(audit);
+            db.SaveChanges();
+
             Session.Clear();
             Session.Abandon();
 
-            TempData["UserLogout"] = "<script>Swal.fire({icon: 'success', title: 'Successfully Logged Out!'});</script>";
-
             // Sign out of forms authentication
             System.Web.Security.FormsAuthentication.SignOut();
+
 
             // Redirect to the login page or any other page
             return RedirectToAction("Login", "Users");
         }
 
 
+        // GET: Reports
 
+        public ActionResult Reports()
+        {
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+            return View(db.Users.ToList());
+        }
 
         public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")
         {
@@ -627,17 +686,7 @@ namespace WebApplication1.Controllers
                 smtp.Send(message);
             }
         }
-
-        // GET: Users
-
-        public ActionResult Reports()
-        {
-            if (Session["Username"] == null)
-            {
-                return RedirectToAction("Login", "Users");
-            }
-            return View(db.Users.ToList());
-        }
     }
 }
+
 
