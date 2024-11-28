@@ -24,7 +24,7 @@
                     <span class="logo logoNone gap-3">
                         <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid m-0" style="height: 24px" />
                         <span class="navbar-brand font-monospace fw-bold m-0">CRUD APP</span>
-                        @*@Html.ActionLink("CRUD APP", "Index", "Home", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold m-0" })*@
+                        @*<span>@Html.ActionLink("CRUD APP", "Index", "Home", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold m-0" })</span>*@
                     </span>
                     <button onclick="toggleSideBar()" id="toggle-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" /></svg>
@@ -55,10 +55,16 @@
                     </a>
                 </li>
                 <li>
+                    <a onclick="goDepts()">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M120-120v-560h240v-80l120-120 120 120v240h240v400H120Zm80-80h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm240 320h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm240 480h80v-80h-80v80Zm0-160h80v-80h-80v80Z" /></svg>
+                        <span>DEPARTMENTS</span>
+                    </a>
+                </li>
+                <li>
                     <button onclick="toggleSub()" class="dropdown-btn ddClick">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M80-200v-80h400v80H80Zm0-200v-80h200v80H80Zm0-200v-80h200v80H80Zm744 400L670-354q-24 17-52.5 25.5T560-320q-83 0-141.5-58.5T360-520q0-83 58.5-141.5T560-720q83 0 141.5 58.5T760-520q0 29-8.5 57.5T726-410l154 154-56 56ZM560-400q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" /></svg>
                         <span>ACCOUNT</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" class="rotate" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" class="ddIcon" /></svg>
                     </button>
                     <ul class="sub-menu disappear">
                         <li class="col-12">
@@ -80,6 +86,7 @@
             @Html.ActionLink("USERS LIST", "Index", "Users", new { area = "" }, new { @class = "d-none btUsers" })
             @Html.ActionLink("AUDIT LOG", "AuditLog", "MOVEHISTs", new { area = "" }, new { @class = "d-none btAudit" })
             @Html.ActionLink("REPORTS", "Reports", "Users", new { area = "" }, new { @class = "d-none btReports" })
+            @Html.ActionLink("DEPT LIST", "Index", "Depts", new { area = "" }, new { @class = "d-none btDepts" })
 
         </nav>
 
@@ -93,7 +100,7 @@
                 <div class="container ms-2 col-md-11">
                     <span class="headLogo gap-3 px-4">
                         <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid mx-auto" style="height: 24px" />
-                        @Html.ActionLink("CRUD APP", "Index", "Home", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold m-0" })
+                        <span>@Html.ActionLink("CRUD APP", "Index", "Users", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold m-0" })</span>
                     </span>
                     <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
@@ -115,16 +122,18 @@
         @if (Session["UserId"] != null)
         {
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark d-flex py-4" style="background-color: green;">
-                <div class="container ms-2 col-md-11">
-                    <span class="headLogoNone gap-3">
-                        <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid mx-auto" style="height: 24px" />
-                        @Html.ActionLink("CRUD APP", "Index", "Home", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold m-0" })
-                    </span>
-                    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse d-sm-inline-flex justify-content-end col-11 d-flex">
+                <div class="container ms-2 col-md-11 d-flex flex-row">
+                    <div>
+                        <span class="headLogoNone gap-3">
+                            <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid mx-auto" style="height: 24px" />
+                            <span>@Html.ActionLink("CRUD APP", "Index", "Users", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold mx-3" })</span>
+                        </span>
+                        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse d-sm-inline-flex flex-row-reverse col-12 d-flex">
                         <ul class="navbar-nav">
                             @if (Session["UserId"] != null)
                             {
@@ -165,6 +174,7 @@
         const btUsers = document.querySelector('.btUsers')
         const btAudit = document.querySelector('.btAudit')
         const btReports = document.querySelector('.btReports')
+        const btDepts = document.querySelector('.btDepts')
 
         let shown = false;
         let sideShown = true;
@@ -232,6 +242,10 @@
 
         function goReports() {
             btReports.click();
+        }
+
+        function goDepts() {
+            btDepts.click();
         }
 
 

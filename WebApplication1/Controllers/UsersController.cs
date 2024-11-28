@@ -74,6 +74,31 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode")] User user)
         {
+
+            try
+            {
+                using (var connection = new SqlConnection(WebConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString))
+                {
+                    connection.Open();
+
+
+                    if (connection.State == ConnectionState.Open)
+                    {
+                        // Success (connection opened)
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Connection Error! Invalid Database";
+                        return View();
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                Response.Write("<script>alert('Wrong Connection Error! Invalid Database')</script>");
+                return View();
+            }
+
             if (ModelState.IsValid)
             {
                 // Check if email already exists
@@ -413,7 +438,7 @@ namespace WebApplication1.Controllers
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
                 Response.Write("<script>alert('Wrong Connection Error! Invalid Database')</script>");
                 return View();

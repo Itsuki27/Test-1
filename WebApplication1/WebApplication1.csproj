@@ -201,6 +201,7 @@
     <Content Include="Resources\imgLaptop.png" />
     <Content Include="Resources\keyboard_arrow_down_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\library_books_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\location_city_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\logout_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\manage_search_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\menu_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />

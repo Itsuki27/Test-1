@@ -7,21 +7,29 @@
 @*<h2>Audit Logs</h2>*@
 
 <div class="form-horizontal d-flex flex-column p-5">
-    <h2 class="text-center">Audit Log</h2>
-    <hr />
+    <div>
+        <h2 class="text-center">Audit Log</h2>
+        <hr />
 
-    <div class="d-flex flex-column small">
-        <h6 class="text-center">Table Filters</h6>
-        <div class="filters d-flex flex-row gap-1 col-12 small justify-content-center">
-            <p class="col-1" id="tbId">ID</p>
-            <p class="col-2" id="tbMac">MAC ADDRESS</p>
-            <p class="col-2" id="tbType">TYPE</p>
-            @*<p id="tbOld">@Html.DisplayNameFor(model => model.OLD_DATA)</p>
-                <p id="tbNew">@Html.DisplayNameFor(model => model.NEW_DATA)</p>*@
-            <p class="col-2" id="tbDate">@Html.DisplayNameFor(model => model.D_ACTION)</p>
-            <p class="col-2" id="tbTime">@Html.DisplayNameFor(model => model.T_ACTION)</p>
-            <p class="col-2" id="tbBy">@Html.DisplayNameFor(model => model.ACTION_BY)</p>
-            <p class="col-1" id="tbUid">UID</p>
+        <div class="d-flex flex-column small">
+            <h6 class="text-center">Table Filters</h6>
+            <div class="filters d-flex flex-row gap-1 col-12 small justify-content-center">
+                <p class="col-1" id="tbId">ID</p>
+                <p class="col-2" id="tbMac">MAC ADDRESS</p>
+                <p class="col-2" id="tbType">TYPE</p>
+                <p class="col-2" id="tbBy">ACTION_BY</p>
+                <p class="col-1" id="tbUid">UID</p>
+            </div>
+            <div class="d-flex flex-row gap-3 justify-content-center">
+                <div class="d-flex flex-row">
+                    <p class="my-auto mx-3">From:</p>
+                    <input type="text" id="start" name="start" placeholder="MM/DD/YYYY" class="date-range-filter form-control form-control-xs">
+                </div>
+                <div class="d-flex flex-row">
+                    <p class="my-auto mx-3">To:</p>
+                    <input type="text" id="end" name="end" placeholder="MM/DD/YYYY" class="date-range-filter form-control form-control-xs">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -93,6 +101,7 @@
 @*Table Design and Features Imports*@
 
 <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/datetime/1.5.4/css/dataTables.dateTime.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 
@@ -103,19 +112,26 @@
 @*PDF Export*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
 
 @*Export Button Features*@
 
 <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+<link href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.min.css" />
 <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
 @*Search Panes*@
 <script src="https://cdn.datatables.net/searchpanes/2.3.3/js/dataTables.searchPanes.js"></script>
 <script src="https://cdn.datatables.net/searchpanes/2.3.3/js/searchPanes.dataTables.js"></script>
 
-@*Selecting Data Tables*@
+@*Select Data Tables*@
 <script src="https://cdn.datatables.net/select/2.1.0/js/dataTables.select.js"></script>
 <script src="https://cdn.datatables.net/select/2.1.0/js/select.dataTables.js"></script>
+
+@*Date Picker*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.4/js/dataTables.dateTime.min.js"></script>
 
 <!-- Alerts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -133,42 +149,227 @@
     var tbUid = document.getElementById('tbUid');
 
     $(document).ready(function () {
-        new DataTable('#tblAudit', {
+
+        let startDate, endDate;
+
+        DataTable.ext.search.push(function (settings, data, dataIndex) {
+            let start = startDate.val();
+            let end = endDate.val();
+            let date = new Date(data[7]);
+
+            start = start ? new Date(start).setHours(0, 0, 0, 0) : null;
+            end = end ? new Date(end).setHours(23, 59, 59, 999) : null;
+
+            if (
+                (start === null && end === null) ||
+                (start === null && date <= end) ||
+                (start <= date && end === null) ||
+                (start <= date && date <= end)
+            ) {
+                return true;
+            }
+            return false;
+
+        });
+
+        startDate = new DateTime('#start', {
+            format: 'MM/DD/YYYY'
+        });
+
+        endDate = new DateTime('#end', {
+            format: 'MM/DD/YYYY'
+        });
+
+        var table = new DataTable('#tblAudit', {
             layout: {
                 top: 'pageLength',
                 topStart: {
                     buttons: [
 
-                        { extend: 'excel', className: 'btn btn-outline-success btn-sm px-3 py-2' },
-                        { extend: 'pdf', orientation: 'landscape', className: 'btn btn-outline-danger btn-sm px-3 py-2 mx-1' }
+                        {
+                            extend: 'excel',
+                            className: 'btn btn-outline-success btn-sm px-3 py-2',
+                            text: 'Excel',
+                            title: 'User Audit Logs',
+                        },
+
+                        {
+                            extend: 'pdfHtml5',
+                            className: 'btn btn-outline-danger btn-sm px-3 py-2 mx-1',
+                            text: 'PDF',
+                            title: 'User Audit Logs',
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+
+                            messageTop: function () {
+                                const now = new Date();
+                                const month = now.toLocaleString('default', {
+                                    month: 'long'
+                                });
+                                var dateFormat = month + ' ' + now.getDate() + ', ' + now.getFullYear();
+                                var dateFirst = startDate.val() != null ? 'From ' + startDate.val() + '\n' : "";
+                                var dateLast = endDate.val() != null ? 'Until ' + endDate.val() + '\n' : "";
+                                return {
+                                    text: [{
+                                        alignment: 'center',
+                                        italics: false,
+                                        fontsize: 15,
+                                        bold: true,
+                                        Margin: [0.0],
+                                        text: dateFirst + dateLast + ' ' + 'As of ' + dateFormat
+                                    }],
+                                    margin: 5
+                                };
+                            },
+
+                            //customize: function (doc) {
+
+                            //    doc.content[1].table.body[0].forEach(function (cell) {
+                            //        cell.styles.fillColor = '#4CAF50';
+                            //        cell.styles.fontSize = 9;
+                            //        cell.styles.bold = true;
+                            //        cell.styles.color = '#000000';
+                            //    });
+
+
+
+                            //},
+
+
+
+                            //customize: function (win) {
+
+                            //    //style customization
+                            //    win.content.splice(0, 1);
+                            //    win.styles.tableHeader.fillColor = '#adbce6';
+                            //    win.styles.tableHeader.color = 'black';
+                            //    win.styles.tableHeader.alignment = 'left';
+                            //    win.styles.tableBodyEven.alignment = 'left';
+                            //    win.styles.tableBodyOdd.fillColor = 'white';
+                            //    win.styles.tableHeader.alignment = 'center';
+                            //    win.pageMargins = [20, 20, 20, 20];
+                            //    //Col specific size each
+                            //    win.content[1].table.widths = ['1%', '10%', '6%', '18%', '18%', '10%', '10%', '5%', '5%', '10%'. '5%', '1%'];
+                            //    win.defaultStyle.fontSize = 9;
+                            //    win.styles.tableHeader.fontSize = 10;
+
+                            //    //remove repeating header
+                            //    //win.content[1].table.headerRows = 0;
+
+                            //    const now = new Date();
+                            //    const month = now.toLocaleString('default', { month: 'long' }); //ECMAScript Internationalization API ('long' uses the full name of the month, 'short' for the short name, and 'narrow' for a more minimal version, such as the first letter in alphabetical languages.)
+                            //    var formateddate = month + ' ' + now.getDate() + ', ' + now.getFullYear() + ' ' + now.toLocaleTimeString().replace(/:\d+ /, ' ');
+
+                            //    //specific column allignment
+                            //    var rowCount = win.content[1].table.body.length;
+                            //    for (i = 1; i < rowCount; i++) {
+                            //        win.content[1].table.body[i][0].alignment = 'center';
+
+                            //    };
+
+
+
+                            //    // Change dataTable layout (Table styling)
+                            //    // To use predefined layouts uncomment the line below and comment the custom lines below
+                            //    // doc.content[0].layout = 'lightHorizontalLines'; // noBorders , headerLineOnly
+                            //    var objLayout = {};
+                            //    objLayout['hLineWidth'] = function (i) { return .5; };
+                            //    objLayout['vLineWidth'] = function (i) { return .5; };
+                            //    objLayout['hLineColor'] = function (i) { return '#aaa'; };
+                            //    objLayout['vLineColor'] = function (i) { return '#aaa'; };
+                            //    objLayout['paddingLeft'] = function (i) { return 4; };
+                            //    objLayout['paddingRight'] = function (i) { return 4; };
+                            //    win.content[1].layout = objLayout;
+
+
+                            //    win['header'] = (function () {
+                            //        return {
+
+                            //            columns: [{ alignment: 'left', fontSize: 9, margin: [20, 5], italics: false, text: 'Reports | Inactive Employees ' }]
+                            //        }
+                            //    });
+
+                            //    win['footer'] = (function (page, pages) {
+                            //        return {
+                            //            columns: [
+                            //                { alignment: 'left', italics: false, text: 'Run Date: ' + " " + formateddate, fontSize: 9, margin: [20, 0] },
+
+                            //                { alignment: 'right', text: [{ text: 'Page ' + page.toString() + ' of ' + pages.toString(), italics: false, fontSize: 9, }], margin: [20, 0] }
+                            //            ]
+                            //        }
+
+                            //    })
+                            //},
+
+
+
+                            //customize: function (doc) {
+                            //    doc.content[1].table.body[0].forEach(function (cell) {
+                            //        cell.styles.fillColor = '#97dbad';
+                            //        cell.styles.fontSize = '12';
+                            //        cell.syles.bold = true;
+                            //        cell.styles.color = 'black';
+                            //    })
+                            //}
+
+                            //customize: function (win) {
+                            //    win.styles.tableHeader.color = 'black';
+                            //    win.styles.tableHeader.fillColor = "#97dbad";
+                            //    win.styles.tableHeader.alignment = 'center';
+
+
+                            //    win.styles.tableBodyOdd.fillColor = "#c0ebce";
+                            //    win.styles.tableBodyEven.fillColor = "#ffffff";
+                            //    win.styles.tableBodyEven.alignment = 'left';
+
+                            //    win.pageMargins = [20, 20, 20, 20];
+                            //    win.content[1].table.widths = ['1%', '10%', '6%', '18%', '18%', '10%', '10%', '5%', '5%', '10%'. '5%', '1%'];
+                            //    win.defaultStyle.fontSize = 9;
+                            //    win.styles.tableHeader.fontSize = 10;
+
+                            //    win.content[1].table.headerRows = 0;
+                            //},
+                        }
 
                     ],
                 },
             },
 
+            autoWidth: false,
+
+            columns: [
+                { width: '1%' },
+                { width: '10%' },
+                { width: '6%' },
+                { width: '18%' },
+                { width: '18%' },
+                { width: '10%' },
+                { width: '10%' },
+                { width: '5%' },
+                { width: '5%' },
+                { width: '10%' },
+                { width: '5%' },
+                { width: '1%' },
+            ],
+
             initComplete: function () {
-                //Action ID Filter
+                //Action ID Input Filter
                 this.api()
                     .columns([0])
                     .every(function () {
                         var column = this;
-                        var type = column.header().textContent;
 
-                        var select = $('<select class="form-control form-control-sm"><option value="">--Audit ID--</option></select>')
-                            .appendTo($('#tbId').empty())
-                            .on('change', function () {
-                                if (column.search() !== this.value) {
-                                    column.search(this.value).draw();
-                                }
+                        // Create input element
+                        var input = document.createElement('input');
+                        input.placeholder = "SEARCH IN ID";
+                        input.setAttribute("class", "form-control form-control-sm h-25");
+                        tbId.replaceWith(input);
 
-                                column
-                                    .search(val ? '^' + val + '$' : '', true, false)
-                                    .draw();
-                            });
-
-                        column.data().unique().sort().each(function (d, j) {
-                            var val = $('<div/>').html(d).text();
-                            select.append('<option value="' + val + '">' + val + '</option>');
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
                         });
                     });
 
@@ -177,9 +378,8 @@
                     .columns([1])
                     .every(function () {
                         var column = this;
-                        var type = column.header().textContent;
 
-                        var select = $('<select class="form-control form-control-sm"><option value="">--MAC Address--</option></select>')
+                        var select = $('<select class="form-control form-control-sm"><option value="">--SELECT MAC ADDRESS--</option></select>')
                             .appendTo($('#tbMac').empty())
                             .on('change', function () {
                                 if (column.search() !== this.value) {
@@ -202,9 +402,8 @@
                     .columns([2])
                     .every(function () {
                         var column = this;
-                        var type = column.header().textContent;
 
-                        var select = $('<select class="form-control form-control-sm"><option value="">--Action Type--</option></select>')
+                        var select = $('<select class="form-control form-control-sm"><option value="">--SELECT ACTION TYPE--</option></select>')
                             .appendTo($('#tbType').empty())
                             .on('change', function () {
                                 if (column.search() !== this.value) {
@@ -222,58 +421,11 @@
                         });
                     });
 
-                //Date Action Filter
-                this.api()
-                    .columns([7])
-                    .every(function () {
-                        var column = this;
-                        var type = column.header().textContent;
-
-                        var select = $('<select class="form-control form-control-sm"><option value="">--Date Action--</option></select>')
-                            .appendTo($('#tbDate').empty())
-                            .on('change', function () {
-                                if (column.search() !== this.value) {
-                                    column.search(this.value).draw();
-                                }
-
-                                column
-                                    .search(val ? '^' + val + '$' : '', true, false)
-                                    .draw();
-                            });
-
-                        column.data().unique().sort().each(function (d, j) {
-                            var val = $('<div/>').html(d).text();
-                            select.append('<option value="' + val + '">' + val + '</option>');
-                        });
-                    });
-
-                //Input Type Sorting
-                //this.api()
-                //    .columns([7])
-                //    .every(function () {
-                //        var column = this;
-                //        var date = column.header().textContent;
-
-                //        // Create input element
-                //        var input = document.createElement('input');
-                //        input.placeholder = date;
-                //        input.className = "text-justify";
-                //        tbDate.replaceChildren(input);
-
-                //        // Event listener for user input
-                //        input.addEventListener('keyup', () => {
-                //            if (column.search() !== this.value) {
-                //                column.search(input.value).draw();
-                //            }
-                //        });
-                //    });
-
                 //Time Action Filter
                 this.api()
                     .columns([8])
                     .every(function () {
                         var column = this;
-                        var type = column.header().textContent;
 
                         var select = $('<select class="form-control form-control-sm"><option value="">--Time Action--</option></select>')
                             .appendTo($('#tbTime').empty())
@@ -298,9 +450,8 @@
                     .columns([10])
                     .every(function () {
                         var column = this;
-                        var type = column.header().textContent;
 
-                        var select = $('<select class="form-control form-control-sm"><option value="">--Action By--</option></select>')
+                        var select = $('<select class="form-control form-control-sm"><option value="">--SELECT ACTION BY--</option></select>')
                             .appendTo($('#tbBy').empty())
                             .on('change', function () {
                                 if (column.search() !== this.value) {
@@ -318,31 +469,31 @@
                         });
                     });
 
-                //UID Filter
+                //UID Input Filter
                 this.api()
                     .columns([11])
                     .every(function () {
                         var column = this;
-                        var type = column.header().textContent;
 
-                        var select = $('<select class="form-control form-control-sm"><option value="">--User ID--</option></select>')
-                            .appendTo($('#tbUid').empty())
-                            .on('change', function () {
-                                if (column.search() !== this.value) {
-                                    column.search(this.value).draw();
-                                }
+                        // Create input element
+                        var input = document.createElement('input');
+                        input.placeholder = "SEARCH IN UID";
+                        input.setAttribute("class", "form-control form-control-sm h-25");
+                        tbUid.replaceWith(input);
 
-                                column
-                                    .search(val ? '^' + val + '$' : '', true, false)
-                                    .draw();
-                            });
-
-                        column.data().unique().sort().each(function (d, j) {
-                            var val = $('<div/>').html(d).text();
-                            select.append('<option value="' + val + '">' + val + '</option>');
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
                         });
                     });
+
             }
+        });
+
+        document.querySelectorAll('#start, #end').forEach((element) => {
+            element.addEventListener('change', () => table.draw());
         });
 
     });

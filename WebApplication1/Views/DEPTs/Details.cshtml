@@ -49,11 +49,11 @@
             <dd>
                 @Html.DisplayFor(model => model.DEPT_FLOOR)
             </dd>
-            <p>
-                @Html.ActionLink("Edit", "Edit", new { id = Model.DEPT_ID }, new { @class = "btn btn-outline-success px-4" }) |
-                @Html.ActionLink("Back to List", "Index", "DEPTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
-            </p>
         </dl>
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.DEPT_ID }, new { @class = "btn btn-outline-success px-4" }) |
+            @Html.ActionLink("Back to List", "Index", "DEPTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
+        </p>
     </div>
 </div>
 
