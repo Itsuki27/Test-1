@@ -15,7 +15,6 @@
 </head>
 
 <body style="background-color: whitesmoke">
-
     @if (Session["UserId"] != null)
     {
         <nav id="sidebar" class="sidebar-full">
@@ -73,10 +72,10 @@
                             </a>
                         </li>
                         <li class="col-12">
-                            <span>@Html.ActionLink("EDIT USER", "Edit", "Users", new { area = "" }, new { @id = @Session["UserId"] })</span>
+                                <span>@Html.ActionLink("EDIT USER", "Edit", "Users", new { @id = 12 })</span>
                         </li>
                         <li class="col-12">
-                            <span>@Html.ActionLink("LOGOUT", "Logout", "Users", new { area = "" })</span>
+                            <span>@Html.ActionLink("LOGOUT", "Logout", "Users", new { area = "" }, new {@class = "btLogout"})</span>
                         </li>
                     </ul>
                 </li>
@@ -163,7 +162,15 @@
 
     @RenderSection("scripts", required: false)
 
-    <script>
+<script>
+        console.log(@Session["UserId"]);
+
+        const editRoute = document.querySelector('.editRoute')
+
+        //editRoute.addEventListener('click', function () {
+
+        //});
+
         const subMenu = document.querySelector('.sub-menu')
         const toggleBtn = document.querySelector('#toggle-btn')
         const sideBar = document.querySelector('#sidebar')
@@ -250,7 +257,7 @@
 
 
 
-    </script>
+</script>
 
 </body>
 </html>

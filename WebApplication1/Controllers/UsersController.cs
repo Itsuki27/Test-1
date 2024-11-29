@@ -121,6 +121,11 @@ namespace WebApplication1.Controllers
                     Response.Write("<script>alert('Empty field/s')</script>");
                     return View(user);
                 }
+                if (user.PasswordHash.Length < 8 || user.ConfirmPassword.Length < 8)
+                {
+                    Response.Write("<script>alert('Password must be at least 8 characters')</script>");
+                    return View(user);
+                }
 
                 // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
@@ -455,9 +460,11 @@ namespace WebApplication1.Controllers
 
             if (query != null)
             {
-                Session["UserId"] = query.UserId.ToString();
+                Session["UserId"] = query.UserId;
                 Session["Username"] = query.Username.ToString();
                 Session["Email"] = query.Email.ToString();
+
+                TempData["user_id"] = query.UserId;
 
                 var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
                                where nic.OperationalStatus == OperationalStatus.Up
