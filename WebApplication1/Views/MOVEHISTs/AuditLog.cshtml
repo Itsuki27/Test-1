@@ -21,11 +21,11 @@
                 <p class="col-1" id="tbUid">UID</p>
             </div>
             <div class="d-flex flex-row gap-3 justify-content-center">
-                <div class="d-flex flex-row">
+                <div class="d-flex flex-row datePicker">
                     <p class="my-auto mx-3">From:</p>
                     <input type="text" id="start" name="start" placeholder="MM/DD/YYYY" class="date-range-filter form-control form-control-xs">
                 </div>
-                <div class="d-flex flex-row">
+                <div class="d-flex flex-row datePicker">
                     <p class="my-auto mx-3">To:</p>
                     <input type="text" id="end" name="end" placeholder="MM/DD/YYYY" class="date-range-filter form-control form-control-xs">
                 </div>
@@ -148,6 +148,10 @@
     var tbBy = document.getElementById('tbBy');
     var tbUid = document.getElementById('tbUid');
 
+    $("[type='text']").keypress(function (evt) {
+        evt.preventDefault();
+    });
+
     $(document).ready(function () {
 
         let startDate, endDate;
@@ -213,27 +217,25 @@
                                     text: [{
                                         alignment: 'center',
                                         italics: false,
-                                        fontsize: 15,
+                                        fontSize: 7,
                                         bold: true,
-                                        Margin: [0.0],
+                                        margin: [0.0],
                                         text: dateFirst + dateLast + ' ' + 'As of ' + dateFormat
                                     }],
                                     margin: 5
                                 };
                             },
 
-                            //customize: function (doc) {
+                            customize: function (doc) {
+                                doc.styles.tableHeader.fillColor = '#4CAF50';
+                                doc.styles.tableHeader.fontSize = 10;
+                                doc.styles.tableHeader.bold = true;
+                                doc.styles.tableHeader.color = '#000000';
+                                doc.styles.tableHeader.alignment = 'left';
 
-                            //    doc.content[1].table.body[0].forEach(function (cell) {
-                            //        cell.styles.fillColor = '#4CAF50';
-                            //        cell.styles.fontSize = 9;
-                            //        cell.styles.bold = true;
-                            //        cell.styles.color = '#000000';
-                            //    });
-
-
-
-                            //},
+                                //doc.content[1].table.widths = ['1%', '10%', '6%', '18%', '18%', '10%', '10%', '5%', '5%', '10%'. '5%', '1%'];
+                                //doc.content[1].table.headerRows = 0;
+                            },
 
 
 
@@ -491,6 +493,21 @@
 
             }
         });
+
+        //var tblExport = {
+        //    content: [
+        //        {
+        //            table: {
+        //                headerRows: 0,
+        //                body: [
+        //                    [
+        //                        fillColor: '#4CAF50',
+        //                    ]
+        //                ]
+        //            }
+        //                            }
+        //    ]
+        //}
 
         document.querySelectorAll('#start, #end').forEach((element) => {
             element.addEventListener('change', () => table.draw());

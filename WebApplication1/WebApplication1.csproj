@@ -195,6 +195,7 @@
       <DependentUpon>Model1.edmx</DependentUpon>
       <LastGenOutput>Model1.cs</LastGenOutput>
     </Content>
+    <Content Include="Resources\account_circle_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\edit_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\home_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\imgHandshake.jpg" />

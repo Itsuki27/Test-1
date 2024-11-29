@@ -127,6 +127,11 @@ namespace WebApplication1.Controllers
                     return View(user);
                 }
 
+                if (user.DEPT_ID == null)
+                {
+                    TempData["deptEmpty"] = true;
+                }
+
                 // Check if passwords match
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
@@ -285,6 +290,10 @@ namespace WebApplication1.Controllers
                 existingUser.Email = user.Email;
                 existingUser.IsActive = user.IsActive;
                 existingUser.DEPT_ID = user.DEPT_ID;
+
+                if (existingUser.DEPT_ID == null) {
+                    TempData["deptEmpty"] = true;
+                }
 
                 db.SaveChanges();
 

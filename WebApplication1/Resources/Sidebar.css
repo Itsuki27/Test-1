@@ -175,3 +175,9 @@ body{
 .headLogo img{
     margin: auto;
 }
+
+/* Audit Log */
+
+.datePicker input:hover{
+    cursor: pointer;
+}
