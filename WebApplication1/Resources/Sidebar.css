@@ -25,21 +25,21 @@ body{
     background-color: darkgreen;
     border-right: 1px solid var(--line-clr);
 
+    overflow: hidden;
+
     position: sticky;
     top: 0;
     align-self: start;
-
-    transition: 300ms ease-in-out;
 }
 
 .sidebar-full{
     width: 250px;
-    transition: 300ms ease-in-out;
+    transition: 400ms ease-in-out;
 }
 
 .sidebar-small{
     width: 85px;
-    transition: 300ms ease-in-out;
+    transition: 400ms ease-in-out;
 }
 
 .sidebar-small ul li span{
@@ -52,7 +52,7 @@ body{
     transition: 300ms ease-in-out;
 }
 
-.sidebar-small .ddIcon{
+.sidebar-small #ddIcon{
     display: none;
     transition: 300ms ease-in-out;
 }
@@ -174,6 +174,18 @@ body{
 
 .headLogo img{
     margin: auto;
+}
+
+.ddIcon180{
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: 200ms ease-in-out;
+}
+
+.ddIcon0{
+    transform: rotate(0deg);
+    transform-origin: center;
+    transition: 200ms ease-in-out;
 }
 
 /* Audit Log */

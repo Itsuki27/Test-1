@@ -63,17 +63,17 @@
                     <button onclick="toggleSub()" class="dropdown-btn ddClick">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" /></svg>
                         <span>ACCOUNT</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" class="ddIcon" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" id="ddIcon" /></svg>
                     </button>
                     <ul class="sub-menu disappear">
                         <li class="col-12">
                             <span>@Html.ActionLink("VIEW PROFILE", "Details", "Users", new { id = Session["UserId"] }, null)</span>
                         </li>
                         <li class="col-12">
-                                <span>@Html.ActionLink("EDIT USER", "Edit", "Users", new { id = Session["UserId"]},null)</span>
+                                <span>@Html.ActionLink("EDIT USER", "Edit", "Users", new { id = Session["UserId"] }, null)</span>
                         </li>
                         <li class="col-12">
-                            <span>@Html.ActionLink("LOGOUT", "Logout", "Users", new { area = "" }, new {@class = "btLogout"})</span>
+                            <span>@Html.ActionLink("LOGOUT", "Logout", "Users", new { area = "" }, new { @class = "btLogout" })</span>
                         </li>
                     </ul>
                 </li>
@@ -87,68 +87,31 @@
 
         </nav>
 
-
-    }
-
-    <div class="d-flex flex-column w-auto">
-        @if (Session["UserId"] == null)
-        {
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark py-4 col-12" style="background-color: green">
-                <div class="container ms-2 col-md-11">
-                    <span class="headLogo gap-3 px-4">
-                        <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid mx-auto" style="height: 24px" />
-                        <span>@Html.ActionLink("CRUD APP", "Index", "Users", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold m-0" })</span>
-                    </span>
-                    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse d-sm-inline-flex justify-content-end col-12 d-flex" style="padding-right: 5px;">
-                        <ul class="navbar-nav">
-                            @if (Session["UserId"] == null)
-                            {
-                                <li>@Html.ActionLink("Login", "Login", "Users", new { area = "" }, new { @class = "nav-link mx-3" })</li>
-                                <li style="margin-right: 80px">@Html.ActionLink("Register", "Create", "Users", new { area = "" }, new { @class = "nav-link mx-3" })</li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        }
-
-        @if (Session["UserId"] != null)
-        {
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark d-flex py-4" style="background-color: green;">
+        <div class="d-flex flex-column">
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark d-flex py-4" style="background-color: green; height: 75px">
                 <div class="container ms-2 col-md-11 d-flex flex-row">
                     <div>
                         <span class="headLogoNone gap-3">
                             <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid mx-auto" style="height: 24px" />
                             <span>@Html.ActionLink("CRUD APP", "Index", "Users", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold mx-3" })</span>
                         </span>
-                        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                                aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
                     </div>
-                    <div class="collapse navbar-collapse d-sm-inline-flex flex-row-reverse col-12 d-flex">
+                    <div class="collapse navbar-collapse d-sm-inline-flex flex-row-reverse col-11 d-flex">
                         <ul class="navbar-nav">
-                            @if (Session["UserId"] != null)
-                            {
                                 <li class="my-auto mx-2 text-light">Welcome, <b>@Session["Username"].ToString()</b>!</li>
-                                @Html.ActionLink("Logout", "Logout", "Users", new { area = "" }, new { @class = "nav-link mx-1 d-none hideLogout" })
-                            }
+                                @Html.ActionLink("Logout", "Logout", "Users", new { area = "" }, new { @class = "nav-link mx-4 d-none hideLogout" })
                         </ul>
                     </div>
                 </div>
             </nav>
-        }
-        @RenderBody()
-        <hr />
-        <footer class="d-flex flex-row px-4 mx-4">
-            <p>&copy; @DateTime.Now.Year - CRUD APP</p>
-        </footer>
-    </div>
 
+            @RenderBody()
+            <hr />
+            <footer class="d-flex flex-row px-4 mx-4">
+                <p>&copy; @DateTime.Now.Year - CRUD APP</p>
+            </footer>
+        </div>
+    }
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <link href="~/Resources/Sidebar.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/jquery")
@@ -159,99 +122,129 @@
     @RenderSection("scripts", required: false)
 
 <script>
-        console.log(@Session["UserId"]);
+    console.log(@Session["UserId"]);
 
-        const editRoute = document.querySelector('.editRoute')
+    const editRoute = document.querySelector('.editRoute')
 
-        //editRoute.addEventListener('click', function () {
+    //editRoute.addEventListener('click', function () {
 
-        //});
+    //});
 
-        const subMenu = document.querySelector('.sub-menu')
-        const toggleBtn = document.querySelector('#toggle-btn')
-        const sideBar = document.querySelector('#sidebar')
-        const logo = document.querySelector('.logo')
-        const headLogo = document.querySelector(".headLogoNone")
-        const btLogout = document.querySelector('.btLogout')
-        const hideLogout = document.querySelector('.hideLogout')
-        const btUsers = document.querySelector('.btUsers')
-        const btAudit = document.querySelector('.btAudit')
-        const btReports = document.querySelector('.btReports')
-        const btDepts = document.querySelector('.btDepts')
+    const subMenu = document.querySelector('.sub-menu')
+    const toggleBtn = document.querySelector('#toggle-btn')
+    const sideBar = document.querySelector('#sidebar')
+    const logo = document.querySelector('.logo')
+    const headLogo = document.querySelector(".headLogoNone")
+    const btLogout = document.querySelector('.btLogout')
+    const hideLogout = document.querySelector('.hideLogout')
+    const btUsers = document.querySelector('.btUsers')
+    const btAudit = document.querySelector('.btAudit')
+    const btReports = document.querySelector('.btReports')
+    const btDepts = document.querySelector('.btDepts')
 
-        let shown = false;
-        let sideShown = true;
-        const ddIcon = document.querySelector('.ddIcon');
+    var shown = false;
+    var sideShown = true;
+    var deg0 = true;
 
-        if (shown == false) {
-            window.onload = function () {
-                subMenu.setAttribute("class", "disappear");
+    const ddIcon = document.querySelector('#ddIcon');
+
+    if (shown == false) {
+        window.onload = function () {
+            subMenu.setAttribute("class", "disappear");
+        }
+    }
+
+
+    function toggleSub() {
+        if (shown == true) {
+            subMenu.setAttribute("class", "disappear");
+            //ddIcon.setAttribute("class", "rotate");
+            shown = false;
+            ddIcon.removeAttribute("class", "ddIcon180");
+            ddIcon.setAttribute("class", "ddIcon0");
+
+            sideShown = false;
+            toggleSideBar();
+
+            console.log(shown);
+        } else {
+            subMenu.setAttribute("class", "show");
+            //ddIcon.setAttribute("class", "revert");
+            shown = true;
+            ddIcon.removeAttribute("class", "ddIcon0");
+            ddIcon.setAttribute("class", "ddIcon180");
+
+            sideShown = false;
+            toggleSideBar();
+
+            console.log(shown);
+        }
+
+    }
+
+    function ddRotate() {
+        
+    }
+       
+
+    function toggleSideBar() {
+        if (sideShown == true) {
+            sideShown = false;
+            sideBar.removeAttribute("class", "sidebar-full")
+            logo.setAttribute("class", "logoNone")
+            sideBar.setAttribute("class", "sidebar-small")
+            headLogo.setAttribute("class", "headLogo")
+        } else {
+            sideShown = true;
+            sideBar.removeAttribute("class", "sidebar-small")
+            logo.setAttribute("class", "logo")
+            sideBar.setAttribute("class", "sidebar-full")
+            headLogo.setAttribute("class", "headLogoNone")
+        }
+    }
+
+    //sideBar.addEventListener('mouseover', function () {
+    //    sideShown = false;
+    //    toggleSideBar();
+    //});
+
+    //sideBar.addEventListener('mouseout', function () {
+    //    sideShown = true;
+    //    toggleSideBar();
+    //});
+
+    btLogout.addEventListener('click', function (e) {
+        e.preventDefault();
+        var form = $(this).parents('form');
+        Swal.fire({
+            icon: 'question',
+            title: 'Log out?',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Logout',
+        }).then((result) => {
+            if (result.value) {
+                hideLogout.click();
             }
-        }
+        });
+    })
 
-        function toggleSub() {
-            if (shown == true) {
-                subMenu.setAttribute("class", "disappear");
-                //ddIcon.setAttribute("class", "rotate");
-                shown = false;
-                console.log(shown);
-            } else {
-                subMenu.setAttribute("class", "show");
-                //ddIcon.setAttribute("class", "revert");
-                shown = true;
-                console.log(shown);
-            }
+    function goUsers() {
+        btUsers.click();
+    }
 
-        }
+    function goAudit() {
+        btAudit.click();
+    }
 
-        function toggleSideBar() {
-            if (sideShown == true) {
-                sideShown = false;
-                sideBar.removeAttribute("class", "sidebar-full")
-                logo.setAttribute("class", "logoNone")
-                sideBar.setAttribute("class", "sidebar-small")
-                headLogo.setAttribute("class", "headLogo")
-            } else {
-                sideShown = true;
-                sideBar.removeAttribute("class", "sidebar-small")
-                logo.setAttribute("class", "logo")
-                sideBar.setAttribute("class", "sidebar-full")
-                headLogo.setAttribute("class", "headLogoNone")
-            }
-        }
+    function goReports() {
+        btReports.click();
+    }
 
-        btLogout.addEventListener('click', function (e) {
-            e.preventDefault();
-            var form = $(this).parents('form');
-            Swal.fire({
-                icon: 'question',
-                title: 'Log out?',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Logout',
-            }).then((result) => {
-                if (result.value) {
-                    hideLogout.click();
-                }
-            });
-        })
-
-        function goUsers() {
-            btUsers.click();
-        }
-
-        function goAudit() {
-            btAudit.click();
-        }
-
-        function goReports() {
-            btReports.click();
-        }
-
-        function goDepts() {
-            btDepts.click();
-        }
+    function goDepts() {
+        btDepts.click();
+    }
 
 
 
