@@ -4,7 +4,7 @@
     ViewBag.Title = "Account List";
 }
 
-<div class="loader hidden"></div>
+<div id="loader" class="loader"></div>
 
 <div class="form-horizontal d-flex flex-column p-5">
     <h2 class="text-center">User Masterlist</h2>
@@ -115,5 +115,11 @@
             }
         });
 
+    });
+
+    const loader = document.getElementById('loader')
+
+    document.addEventListener("DOMContentLoaded", function () {
+        loader.style.display = "none";
     });
 </script>

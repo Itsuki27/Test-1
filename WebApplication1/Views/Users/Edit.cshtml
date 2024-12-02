@@ -8,6 +8,8 @@
 {
     @Html.AntiForgeryToken()
 
+    <div id="loader" class="loader"></div>
+
     <div class="form-horizontal d-flex p-4">
         <div class="col-7 d-none d-xl-none d-lg-block p-4">
             <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3 h-100 ">
@@ -59,20 +61,11 @@
                         </div>
                     </div>
 
-                    @*<div class="form-group">
-                            Date Created
-                            @Html.LabelFor(model => model.CreatedDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-12 mb-2">
-                                @Html.EditorFor(model => model.CreatedDate, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.CreatedDate, "", new { @class = "text-danger" })
-                            </div>
-                        </div>*@
-
                     <div class="form-group">
                         @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-12 mb-2">
                             <div class="checkbox col-12">
-                                @Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control border-1 col-md-12" }})
+                                @Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control border-1 col-md-12" } })
                                 @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -82,9 +75,9 @@
                         <label for="Department">Department</label>
                         <div class="col-md-12 mb-1 px-6">
                             @Html.DropDownListFor(model => model.DEPT_ID,
-                                (IEnumerable<SelectListItem>)ViewBag.DropUser,
-                                "--Select Department--",
-                                new { @class = "form-control" })
+                                     (IEnumerable<SelectListItem>)ViewBag.DropUser,
+                                     "--Select Department--",
+                                     new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.DEPT_ID, "", new { @class = "text-danger" })
 
                         </div>
@@ -111,5 +104,9 @@
 }
 
 <script>
-    console.log("Edit View: " + @Session["UserId"]);
+    const loader = document.getElementById('loader');
+
+    document.addEventListener("DOMContentLoaded", function () {
+        loader.style.display = "none";
+    });
 </script>

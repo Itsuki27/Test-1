@@ -4,6 +4,8 @@
     ViewBag.Title = "Details";
 }
 
+<div id="loader" class="loader"></div>
+
 <div class="form-horizontal d-flex p-4">
     <div class="col-7 d-none d-xl-none d-lg-block p-4">
         <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3 h-100 ">
@@ -74,15 +76,10 @@
 </div>
 
 
-@*@TempData["loading"];
+<script nonce="myScript">
+    const loader = document.getElementById('loader');
 
-<script>
-    function showLoading() {
-        event.preventDefault();
-        $(".loader").removeClass("hidden");
-        setTimeout(function () {
-            $("form").submit();
-        }, 1);
-        return true;
-    }
-</script>*@
+    document.addEventListener("DOMContentLoaded", function () {
+        loader.style.display = "none";
+    });
+</script>

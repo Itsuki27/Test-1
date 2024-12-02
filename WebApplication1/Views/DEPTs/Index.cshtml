@@ -1,24 +1,13 @@
 ﻿@model IEnumerable<WebApplication1.Models.DEPT>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Departments List";
 }
 
+<div id="loader" class="loader"></div>
 
 <div class="form-horizontal d-flex flex-column p-5">
     <h2 class="text-center">Department List</h2>
-
-
-
-
-    @*<button class="btn-outline-info">
-            @Html.ActionLink("Create New", "Create")
-        </button>*@
-
-    @*<button  style="width:75px; height:75px;"class="btn btn-outline-info" onclick="window.location.href='@Url.Action("Create", "DEPTs")'">
-                Create New
-        </button>*@
-
 
     <table table id="tblDepts" class="table table-bordered table-striped table-light small">
         <thead>
@@ -47,9 +36,9 @@
                         @Html.DisplayFor(modelItem => item.DEPT_FLOOR)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.DEPT_ID }, new { @class = "btn btn-outline-success" })
-                        @Html.ActionLink("Details", "Details", new { id = item.DEPT_ID }, new { @class = "btn btn-outline-primary" })
-                        @Html.ActionLink("Delete", "Delete", new { id = item.DEPT_ID }, new { @class = "btn btn-outline-danger" })
+                        @Html.ActionLink("Edit", "Edit", new { id = item.DEPT_ID }, new { @class = "btn btn-success" })
+                        @Html.ActionLink("Details", "Details", new { id = item.DEPT_ID }, new { @class = "btn btn-primary" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.DEPT_ID }, new { @class = "btn btn-danger" })
                     </td>
                 </tr>
             }
@@ -97,6 +86,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script nonce="myScript">
+
+
     $(document).ready(function () {
         new DataTable('#tblDepts', {
             layout: {
@@ -113,6 +104,13 @@
         });
 
     });
+
 </script>
 
+<script type="text/javascript">
+    const loader = document.getElementById('loader');
 
+    document.addEventListener("DOMContentLoaded", function () {
+        loader.style.display = "none";
+    });
+</script>

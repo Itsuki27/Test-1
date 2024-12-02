@@ -23,8 +23,6 @@ namespace WebApplication1.Controllers
                 return RedirectToAction("Login", "Users");
             }
 
-            TempData["loading"] = "<script>nowLoading()</script>";
-
             return View(db.MOVEHISTs.ToList());
         }
 

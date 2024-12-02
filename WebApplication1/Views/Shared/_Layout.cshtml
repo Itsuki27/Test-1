@@ -164,8 +164,6 @@
 
                 sideShown = false;
                 toggleSideBar();
-
-                console.log(shown);
             } else {
                 subMenu.setAttribute("class", "show");
                 //ddIcon.setAttribute("class", "revert");
@@ -175,8 +173,6 @@
 
                 sideShown = false;
                 toggleSideBar();
-
-                console.log(shown);
             }
 
         }
@@ -229,46 +225,30 @@
             });
         })
 
-        console.log(navLoad);
-
         function goUsers() {
             btUsers.click();
-            showLoading(this);
+            showLoading();
         }
 
         function goAudit() {
             btAudit.click();
-            showLoading(this);
+            showLoading();
         }
 
         function goDepts() {
             btDepts.click();
-            showLoading(this);
+            showLoading();
         }
 
         function goDetails() {
             btDetails.click();
-            navLoading(this);
+            showLoading();
         }
 
         function goEdit() {
             btEdit.click();
-            navLoading(this);
+            showLoading();
         }
-
-
-        @*function Loader() {
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("CallingAjaxFunction", "Home")',
-                contentType: "application/json;charset-utf-8",
-                dataType: "json",
-                success: function (result) {
-                },
-                error: function () {
-                }
-            });
-    }*@
 
     function showLoading() {
         event.preventDefault();
@@ -287,13 +267,13 @@
 
     </script>
 
-    <script type="text/javascript">
+    @*<script type="text/javascript">
         function preventBack() {
             window.history.forward();
         }
         setTimeout("preventBack()", 0);
         window.onunload = function () { null };
-    </script>
+    </script>*@
 
 </body>
 </html>
