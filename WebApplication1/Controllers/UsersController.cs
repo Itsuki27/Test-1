@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Helpers;
@@ -34,6 +35,7 @@ namespace WebApplication1.Controllers
             {
                 return RedirectToAction("Login", "Users");
             }
+
             return View(db.Users.ToList());
         }
 
@@ -58,6 +60,8 @@ namespace WebApplication1.Controllers
             {
                 return RedirectToAction("Login", "Users");
             }
+
+            TempData["loading"] = "<script>showLoading()</script>";
 
             return View(user);
         }
@@ -104,26 +108,45 @@ namespace WebApplication1.Controllers
                 // Check if email already exists
                 if (db.Users.Any(x => x.Email == user.Email))
                 {
-                    Response.Write("<script>alert('Email Already Registered')</script>");
+                    ModelState.AddModelError("Email", "Email Already Registered");
                     return View(user);
                 }
 
                 // Check if username already exists
                 if (db.Users.Any(x => x.Username == user.Username))
                 {
-                    Response.Write("<script>alert('Username already exists')</script>");
+                    ModelState.AddModelError("Username", "Username Already Registered");
                     return View(user);
                 }
 
                 // Check for empty fields
                 if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Email) || string.IsNullOrWhiteSpace(user.PasswordHash))
                 {
-                    Response.Write("<script>alert('Empty field/s')</script>");
-                    return View(user);
+                   
+
+                    if (string.IsNullOrEmpty(user.Username))
+                    {
+                        ModelState.AddModelError("Username", "Username field is empty");
+                    }
+                    if (string.IsNullOrEmpty(user.Email))
+                    {
+                        ModelState.AddModelError("Email", "Email field is empty");
+                    }
+                    if (string.IsNullOrEmpty(user.ConfirmPassword))
+                    {
+                        ModelState.AddModelError("ConfirmPassword", "Confirm Password field is empty");
+                    }
+                    if (string.IsNullOrEmpty(user.PasswordHash))
+                    {
+                        ModelState.AddModelError("PasswordHash", "Password field is empty");
+                    }
+                    return View();
                 }
+
                 if (user.PasswordHash.Length < 8 || user.ConfirmPassword.Length < 8)
                 {
-                    Response.Write("<script>alert('Password must be at least 8 characters')</script>");
+                    ModelState.AddModelError("PasswordHash", "Password must be at least 8 characters");
+                    ModelState.AddModelError("ConfirmPassword", "Password must be at least 8 characters");
                     return View(user);
                 }
 
@@ -136,17 +159,14 @@ namespace WebApplication1.Controllers
                 if (user.PasswordHash == user.ConfirmPassword)
                 {
 
-                    //#region Password Hashing
+                    #region Password Hashing
                     user.PasswordHash = Hashing.Hash(user.PasswordHash);
                     user.ConfirmPassword = Hashing.Hash(user.ConfirmPassword);
-                    user.ConfirmPassword = Hashing.Hash(user.ConfirmPassword);
-                    //#endregion
+                    #endregion
 
                     //Add User
                     db.Users.Add(user);
                     db.SaveChanges();
-
-                    Response.Write("<script>alert('Registration Successful')</script>");
 
                     //MAC ADDRESS
                     var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
@@ -184,7 +204,8 @@ namespace WebApplication1.Controllers
                 }
                 else
                 {
-                    Response.Write("<script>alert('Password Does Not Match')</script>");
+                    ModelState.AddModelError("ConfirmPassword", "Password does not match");
+                    
                     return View(user);
                 }
 
@@ -243,26 +264,27 @@ namespace WebApplication1.Controllers
                 // Check if the username is duplicated
                 if (db.Users.Any(x => x.Username == user.Username && x.UserId != user.UserId))
                 {
-                    Response.Write("<script>alert('Username already exists')</script>");
+                    ModelState.AddModelError("Username", "Username is unavailable");
                     return View(user);
                 }
                 // Check if the email is duplicated
                 if (db.Users.Any(x => x.Email == user.Email && x.UserId != user.UserId))
                 {
-                    Response.Write("<script>alert('Email already exists')</script>");
+                    ModelState.AddModelError("Email", "Email is unavailable");
                     return View(user);
                 }
                 // Empty Fields
                 if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email))
                 {
-                    Response.Write("<script>alert('One or more fields are empty. Please fill in all required fields.')</script>");
+                    ModelState.AddModelError("Username", "Username field is empty.");
+                    ModelState.AddModelError("Email", "Email field is empty.");
                     return View(user);
                 }
 
                 // Check if the password is being updated
                 if (user.PasswordHash != user.ConfirmPassword)
                 {
-                    Response.Write("<script>alert('Passwords do not match.')</script>");
+                    ModelState.AddModelError("ConfirmPassword", "Password does not match");
                     return View(user);
                 }
                 else
@@ -273,7 +295,8 @@ namespace WebApplication1.Controllers
                         // Validate the new password
                         if (user.PasswordHash.Length < 8 || user.PasswordHash.Length > 12)
                         {
-                            Response.Write("<script>alert('Password must be between 8 and 12 characters.')</script>");
+                            ModelState.AddModelError("PasswordHash", "Password must be at least 8 characters");
+                            ModelState.AddModelError("ConfirmPassword", "Password must be at least 8 characters");
                             return View(user);
                         }
 
@@ -460,7 +483,15 @@ namespace WebApplication1.Controllers
 
             if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.PasswordHash))
             {
-                Response.Write("<script>alert('One or more fields are empty. Please fill in all required fields.')</script>");
+                if (string.IsNullOrEmpty(user.Username))
+                {
+                    ModelState.AddModelError("Username", "Username field is empty");
+                }
+                if (string.IsNullOrEmpty(user.PasswordHash))
+                {
+                    ModelState.AddModelError("PasswordHash", "Password field is empty");
+                }
+
                 return View();
             }
 

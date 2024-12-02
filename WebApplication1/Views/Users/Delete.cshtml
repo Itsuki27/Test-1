@@ -61,7 +61,9 @@
 </div>
 
 
-<script>var btDelete = document.getElementById("btDelete");
+<script>
+
+    var btDelete = document.getElementById("btDelete");
 
     btDelete.addEventListener('click', function (e) {
         e.preventDefault();
@@ -76,9 +78,16 @@
             confirmButtonText: 'Delete User'
         }).then((result) => {
             if (result.value) {
+                nowLoading();
                 form.submit();
             }
         });
     });
 
-    </script>
+    function nowLoading() {
+        event.preventDefault();
+        $(".loader").removeClass("hidden");
+        return true;
+    }
+
+</script>

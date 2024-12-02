@@ -72,3 +72,17 @@
         @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-outline-primary" })
     </div>
 </div>
+
+
+@*@TempData["loading"];
+
+<script>
+    function showLoading() {
+        event.preventDefault();
+        $(".loader").removeClass("hidden");
+        setTimeout(function () {
+            $("form").submit();
+        }, 1);
+        return true;
+    }
+</script>*@

@@ -67,9 +67,8 @@ namespace WebApplication1.Controllers
 
             if (Duplicate == true)
             {
-                //ModelState.AddModelError("DEPT1", "Department already exists");
-                //ModelState.AddModelError("DEPT1", "Department already exists");
-                Response.Write("<script>alert('Department already exists')</script>");
+             
+                ModelState.AddModelError("DEPT1", "Department already exists");
                 return View(dEPT);
             }
 
@@ -115,7 +114,7 @@ namespace WebApplication1.Controllers
 
             if (Duplicate == true)
             {
-                Response.Write("<script>alert('Department already exists')</script>");
+                ModelState.AddModelError("DEPT1", "Department already exists");
                 return View(dEPT);
             }
 

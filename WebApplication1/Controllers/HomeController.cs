@@ -37,5 +37,11 @@ namespace WebApplication1.Controllers
 
             return View();
         }
+
+        public JsonResult CallingAjaxFunction()
+        {
+            System.Threading.Thread.Sleep(3000);
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
     }
 }

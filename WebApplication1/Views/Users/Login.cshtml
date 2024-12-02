@@ -9,7 +9,7 @@
 {
     @Html.AntiForgeryToken()
 
-
+    <div class="loader hidden"></div>
 
     <div class="form-horizontal d-flex p-4">
         <div class="col-7 d-none d-xl-none d-lg-block p-4">
@@ -45,7 +45,7 @@
 
             <div class="form-group d-flex col-md-12 justify-content-center">
                 <div class="m-auto">
-                    <input type="submit" value="Login" class="btn btn-success mt-4 px-4" id="btLogin" />
+                    <input type="submit" onclick="showLoading()" value="Login" class="btn btn-success mt-4 px-4" id="btLogin" />
                 </div>
             </div>
 
@@ -77,3 +77,14 @@
         @Html.Raw(TempData["UserLogout"])
     }
 }
+
+<script>
+    function showLoading() {
+        event.preventDefault();
+        $(".loader").removeClass("hidden");
+        setTimeout(function () {
+            $("form").submit();
+        }, 1);
+        return true;
+    }
+</script>
