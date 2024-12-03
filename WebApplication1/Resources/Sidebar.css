@@ -176,16 +176,18 @@ body{
     margin: auto;
 }
 
+#ddIcon{
+    margin-left: 35px;
+}
+
 .ddIcon180{
-    transform: rotate(-90deg);
-    transform-origin: center;
-    transition: 200ms ease-in-out;
+    transform: rotateX(180deg);
+    transition: 400ms ease-in-out;
 }
 
 .ddIcon0{
-    transform: rotate(0deg);
-    transform-origin: center;
-    transition: 200ms ease-in-out;
+    transform: rotateX(0deg);
+    transition: 400ms ease-in-out;
 }
 
 /* Audit Log */
