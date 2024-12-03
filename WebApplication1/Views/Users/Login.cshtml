@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <span style="color: red" class="col-md-12 fst-italic fw-bold">@ViewBag.LoginError</span>
+            <span class="text-danger col-md-12">@ViewBag.LoginError</span>
 
             <div class="form-group d-flex col-md-12 justify-content-center">
                 <div class="m-auto">
@@ -75,6 +75,16 @@
     @if (TempData["UserLogout"] != null)
     {
         @Html.Raw(TempData["UserLogout"])
+    }
+
+    @if (TempData["UserReset"] != null)
+    {
+        @Html.Raw(TempData["UserReset"])
+    }
+
+    @if (TempData["UserForgot"] != null)
+    {
+        @Html.Raw(TempData["UserForgot"])
     }
 }
 

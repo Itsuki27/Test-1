@@ -16,30 +16,10 @@
 </head>
 
 <body style="background-color: whitesmoke" class="d-flex flex-column">
-    @*@if (Session["UserId"] == null)
-    {*@
-        @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark py-4 col-12" style="background-color: green">
-                <div class="container ms-2 col-md-11">
-                    <span class="headLogo gap-3 px-4">
-                        <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid mx-auto" style="height: 24px" />
-                        <span>@Html.ActionLink("CRUD APP", "Index", "Users", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold m-0" })</span>
-                    </span>
-                    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse d-sm-inline-flex justify-content-end col-12 d-flex" style="padding-right: 5px;">
-                        <ul class="navbar-nav ms-auto" style="float: right">
-                            <li>@Html.ActionLink("Login", "Login", "Users", new { area = "" }, new { @class = "nav-link mx-3" })</li>
-                            <li style="margin-right: 80px">@Html.ActionLink("Register", "Create", "Users", new { area = "" }, new { @class = "nav-link mx-3" })</li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>*@
 
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark py-4" style="background-color: green; height: 75px">
-            <div class="container ms-2 col-md-11 d-flex flex-row">
-                <div class="col-11">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark py-4" style="background-color: green; height: 90px">
+            <div class="container ms-2 col-md-12 d-flex flex-row">
+                <div class="col-12">
                     <span class="headLogo gap-3 px-4">
                         <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid mx-auto" style="height: 24px" />
                         <span>@Html.ActionLink("CRUD APP", "Index", "Users", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold m-0" })</span>
@@ -65,7 +45,6 @@
 
             </div>
         </nav>
-    @*}*@
 
     @RenderBody()
     <hr />

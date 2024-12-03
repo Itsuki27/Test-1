@@ -4,6 +4,8 @@
     ViewBag.Title = "Delete";
 }
 
+<div id="loader" class="loader"></div>
+
 <div class="form-horizontal d-flex p-5 flex-column">
     <div class="m-auto bg-warning text-center p-3 mb-2 rounded">
         <h4 class="m-0">Are you sure you want to DELETE</h4>
@@ -84,10 +86,8 @@
         });
     });
 
-    function nowLoading() {
-        event.preventDefault();
-        $(".loader").removeClass("hidden");
-        return true;
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+        loader.style.display = "none";
+    });
 
 </script>

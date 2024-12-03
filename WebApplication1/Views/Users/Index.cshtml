@@ -10,6 +10,31 @@
     <h2 class="text-center">User Masterlist</h2>
 
     <hr />
+
+    <div class="d-flex flex-column small">
+        <h6 class="text-center">Table Filters</h6>
+        <div class="filters d-flex flex-row gap-1 col-12 small justify-content-center">
+            <p class="col-2" id="tbUname">USERNAME</p>
+            <p class="col-2" id="tbEmail">EMAIL</p>
+            @*<p class="col-2" id="tbActive">ISACTIVE</p>*@
+            <p class="col-2" id="tbDept">DEPARTMENT</p>
+        </div>
+        <div class="d-flex flex-row gap-3 justify-content-center">
+            <div class="d-flex flex-row datePicker">
+                <p class="my-auto mx-3">From:</p>
+                <input type="text" id="start" name="start" placeholder="MM/DD/YYYY" class="date-range-filter form-control form-control-xs">
+            </div>
+            <div class="d-flex flex-row datePicker">
+                <p class="my-auto mx-3">To:</p>
+                <input type="text" id="end" name="end" placeholder="MM/DD/YYYY" class="date-range-filter form-control form-control-xs">
+            </div>
+            @*<div class="btn btn-outline-primary" id="btClearDates">Clear Dates</div>*@
+        </div>
+        @*<div>
+            <p id="btClearAll" class="btn btn-outline-danger my-auto">Clear All Filters</p>
+        </div>*@
+    </div>
+
     <table id="tblUsers" class="table table-bordered table-striped table-light small">
         <thead>
             <tr>
@@ -18,7 +43,7 @@
                 <th>@Html.DisplayName("EMAIL")</th>
                 <th>@Html.DisplayName("DATE_CREATED")</th>
                 <th>@Html.DisplayName("ISACTIVE")</th>
-                <th>@Html.DisplayName("Department")</th>
+                <th>@Html.DisplayName("DEPARTMENT")</th>
                 <th>@Html.DisplayName("ACTIONS")</th>
             </tr>
         </thead>
@@ -48,14 +73,12 @@
                 <th>@Html.DisplayName("EMAIL")</th>
                 <th>@Html.DisplayName("DATE_CREATED")</th>
                 <th>@Html.DisplayName("ISACTIVE")</th>
+                <th>@Html.DisplayName("DEPARTMENT")</th>
                 <th>@Html.DisplayName("ACTIONS")</th>
             </tr>
         </tfoot>
     </table>
 
-    <p class="mx-auto">
-        @Html.ActionLink("Audit Log", "AuditLog", "MOVEHISTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
-    </p>
 </div>
 
 @section Scripts{
@@ -80,7 +103,8 @@
 @*Table Design and Features Imports*@
 
 <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<link href="https://cdn.datatables.net/datetime/1.5.4/css/dataTables.dateTime.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 
 @*Excel Export*@
@@ -90,18 +114,74 @@
 @*PDF Export*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
 
 @*Export Button Features*@
 
 <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+<link href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.min.css" />
 <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
-@*Alerts*@
+@*Search Panes*@
+<script src="https://cdn.datatables.net/searchpanes/2.3.3/js/dataTables.searchPanes.js"></script>
+<script src="https://cdn.datatables.net/searchpanes/2.3.3/js/searchPanes.dataTables.js"></script>
+
+@*Select Data Tables*@
+<script src="https://cdn.datatables.net/select/2.1.0/js/dataTables.select.js"></script>
+<script src="https://cdn.datatables.net/select/2.1.0/js/select.dataTables.js"></script>
+
+@*Date Picker*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.4/js/dataTables.dateTime.min.js"></script>
+
+<!-- Alerts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script nonce="myScript">
+
+    var tbUname = document.getElementById('tbUname');
+    var tbEmail = document.getElementById('tbEmail');
+    var tbActive = document.getElementById('tbActive');
+    var tbDept = document.getElementById('tbDept');
+
+    $("[type='text']").keypress(function (e) {
+        e.preventDefault();
+    });
+
     $(document).ready(function () {
-        new DataTable('#tblUsers', {
+
+        let startDate, endDate;
+
+        DataTable.ext.search.push(function (settings, data, dataIndex) {
+            let start = startDate.val();
+            let end = endDate.val();
+            let date = new Date(data[3]);
+
+            start = start ? new Date(start).setHours(0, 0, 0, 0) : null;
+            end = end ? new Date(end).setHours(23, 59, 59, 999) : null;
+
+            if (
+                (start === null && end === null) ||
+                (start === null && date <= end) ||
+                (start <= date && end === null) ||
+                (start <= date && date <= end)
+            ) {
+                return true;
+            }
+            return false;
+
+        });
+
+        startDate = new DateTime('#start', {
+            format: 'MM/DD/YYYY'
+        });
+
+        endDate = new DateTime('#end', {
+            format: 'MM/DD/YYYY'
+        });
+
+        var table = new DataTable('#tblUsers', {
             layout: {
                 top: 'pageLength',
                 topStart: {
@@ -112,7 +192,102 @@
 
                     ],
                 },
+            },
+
+            initComplete: function () {
+                //Username Input Filter
+                this.api()
+                    .columns([1])
+                    .every(function () {
+                        var column = this;
+
+                        // Create input element
+                        var input = document.createElement('input');
+                        input.placeholder = "SEARCH BY USERNAME";
+                        input.setAttribute("class", "form-control form-control-sm h-25");
+                        tbUname.replaceWith(input);
+
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });
+                    });
+
+                //Email Input Filter
+                this.api()
+                    .columns([2])
+                    .every(function () {
+                        var column = this;
+
+                        // Create input element
+                        var input = document.createElement('input');
+                        input.placeholder = "SEARCH BY USERNAME";
+                        input.setAttribute("class", "form-control form-control-sm h-25");
+                        tbEmail.replaceWith(input);
+
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });
+                    });
+
+                //IsActive Dropdown Filter
+                this.api()
+                    .columns([4])
+                    .every(function () {
+                        var column = this;
+
+                        var select = $('<select class="form-control form-control-sm"><option value="">--SELECT ACTIVITY STATUS WIP--</option></select>')
+                            .appendTo($('#tbActive').empty())
+                            .on('change', function () {
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            var val = $('<div/>').html(d).text();
+                            select.append('<option value="' + val + '">' + val + '</option>');
+                        });
+                    });
+
+                //Department Dropdown Filter
+                this.api()
+                    .columns([5])
+                    .every(function () {
+                        var column = this;
+
+                        var select = $('<select class="form-control form-control-sm" placeholder="--SELECT DEPARTMENT--"></select>')
+                            .appendTo($('#tbDept').empty())
+                            .on('change', function () {
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            var val = $('<div/>').html(d).text();
+                            select.append('<option value="' + val + '">' + val + '</option>');
+                        });
+                    });
             }
+
+        });
+
+        document.querySelectorAll('#start, #end').forEach((element) => {
+            element.addEventListener('change', () => table.draw());
         });
 
     });
@@ -122,4 +297,33 @@
     document.addEventListener("DOMContentLoaded", function () {
         loader.style.display = "none";
     });
+
+    //function clearDates() {
+    //    var table = new DataTable('#tblUsers');
+    //    document.getElementById("start").value = null;
+    //    document.getElementById("end").value = null;
+    //    start.value = null;
+    //    end.value = null;
+
+    //    table.search('');
+    //    table.columns().search('').draw();
+    //};
+
+    //function clearFilters() {
+    //    tbUname.value = null;
+
+    //    $('thead select').val('');
+    //}
+
+    $('#btClearAll').on('click', function () {
+
+    })
 </script>
+
+@*<script type="text/javascript">
+    function preventBack() {
+        window.history.forward();
+    }
+    setTimeout("preventBack()", 0);
+    window.onunload = function () { null };
+</script>*@

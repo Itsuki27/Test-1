@@ -9,6 +9,8 @@
 {
     @Html.AntiForgeryToken()
 
+    <div class="loader hidden"></div>
+
     <div class="form-horizontal d-flex p-4">
         <div class="col-7 d-none d-xl-none d-lg-block p-4">
             <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3 h-100 ">
@@ -82,5 +84,14 @@
 
     let response = @TempData["message"];
     let btCreate = document.getElementById("btCreate");
+
+    function showLoading() {
+        event.preventDefault();
+        $(".loader").removeClass("hidden");
+        setTimeout(function () {
+            $("form").submit();
+        }, 1);
+        return true;
+    }
 
 </script>

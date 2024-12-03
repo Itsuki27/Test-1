@@ -10,7 +10,7 @@
 
     <div id="loader" class="loader"></div>
 
-    <div class="form-horizontal d-flex p-4">
+    <div class="form-horizontal d-flex px-4">
         <div class="col-7 d-none d-xl-none d-lg-block p-4">
             <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3 h-100 ">
         </div>
@@ -75,9 +75,9 @@
                         <label for="Department">Department</label>
                         <div class="col-md-12 mb-1 px-6">
                             @Html.DropDownListFor(model => model.DEPT_ID,
-                                     (IEnumerable<SelectListItem>)ViewBag.DropUser,
-                                     "--Select Department--",
-                                     new { @class = "form-control" })
+                                          (IEnumerable<SelectListItem>)ViewBag.DropUser,
+                                          "--Select Department--",
+                                          new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.DEPT_ID, "", new { @class = "text-danger" })
 
                         </div>
@@ -86,15 +86,15 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <div class="d-flex col-md-12 justify-content-center">
+            <div class="form-group d-flex flex-column text-center">
+                <div class="col-md-12 justify-content-center">
                     <input type="submit" value="Save Changes" class="btn btn-success my-2" />
+                </div>
+                <div class="col-md-12 justify-content-center">
+                    @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-outline-primary" })
                 </div>
             </div>
 
-            <div class="text-center">
-                @Html.ActionLink("Back to List", "Index")
-            </div>
         </div>
     </div>
 }

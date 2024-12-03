@@ -4,8 +4,6 @@
     ViewBag.Title = "Details";
 }
 
-@*<h2>Details</h2>*@
-
 <div class="form-horizontal d-flex p-4">
     <div class="col-7 d-none d-xl-none d-lg-block p-4">
         <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3 h-100 ">
@@ -50,12 +48,15 @@
                 @Html.DisplayFor(model => model.DEPT_FLOOR)
             </dd>
         </dl>
-        <p>
-            @Html.ActionLink("Edit", "Edit", new { id = Model.DEPT_ID }, new { @class = "btn btn-outline-success px-4" }) |
-            @Html.ActionLink("Back to List", "Index", "DEPTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
-        </p>
+
+        <div class="form-group d-flex flex-column text-center">
+            <div class="col-md-12 justify-content-center">
+                @Html.ActionLink("Go to Edit", "Edit", new { id = Model.DEPT_ID }, new { @class = "btn btn-success my-2" })
+            </div>
+            <div class="col-md-12 justify-content-center">
+                @Html.ActionLink("Back to List", "Index", "DEPTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
+            </div>
+        </div>
+
     </div>
 </div>
-
-
-

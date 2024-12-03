@@ -15,7 +15,6 @@
 
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    @Scripts.Render("~/bundles/localjs")
 </head>
 
 <body style="background-color: whitesmoke">
@@ -23,15 +22,11 @@
     {
         <nav id="sidebar" class="sidebar-full">
             <ul>
-                <li>
-                    <span class="logo logoNone gap-3">
-                        <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid m-0" style="height: 24px" />
-                        <span class="navbar-brand font-monospace fw-bold m-0">CRUD APP</span>
-                        @*<span>@Html.ActionLink("CRUD APP", "Index", "Home", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold m-0" })</span>*@
+                <li onclick="refresh()" id="icon-btn" class="logoRefresh mt-2">
+                    <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid m-0" style="height: 24px; width: 21px" />
+                    <span class="logo logoNone px-0">
+                        <span class="navbar-brand font-monospace fw-bold m-0 ">CRUD APP</span>
                     </span>
-                    <button onclick="toggleSideBar()" id="toggle-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" /></svg>
-                    </button>
                 </li>
                 <li class="active">
                     <a href="#" class="text-decoration-none nav-link text-light">
@@ -91,19 +86,16 @@
         </nav>
 
         <div class="d-flex flex-column">
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark d-flex py-4" style="background-color: green; height: 75px">
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark d-flex py-4" style="background-color: green; height: 90px">
                 <div class="container ms-2 col-md-11 d-flex flex-row">
                     <div>
-                        <span class="headLogoNone gap-3">
-                            <img alt="Icon" src="@Url.Content("~/Resources/imgLaptop.png")" class="img-fluid mx-auto" style="height: 24px" />
-                            <span>@Html.ActionLink("CRUD APP", "Index", "Users", new { area = "" }, new { @class = "navbar-brand font-monospace fw-bold mx-3" })</span>
-                        </span>
+                        <button onclick="toggleSideBar()" id="toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" /></svg>
+                        </button>
                     </div>
-                    <div class="collapse navbar-collapse d-sm-inline-flex flex-row-reverse col-11 d-flex">
-                        <ul class="navbar-nav">
-                            <li class="my-auto mx-2 text-light">Welcome, <b>@Session["Username"].ToString()</b>!</li>
+                    <div class="collapse navbar-collapse d-sm-inline-flex flex-row justify-content-end col-12 d-flex">
+                            <div class="my-auto mx-2 text-light">Welcome, <b>@Session["Username"].ToString()</b>!</div>
                             @Html.ActionLink("Logout", "Logout", "Users", new { area = "" }, new { @class = "nav-link mx-4 d-none hideLogout" })
-                        </ul>
                     </div>
                 </div>
             </nav>
@@ -132,7 +124,6 @@
         const toggleBtn = document.querySelector('#toggle-btn')
         const sideBar = document.querySelector('#sidebar')
         const logo = document.querySelector('.logo')
-        const headLogo = document.querySelector(".headLogoNone")
 
         const btLogout = document.querySelector('.btLogout')
         const hideLogout = document.querySelector('.hideLogout')
@@ -144,6 +135,7 @@
         const btEdit = document.querySelector('.btEdit')
 
         var shown = false;
+        var clicked = true;
         var sideShown = true;
         var deg0 = true;
 
@@ -151,64 +143,60 @@
 
         if (shown == false) {
             window.onload = function () {
-                subMenu.setAttribute("class", "disappear");
+                subMenu.setAttribute('class', 'disappear');
             }
         }
 
 
         function toggleSub() {
             if (shown == true) {
-                subMenu.setAttribute("class", "disappear");
-                //ddIcon.setAttribute("class", "rotate");
+                subMenu.setAttribute('class', 'disappear');
+                //ddIcon.setAttribute('class', 'rotate');
                 shown = false;
-                ddIcon.removeAttribute("class", "ddIcon180");
-                ddIcon.setAttribute("class", "ddIcon0");
+                ddIcon.removeAttribute('class', 'ddIcon180');
+                ddIcon.setAttribute('class', 'ddIcon0');
 
                 sideShown = false;
                 toggleSideBar();
             } else {
-                subMenu.setAttribute("class", "show");
-                //ddIcon.setAttribute("class", "revert");
+                subMenu.setAttribute('class', 'show');
+                //ddIcon.setAttribute('class', 'revert');
                 shown = true;
-                ddIcon.removeAttribute("class", "ddIcon0");
-                ddIcon.setAttribute("class", "ddIcon180");
+                ddIcon.removeAttribute('class', 'ddIcon0');
+                ddIcon.setAttribute('class', 'ddIcon180');
 
                 sideShown = false;
                 toggleSideBar();
             }
 
         }
-
-        function ddRotate() {
-
-        }
-
 
         function toggleSideBar() {
             if (sideShown == true) {
+
                 sideShown = false;
-                sideBar.removeAttribute("class", "sidebar-full")
-                logo.setAttribute("class", "logoNone")
-                sideBar.setAttribute("class", "sidebar-small")
-                headLogo.setAttribute("class", "headLogo")
+                logo.setAttribute('class', 'logoNone');
+                sideBar.setAttribute('class', 'sidebar-small');
+
             } else {
                 sideShown = true;
-                sideBar.removeAttribute("class", "sidebar-small")
-                logo.setAttribute("class", "logo")
-                sideBar.setAttribute("class", "sidebar-full")
-                headLogo.setAttribute("class", "headLogoNone")
+                logo.setAttribute('class', 'logo');
+                sideBar.setAttribute('class', 'sidebar-full');
             }
         }
 
-        //sideBar.addEventListener('mouseover', function () {
-        //    sideShown = false;
-        //    toggleSideBar();
-        //});
+        sideBar.addEventListener('mouseover', function () {
+            sideShown = false;
+            toggleSideBar();
+        });
 
-        //sideBar.addEventListener('mouseout', function () {
-        //    sideShown = true;
-        //    toggleSideBar();
-        //});
+        //if (clicked == false) {
+        //    sideBar.addEventListener('mouseout', function () {
+        //        sideShown = true;
+        //        toggleSideBar();
+        //    });
+        //}
+
 
         btLogout.addEventListener('click', function (e) {
             e.preventDefault();
@@ -261,11 +249,11 @@
         return true;
         }
 
-    function navLoading() {
-        event.preventDefault();
-        $(".loader").removeClass("hidden");
-        return true;
-    }
+    //function navLoading() {
+    //    event.preventDefault();
+    //    $(".loader").removeClass("hidden");
+    //    return true;
+    //}
 
     </script>
 
@@ -281,3 +269,9 @@
 </html>
 
 <script src="~/Content/Loader.js"></script>
+
+<script>
+    function refresh() {
+        window.location.reload()
+    };
+</script>

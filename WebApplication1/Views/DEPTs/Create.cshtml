@@ -11,6 +11,8 @@
 {
     @Html.AntiForgeryToken()
 
+    <div id="loader" class="loader"></div>
+
     <div class="form-horizontal d-flex p-4">
         <div class="col-7 d-none d-xl-none d-lg-block p-4">
             <img src="~/Resources/imgHandshake.jpg" alt="Image" class="img-fluid rounded-3 h-100 ">
@@ -25,7 +27,7 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
                 @Html.LabelFor(model => model.DEPT1, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
+                <div class="col-md-12 mb-2">
                     @Html.EditorFor(model => model.DEPT1, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.DEPT1, "", new { @class = "text-danger" })
                 </div>
@@ -34,15 +36,14 @@
                 @*@Html.LabelFor(model => model.DEPT_DESC, htmlAttributes: new { @class = "control-label col-md-2" })*@
 
                 <label for="DEPT_DESC">Department Description</label>
-                <div class="col-md-10">
+                <div class="col-md-12 mb-2">
                     @Html.EditorFor(model => model.DEPT_DESC, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.DEPT_DESC, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
-                @*@Html.LabelFor(model => model.DEPT_BLDG, htmlAttributes: new { @class = "control-label col-md-2" })*@
                 <label for="DEPT_BLDG">Department Building</label>
-                <div class="col-md-10">
+                <div class="col-md-12 mb-2">
                     @Html.EditorFor(model => model.DEPT_BLDG, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.DEPT_BLDG, "", new { @class = "text-danger" })
                 </div>
@@ -50,25 +51,28 @@
             <div class="form-group">
                 @*@Html.LabelFor(model => model.DEPT_FLOOR, htmlAttributes: new { @class = "control-label col-md-2" })*@
                 <label for="DEPT_FLOOR">Department Floor</label>
-                <div class="col-md-10">
+                <div class="col-md-12 mb-2">
                     @Html.EditorFor(model => model.DEPT_FLOOR, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.DEPT_FLOOR, "", new { @class = "text-danger" })
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10 m-3 justify-content-center">
-                    <input type="submit" value="Create" class="btn btn-outline-success px-4 mx-3 p-2" />
-                    @Html.ActionLink("List-Department", "Index", "DEPTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
+            <div class="form-group d-flex flex-column text-center">
+                <div class="col-md-12 justify-content-center">
+                    <input type="submit" value="Submit" class="btn btn-success my-2 px-4" />
                 </div>
-                <!--<p class="mx-auto">-->
-                @*@Html.ActionLink("Deparment", "Index", "DEPTs", new { area = "" }, new { @class = "btn btn-outline-danger" })*@
-                <!--</p>-->
+                <div class="col-md-12 justify-content-center">
+                    @Html.ActionLink("Back to List", "Index", "DEPTs", new { area = "" }, new { @class = "btn btn-outline-primary" })
+                </div>
             </div>
         </div>
     </div>
 }
 
-
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loader.style.display = "none";
+    });
+</script>
 
 
 

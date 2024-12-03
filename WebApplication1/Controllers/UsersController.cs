@@ -47,21 +47,19 @@ namespace WebApplication1.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View("Error");
             }
 
             User user = db.Users.Find(id);
             if (user == null)
             {
-                return HttpNotFound();
+                return View("Error");
             }
 
             if (Session["Username"] == null)
             {
                 return RedirectToAction("Login", "Users");
             }
-
-            TempData["loading"] = "<script>showLoading()</script>";
 
             return View(user);
         }
@@ -562,7 +560,6 @@ namespace WebApplication1.Controllers
 
         {
 
-            string message = "";
 
             var account = db.Users.FirstOrDefault(a => a.Email == Email);
 
@@ -570,9 +567,12 @@ namespace WebApplication1.Controllers
             {
                 string resetCode = Guid.NewGuid().ToString();
                 SendVeficationLink(account.Email, resetCode, "ResetPassword");
+                account.ResetPasswordExpiry = DateTime.Now.AddSeconds(30);
                 account.ResetPasswordCode = resetCode;
                 db.SaveChanges();
-                message = "Password reset link sent successfully.";
+
+                TempData["UserForgot"] = "<script>Swal.fire({icon: 'success', title: 'Password Reset Link Sent!'});</script>";
+
                 var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
                                where nic.OperationalStatus == OperationalStatus.Up
                                select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
@@ -604,19 +604,17 @@ namespace WebApplication1.Controllers
 
                 //End Audit
 
+                return RedirectToAction("Login", "Users");
+
             }
 
             else
 
             {
+                TempData["UserForgotErr"] = "<script>Swal.fire({icon: 'error', title: 'Account not found!'});</script>";
 
-                message = "Account not found.";
-
+                return View();
             }
-
-            ViewBag.Message = message;
-
-            return View();
 
         }
 
@@ -629,8 +627,15 @@ namespace WebApplication1.Controllers
 
             if (query != null)
             {
-                ResetPassword model = new ResetPassword { ResetCode = id };
-                return View(model);
+                if (query.ResetPasswordExpiry.HasValue && query.ResetPasswordExpiry.Value > DateTime.Now)
+                {
+                    ResetPassword model = new ResetPassword { ResetCode = id };
+                    return View(model);
+                }
+                else
+                {
+                    return View("LinkExpired");
+                }
             }
 
             return HttpNotFound();
@@ -650,28 +655,47 @@ namespace WebApplication1.Controllers
 
                 if (user != null)
                 {
-                    user.PasswordHash = Hashing.Hash(model.PasswordHash);
-                    user.ResetPasswordCode = "";
-                    db.Configuration.ValidateOnSaveEnabled = false;
-                    db.SaveChanges();
-                    Response.Write("<script>alert('New password updated successfully')</script>");
-                    //message = "New password updated successfully.";
+                    if (user.ResetPasswordExpiry.HasValue && user.ResetPasswordExpiry.Value > DateTime.Now)
+                    {
+                        user.PasswordHash = Hashing.Hash(model.PasswordHash);
+                        user.ResetPasswordExpiry = null;
+                        user.ResetPasswordCode = "";
+                        db.Configuration.ValidateOnSaveEnabled = false;
+                        db.SaveChanges();
+                        
+                    }
+                    else
+                    {
+                        message = "Reset Link Expired";
+                        return View(model);
+                    }
                 }
                 else
                 {
                     message = "Invalid reset link.";
+                    return View("LinkExpired");
                 }
             }
             else
             {
                 message = "Invalid data.";
+                return View("Error");
             }
 
+
             ViewBag.Message = message;
-            return View(model);
+
+            TempData["UserReset"] = "<script>Swal.fire({icon: 'success', title: 'Reset Password Success!'});</script>";
+
+            //Redirect to Login
+            return RedirectToAction("Login", "Users");
+            //return View(model);
         }
 
-
+        public ActionResult LinkExpired()
+        {
+            return View();
+        }
 
         public ActionResult Logout([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword,DEPT_ID,DEPT1")] User user)
         {

@@ -70,8 +70,17 @@
 
         </dl>
 
-        @Html.ActionLink("Edit", "Edit", new { id = Model.UserId }, new { @class = "btn btn-outline-success px-4" })
-        @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-outline-primary" })
+        <div class="form-group d-flex flex-column text-center">
+            <div class="col-md-12 justify-content-center">
+                @Html.ActionLink("Go to Edit", "Edit", new { id = Model.UserId }, new { @class = "btn btn-success my-2" })
+            </div>
+            <div class="col-md-12 justify-content-center">
+                @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-outline-primary" })
+            </div>
+        </div>
+
+        @*@Html.ActionLink("Edit", "Edit", new { id = Model.UserId }, new { @class = "btn btn-outline-success px-4" })
+        @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-outline-primary" })*@
     </div>
 </div>
 

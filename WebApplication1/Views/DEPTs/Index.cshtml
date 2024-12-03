@@ -9,9 +9,26 @@
 <div class="form-horizontal d-flex flex-column p-5">
     <h2 class="text-center">Department List</h2>
 
+    <hr />
+
+    <div class="d-flex flex-column small">
+        <h6 class="text-center">Table Filters</h6>
+        <div class="filters d-flex flex-row gap-1 col-12 small justify-content-center">
+            <p class="col-2" id="tbDept">DEPARTMENT</p>
+            <p class="col-2" id="tbDesc">DESCRIPTION</p>
+            <p class="col-2" id="tbBldg">BUILDING</p>
+            <p class="col-2" id="tbFlr">FLOOR</p>
+        </div>
+
+        @*<div>
+                <p id="btClearAll" class="btn btn-outline-danger my-auto">Clear All Filters</p>
+            </div>*@
+    </div>
+
     <table table id="tblDepts" class="table table-bordered table-striped table-light small">
         <thead>
             <tr>
+                <th>@Html.DisplayName("ID")</th>
                 <th>@Html.DisplayName("DEPARTMENT")</th>
                 <th>@Html.DisplayName("DEPARTMENT DESCRIPTION")</th>
                 <th>@Html.DisplayName("DEPARTMENT BUILDING")</th>
@@ -23,6 +40,9 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DEPT_ID)
+                    </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.DEPT1)
                     </td>
@@ -43,30 +63,44 @@
                 </tr>
             }
         </tbody>
-        @*<tfoot>
-                <tr>
-                    <th>@Html.DisplayName("DEPARTMENT")</th>
-                    <th>@Html.DisplayName("DEPARTMENT DESCRIPTION")</th>
-                    <th>@Html.DisplayName("DEPARTMENT BUILDING")</th>
-                    <th>@Html.DisplayName("DEPARTMENT FLOOR")</th>
-                    <th>@Html.DisplayName("ACTIONS")</th>
-                </tr>
-            </tfoot>*@
+        <tfoot>
+            <tr>
+                <th>@Html.DisplayName("ID")</th>
+                <th>@Html.DisplayName("DEPARTMENT")</th>
+                <th>@Html.DisplayName("DEPARTMENT DESCRIPTION")</th>
+                <th>@Html.DisplayName("DEPARTMENT BUILDING")</th>
+                <th>@Html.DisplayName("DEPARTMENT FLOOR")</th>
+                <th>@Html.DisplayName("ACTIONS")</th>
+            </tr>
+        </tfoot>
 
 
     </table>
 
     <p class="mx-auto">
-        @Html.ActionLink("Back to Userlist", "Index", "Users", new { area = "" }, new { @class = "btn btn-outline-primary" })
-        @Html.ActionLink("Create Department", "Create", "DEPTs", new { area = "" }, new { @class = "btn btn-outline-danger" })
+        @Html.ActionLink("Create Department", "Create", "DEPTs", new { area = "" }, new { @class = "btn btn-primary" })
     </p>
 </div>
 
+@section Scripts{
+
+    @if (TempData["DeptEdit"] != null)
+    {
+        @Html.Raw(TempData["DeptEdit"])
+    }
+
+    @if (TempData["DeptDelete"] != null)
+    {
+        @Html.Raw(TempData["DeptDelete"])
+    }
+
+}
 
 @*Table Design and Features Imports*@
 
 <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<link href="https://cdn.datatables.net/datetime/1.5.4/css/dataTables.dateTime.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 
 @*Excel Export*@
@@ -76,20 +110,39 @@
 @*PDF Export*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
 
 @*Export Button Features*@
 
 <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+<link href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.min.css" />
 <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
-@*Alerts*@
+@*Search Panes*@
+<script src="https://cdn.datatables.net/searchpanes/2.3.3/js/dataTables.searchPanes.js"></script>
+<script src="https://cdn.datatables.net/searchpanes/2.3.3/js/searchPanes.dataTables.js"></script>
+
+@*Select Data Tables*@
+<script src="https://cdn.datatables.net/select/2.1.0/js/dataTables.select.js"></script>
+<script src="https://cdn.datatables.net/select/2.1.0/js/select.dataTables.js"></script>
+
+@*Date Picker*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.4/js/dataTables.dateTime.min.js"></script>
+
+<!-- Alerts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script nonce="myScript">
 
+    let tbDept = document.getElementById('tbDept');
+    let tbDesc = document.getElementById('tbDesc');
+    let tbBldg = document.getElementById('tbBldg');
+    let tbFlr = document.getElementById('tbFlr');
 
     $(document).ready(function () {
-        new DataTable('#tblDepts', {
+        var table = new DataTable('#tblDepts', {
             layout: {
                 top: 'pageLength',
                 topStart: {
@@ -100,6 +153,96 @@
 
                     ],
                 },
+            },
+
+            initComplete: function () {
+                //Department Name Input Filter
+                this.api()
+                    .columns([1])
+                    .every(function () {
+                        var column = this;
+
+                        // Create input element
+                        var input = document.createElement('input');
+                        input.placeholder = "SEARCH BY NAME";
+                        input.setAttribute("class", "form-control form-control-sm h-25");
+                        tbDept.replaceWith(input);
+
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });
+                    });
+
+                //Department Description Input Filter
+                this.api()
+                    .columns([2])
+                    .every(function () {
+                        var column = this;
+
+                        // Create input element
+                        var input = document.createElement('input');
+                        input.placeholder = "SEARCH BY DESCRIPTION";
+                        input.setAttribute("class", "form-control form-control-sm h-25");
+                        tbDesc.replaceWith(input);
+
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });
+                    });
+
+                //Department Building Dropdown Filter
+                this.api()
+                    .columns([3])
+                    .every(function () {
+                        var column = this;
+
+                        var select = $('<select class="form-control form-control-sm"><option value="">--SELECT BUILDING--</option></select>')
+                            .appendTo($('#tbBldg').empty())
+                            .on('change', function () {
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            var val = $('<div/>').html(d).text();
+                            select.append('<option value="' + val + '">' + val + '</option>');
+                        });
+                    });
+
+                //Department Floor Dropdown Filter
+                this.api()
+                    .columns([4])
+                    .every(function () {
+                        var column = this;
+
+                        var select = $('<select class="form-control form-control-sm"><option value="">--SELECT FLOOR--</option></select>')
+                            .appendTo($('#tbFlr').empty())
+                            .on('change', function () {
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            var val = $('<div/>').html(d).text();
+                            select.append('<option value="' + val + '">' + val + '</option>');
+                        });
+                    });
             }
         });
 

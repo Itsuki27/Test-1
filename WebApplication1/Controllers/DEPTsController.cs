@@ -76,6 +76,8 @@ namespace WebApplication1.Controllers
             {
                 db.DEPTS.Add(dEPT);
                 db.SaveChanges();
+
+                TempData["DeptCreate"] = "<script>Swal.fire({icon: 'success', title: 'Department Creation Success!'});</script>";
                 return RedirectToAction("Index");
             }
 
@@ -122,6 +124,8 @@ namespace WebApplication1.Controllers
             {
                 db.Entry(dEPT).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
+
+                TempData["DeptEdit"] = "<script>Swal.fire({icon: 'success', title: 'Department Updated!'});</script>";
                 return RedirectToAction("Index", "DEPTs");
             }
 
@@ -156,6 +160,9 @@ namespace WebApplication1.Controllers
             DEPT dEPT = db.DEPTS.Find(id);
             db.DEPTS.Remove(dEPT);
             db.SaveChanges();
+
+            TempData["DeptDelete"] = "<script>Swal.fire({icon: 'success', title: 'Department Deleted!'});</script>";
+
             return RedirectToAction("Index");
         }
 

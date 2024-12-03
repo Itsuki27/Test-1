@@ -68,8 +68,8 @@ body{
 }
 
 #sidebar > ul > li:first-child{
-    display: flex;
-    justify-content: flex-end;
+    display: inline-flex;
+    /* justify-content: flex-end; */
     margin-bottom: 16px;
 }
 
@@ -91,7 +91,6 @@ body{
 
 #sidebar .logo{
     border-radius: .5em;
-    padding-left: .85em;
     text-decoration: none;
     color: var(--text-clr);
     display: flex;
@@ -99,6 +98,18 @@ body{
     gap: 1em;
 
     transition: 300ms ease-in-out;
+}
+
+.logoRefresh{
+    width: 100%;
+    justify-content: start;
+    align-items: start;
+    gap: 18px;
+}
+
+.logoRefresh:hover{
+    background-color: var(--hover-clr);
+    border-radius: 10px 10px 0px 0px;
 }
 
 .dropdown-btn{
@@ -157,6 +168,14 @@ body{
     border: none;
     border-radius: .5em;
     background: none;
+    cursor: pointer;
+}
+
+#icon-btn{
+    margin-top: 0;
+    margin-left: auto;
+    padding: 1em;
+    border: none;
     cursor: pointer;
 }
 

@@ -11,7 +11,7 @@ namespace WebApplication1.Models
 {
     using System;
     using System.Collections.Generic;
-    
+
     public partial class User
     {
         public int UserId { get; set; }
@@ -20,9 +20,12 @@ namespace WebApplication1.Models
         public string ConfirmPassword { get; set; }
         public string Email { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; } = DateTime.Now;
-        public Nullable<bool> IsActive { get; set; } = true; public string ResetPasswordCode { get; set; }
-        public Nullable<int> DEPT_ID { get; set; }
-    
+        public Nullable<bool> IsActive { get; set; } = true;
+        public string ResetPasswordCode { get; set; }
+        public Nullable<int> DEPT_ID { get; set; } = 1;
+
+        public DateTime? ResetPasswordExpiry { get; set; }
+
         public virtual DEPT DEPT { get; set; }
     }
 }
