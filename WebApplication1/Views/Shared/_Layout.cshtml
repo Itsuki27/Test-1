@@ -74,7 +74,7 @@
                             <span class="navbar-brand font-monospace fw-bold m-0 ">CRUD APP</span>
                         </span>
                     </li>
-                    <li class="active">
+                    <li class="active" onclick="goDash()">
                         <a href="#" class="text-decoration-none nav-link text-light">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" /></svg>
                             <span>DASHBOARD</span>
@@ -121,6 +121,7 @@
 
                 </ul>
 
+                @Html.ActionLink("DASHBOARD", "Dashboard", "Users", new { area = "" }, new { @class = "d-none btDash" })
                 @Html.ActionLink("USERS LIST", "Index", "Users", new { area = "" }, new { @class = "d-none btUsers" })
                 @Html.ActionLink("AUDIT LOG", "AuditLog", "MOVEHISTs", new { area = "" }, new { @class = "d-none btAudit" })
                 @Html.ActionLink("REPORTS", "Reports", "Users", new { area = "" }, new { @class = "d-none btReports" })
@@ -172,6 +173,7 @@
 
             const btLogout = document.querySelector('.btLogout')
             const hideLogout = document.querySelector('.hideLogout')
+            const btDash = document.querySelector('.btDash')
             const btUsers = document.querySelector('.btUsers')
             const btAudit = document.querySelector('.btAudit')
             const btReports = document.querySelector('.btReports')
@@ -180,72 +182,72 @@
             const btEdit = document.querySelector('.btEdit')
 
             var shown = false;
-            var clicked = true;
-            var sideShown = true;
-            var deg0 = true;
+                var clicked = true;
+                var sideShown = true;
+                var deg0 = true;
 
-            const ddIcon = document.querySelector('#ddIcon');
+                const ddIcon = document.querySelector('#ddIcon');
 
-            if (shown == false) {
-                window.onload = function () {
-                    subMenu.setAttribute('class', 'disappear');
+                if (shown == false) {
+                    window.onload = function () {
+                        subMenu.setAttribute('class', 'disappear');
+                    }
                 }
-            }
 
 
-            function toggleSub() {
-                if (shown == true) {
-                    subMenu.setAttribute('class', 'disappear');
-                    shown = false;
-                    ddIcon.removeAttribute('class', 'ddIcon180');
-                    ddIcon.setAttribute('class', 'ddIcon0');
+                function toggleSub() {
+                    if (shown == true) {
+                        subMenu.setAttribute('class', 'disappear');
+                        shown = false;
+                        ddIcon.removeAttribute('class', 'ddIcon180');
+                        ddIcon.setAttribute('class', 'ddIcon0');
 
+                        sideShown = false;
+                        toggleSideBar();
+                    } else {
+                        subMenu.setAttribute('class', 'show');
+                        shown = true;
+                        ddIcon.removeAttribute('class', 'ddIcon0');
+                        ddIcon.setAttribute('class', 'ddIcon180');
+
+                        sideShown = false;
+                        toggleSideBar();
+                    }
+
+                }
+
+                function toggleSideBar() {
+                    if (sideShown == true) {
+
+                        sideShown = false;
+                        logo.setAttribute('class', 'logoNone');
+                        sideBar.setAttribute('class', 'sidebar-small');
+
+                    } else {
+                        sideShown = true;
+                        logo.setAttribute('class', 'logo');
+                        sideBar.setAttribute('class', 'sidebar-full');
+                    }
+                }
+
+                sideBar.addEventListener('mouseover', function () {
                     sideShown = false;
                     toggleSideBar();
-                } else {
-                    subMenu.setAttribute('class', 'show');
-                    shown = true;
-                    ddIcon.removeAttribute('class', 'ddIcon0');
-                    ddIcon.setAttribute('class', 'ddIcon180');
+                });
 
-                    sideShown = false;
-                    toggleSideBar();
-                }
-
-            }
-
-            function toggleSideBar() {
-                if (sideShown == true) {
-
-                    sideShown = false;
-                    logo.setAttribute('class', 'logoNone');
-                    sideBar.setAttribute('class', 'sidebar-small');
-
-                } else {
-                    sideShown = true;
-                    logo.setAttribute('class', 'logo');
-                    sideBar.setAttribute('class', 'sidebar-full');
-                }
-            }
-
-            sideBar.addEventListener('mouseover', function () {
-                sideShown = false;
-                toggleSideBar();
-            });
-
-            //if (clicked == false) {
-            //    sideBar.addEventListener('mouseout', function () {
-            //        sideShown = true;
-            //        toggleSideBar();
-            //    });
-            //}
+                //if (clicked == false) {
+                //    sideBar.addEventListener('mouseout', function () {
+                //        sideShown = true;
+                //        toggleSideBar();
+                //    });
+                //}
 
 
-            btLogout.addEventListener('click', function (e) {
-                e.preventDefault();
-                var form = $(this).parents('form');
-                Swal.fire({
-                    icon: 'question',
+                btLogout.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var form = $(this).parents('form');
+                    Swal.fire({
+icon: 'question',
                     title: 'Log out?',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -256,41 +258,46 @@
                         hideLogout.click();
                     }
                 });
-            })
+                })
 
-            function goUsers() {
-                btUsers.click();
-                showLoading();
-            }
+            function goDash() {
+                    btDash.click();
+                    showLoading();
+                }
 
-            function goAudit() {
-                btAudit.click();
-                showLoading();
-            }
+                function goUsers() {
+                    btUsers.click();
+                    showLoading();
+                }
 
-            function goDepts() {
-                btDepts.click();
-                showLoading();
-            }
+                function goAudit() {
+                    btAudit.click();
+                    showLoading();
+                }
 
-            function goDetails() {
-                btDetails.click();
-                showLoading();
-            }
+                function goDepts() {
+                    btDepts.click();
+                    showLoading();
+                }
 
-            function goEdit() {
-                btEdit.click();
-                showLoading();
-            }
+                function goDetails() {
+                    btDetails.click();
+                    showLoading();
+                }
 
-        function showLoading() {
+                function goEdit() {
+                    btEdit.click();
+                    showLoading();
+                }
+
+                function showLoading() {
             event.preventDefault();
             $(".loader").removeClass("hidden");
-            //setTimeout(function () {
-            //    $("form").submit();
-            //}, 1);
-            return true;
-            }
+                    //setTimeout(function () {
+                    //    $("form").submit();
+                    //}, 1);
+                    return true;
+                }
 
         //function navLoading() {
         //    event.preventDefault();

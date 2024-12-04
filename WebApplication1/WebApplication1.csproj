@@ -198,6 +198,9 @@
       <LastGenOutput>Model1.cs</LastGenOutput>
     </Content>
     <Content Include="Resources\account_circle_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\arrow_back_2_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png" />
+    <Content Include="Resources\Dashboard.css" />
+    <Content Include="Resources\Dashboard.js" />
     <Content Include="Resources\edit_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\home_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\imgHandshake.jpg" />
@@ -278,6 +281,7 @@
     <Content Include="Views\Users\Reports.cshtml" />
     <Content Include="Views\Shared\_LayoutNoSession.cshtml" />
     <Content Include="Views\Users\LinkExpired.cshtml" />
+    <Content Include="Views\Users\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

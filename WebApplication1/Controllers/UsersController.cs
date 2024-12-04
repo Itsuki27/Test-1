@@ -668,7 +668,7 @@ namespace WebApplication1.Controllers
                     else
                     {
                         message = "Reset Link Expired";
-                        return View(model);
+                        return View("LinkExpired");
                     }
                 }
                 else
@@ -680,7 +680,7 @@ namespace WebApplication1.Controllers
             else
             {
                 message = "Invalid data.";
-                return View("Error");
+                return View(model);
             }
 
 
@@ -760,6 +760,15 @@ namespace WebApplication1.Controllers
                 return RedirectToAction("Login", "Users");
             }
             return View(db.Users.ToList());
+        }
+
+        public ActionResult Dashboard()
+        {
+            if (Session["Username"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+            return View();
         }
 
         public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")

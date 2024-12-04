@@ -41,6 +41,11 @@ namespace WebApplication1
                 defaults: new { controller = "Users", action = "Reports", id = UrlParameter.Optional }
             );
             routes.MapRoute(
+                name: "Dashboard",
+                url: "Users/Dashboard",
+                defaults: new { controller = "Users", action = "Dashboard", id = UrlParameter.Optional }
+            );
+            routes.MapRoute(
                 name: "Edit",
                 url: "Users/Edit/{id}",
                 defaults: new { controller = "Users", action = "Edit", id = UrlParameter.Optional }
