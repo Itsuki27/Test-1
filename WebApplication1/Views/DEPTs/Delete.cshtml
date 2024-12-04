@@ -82,6 +82,12 @@
         });
     });
 
+    function nowLoading() {
+        event.preventDefault();
+        $(".loader").removeClass("hidden");
+        return true;
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         loader.style.display = "none";
     });

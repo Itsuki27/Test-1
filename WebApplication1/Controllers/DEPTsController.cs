@@ -89,8 +89,15 @@ namespace WebApplication1.Controllers
         {
             if (id == null)
             {
+                TempData["Warning"] = null;
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            if (id == 1)
+            {
+                TempData["Warning"] = "<script>Swal.fire({icon: 'error', title: 'Action Not Allowed!'});</script>";
+                return RedirectToAction("Index");
+            }
+
             DEPT dEPT = db.DEPTS.Find(id);
             if (dEPT == null)
             {
@@ -101,6 +108,8 @@ namespace WebApplication1.Controllers
             {
                 return RedirectToAction("Login", "Users");
             }
+
+            TempData["Warning"] = null;
             return View(dEPT);
         }
 
@@ -138,6 +147,11 @@ namespace WebApplication1.Controllers
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if (id == 1)
+            {
+                TempData["Warning"] = "<script>Swal.fire({icon: 'error', title: 'Action Not Allowed!'});</script>";
+                return RedirectToAction("Index");
             }
             DEPT dEPT = db.DEPTS.Find(id);
             if (dEPT == null)

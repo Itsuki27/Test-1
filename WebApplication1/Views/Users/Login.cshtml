@@ -86,6 +86,11 @@
     {
         @Html.Raw(TempData["UserForgot"])
     }
+
+    @if (TempData["UserDelete"] != null)
+    {
+        @Html.Raw(TempData["UserDelete"])
+    }
 }
 
 <script>

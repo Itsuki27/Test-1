@@ -55,24 +55,15 @@
                 @Html.DisplayNameFor(model => model.DEPT.DEPT1)
             </dt>
 
-            @if (@Html.DisplayFor(model => model.DEPT.DEPT1) == null)
-            {
-                <dd>
-                    @Html.DisplayName("Department Undeclared")
-                </dd>
-            }
-            else
-            {
-                <dd>
-                    @Html.DisplayFor(model => model.DEPT.DEPT1)
-                </dd>
-            }
+            <dd>
+                @Html.DisplayFor(model => model.DEPT.DEPT1)
+            </dd>
 
         </dl>
 
         <div class="form-group d-flex flex-column text-center">
             <div class="col-md-12 justify-content-center">
-                @Html.ActionLink("Go to Edit", "Edit", new { id = Model.UserId }, new { @class = "btn btn-success my-2" })
+                @Html.ActionLink("Edit User", "Edit", new { id = Model.UserId }, new { @class = "btn btn-success my-2" })
             </div>
             <div class="col-md-12 justify-content-center">
                 @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-outline-primary" })

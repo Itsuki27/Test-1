@@ -76,7 +76,7 @@
                         <div class="col-md-12 mb-1 px-6">
                             @Html.DropDownListFor(model => model.DEPT_ID,
                                           (IEnumerable<SelectListItem>)ViewBag.DropUser,
-                                          "--Select Department--",
+                                          //"--Select Department--",
                                           new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.DEPT_ID, "", new { @class = "text-danger" })
 

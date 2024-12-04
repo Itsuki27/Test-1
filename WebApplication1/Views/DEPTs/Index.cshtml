@@ -19,11 +19,12 @@
             <p class="col-2" id="tbBldg">BUILDING</p>
             <p class="col-2" id="tbFlr">FLOOR</p>
         </div>
-
-        @*<div>
-                <p id="btClearAll" class="btn btn-outline-danger my-auto">Clear All Filters</p>
-            </div>*@
+        
+        <div class="text-center my-2">
+            <p id="btClearAll" class="btn btn-danger my-auto" onclick="clearFilters()">Clear Filters</p>
+        </div>
     </div>
+
 
     <table table id="tblDepts" class="table table-bordered table-striped table-light small">
         <thead>
@@ -56,9 +57,18 @@
                         @Html.DisplayFor(modelItem => item.DEPT_FLOOR)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.DEPT_ID }, new { @class = "btn btn-success" })
-                        @Html.ActionLink("Details", "Details", new { id = item.DEPT_ID }, new { @class = "btn btn-primary" })
-                        @Html.ActionLink("Delete", "Delete", new { id = item.DEPT_ID }, new { @class = "btn btn-danger" })
+                        @if (item.DEPT_ID == 1)
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.DEPT_ID }, new { @class = "btn btn-success disabled" })
+                            @Html.ActionLink("Details", "Details", new { id = item.DEPT_ID }, new { @class = "btn btn-primary" })
+                            @Html.ActionLink("Delete", "Delete", new { id = item.DEPT_ID }, new { @class = "btn btn-danger disabled" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.DEPT_ID }, new { @class = "btn btn-success" })
+                            @Html.ActionLink("Details", "Details", new { id = item.DEPT_ID }, new { @class = "btn btn-primary" })
+                            @Html.ActionLink("Delete", "Delete", new { id = item.DEPT_ID }, new { @class = "btn btn-danger" })
+                        }
                     </td>
                 </tr>
             }
@@ -78,7 +88,7 @@
     </table>
 
     <p class="mx-auto">
-        @Html.ActionLink("Create Department", "Create", "DEPTs", new { area = "" }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Add New Department", "Create", "DEPTs", new { area = "" }, new { @class = "btn btn-primary" })
     </p>
 </div>
 
@@ -94,45 +104,12 @@
         @Html.Raw(TempData["DeptDelete"])
     }
 
+    @if (TempData["Warning"] != null)
+    {
+        @Html.Raw(TempData["Warning"])
+    }
+
 }
-
-@*Table Design and Features Imports*@
-
-<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
-<link href="https://cdn.datatables.net/datetime/1.5.4/css/dataTables.dateTime.min.css" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
-
-@*Excel Export*@
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-@*PDF Export*@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
-
-@*Export Button Features*@
-
-<script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
-<link href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.min.css" />
-<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-
-@*Search Panes*@
-<script src="https://cdn.datatables.net/searchpanes/2.3.3/js/dataTables.searchPanes.js"></script>
-<script src="https://cdn.datatables.net/searchpanes/2.3.3/js/searchPanes.dataTables.js"></script>
-
-@*Select Data Tables*@
-<script src="https://cdn.datatables.net/select/2.1.0/js/dataTables.select.js"></script>
-<script src="https://cdn.datatables.net/select/2.1.0/js/select.dataTables.js"></script>
-
-@*Date Picker*@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
-<script src="https://cdn.datatables.net/datetime/1.5.4/js/dataTables.dateTime.min.js"></script>
-
-<!-- Alerts -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script nonce="myScript">
 
@@ -164,7 +141,7 @@
 
                         // Create input element
                         var input = document.createElement('input');
-                        input.placeholder = "SEARCH BY NAME";
+                        input.placeholder = "SEARCH BY DEPARTMENT NAME";
                         input.setAttribute("class", "form-control form-control-sm h-25");
                         tbDept.replaceWith(input);
 
@@ -256,4 +233,8 @@
     document.addEventListener("DOMContentLoaded", function () {
         loader.style.display = "none";
     });
+
+    function clearFilters() {
+        window.location.reload()
+    }
 </script>

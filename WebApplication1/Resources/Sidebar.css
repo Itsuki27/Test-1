@@ -214,3 +214,8 @@ body{
 .datePicker input:hover{
     cursor: pointer;
 }
+
+#greetUser:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}

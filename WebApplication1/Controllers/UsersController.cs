@@ -423,7 +423,8 @@ namespace WebApplication1.Controllers
             {
                 // Clear session and redirect to login
                 Session.Clear();
-                //TempData["UserDelete"] = "<script>Swal.fire({icon: 'success', title: 'Your account has been deleted!'});</script>";
+
+                TempData["UserDelete"] = "<script>Swal.fire({icon: 'success', title: 'User Deleted!'});</script>";
                 return RedirectToAction("Login", "Users");
             }
 
@@ -701,6 +702,11 @@ namespace WebApplication1.Controllers
         {
             var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
 
+            if (Session["Userid"] == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
             // Get the MAC address
             var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
                            where nic.OperationalStatus == OperationalStatus.Up
@@ -732,6 +738,9 @@ namespace WebApplication1.Controllers
 
             Session.Clear();
             Session.Abandon();
+            var cookie = new HttpCookie("ASP.NET_SessionId", "");
+            cookie.Expires = DateTime.Now.AddDays(-1);
+            Response.Cookies.Add(cookie);
 
             // Sign out of forms authentication
             System.Web.Security.FormsAuthentication.SignOut();
