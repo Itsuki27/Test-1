@@ -6,13 +6,11 @@
 }
 
 <div class="d-flex flex-column loginContainer">
+    
+    <div class="loader hidden"></div>
 
     <div class="loginBox">
         <div class="p-5 d-flex justify-content-center m-auto">
-
-            @*<div id="bgContainer">
-                <img src="~/Resources/dvproIconCircle.png" alt="DVPRO Logo" id="backLogo" />
-            </div>*@
 
             @using (Html.BeginForm())
             {
@@ -23,6 +21,7 @@
                 </div>
 
                 <div class="col-md-12">
+
                     <h4 class="text-center mt-5">Log In</h4>
 
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -39,16 +38,16 @@
                         @Html.ValidationMessageFor(model => model.PasswordHash, "", new { @class = "text-danger" })
                     </div>
                     <div class="col-md-12 mb-2">
-                        <input type="submit" value="Log In" class="btn mt-4 px-4 col-md-12 text-light" id="btLogin" />
-                    </div>
-                    </div>
-
-                    <div class="d-flex col-md-12 mx-auto text-center flex-column mt-4">
-                        @Html.ActionLink("Can't sign in?", "ForgotPassword", "Users", new { are = "" }, new { @class = "text-primary text-decoration-none" })
+                        <input type="submit" value="Log In" onclick="showLoading()" class="btn mt-4 px-4 col-md-12" id="btSubmit" />
                     </div>
 
-                    }
                 </div>
+
+                <div class="d-flex col-md-12 mx-auto text-center flex-column mt-4">
+                    @Html.ActionLink("Can't sign in?", "TemplateForgot", "Users", new { are = "" }, new { @class = "text-primary redirect" })
+                </div>
+            }
+        </div>
     </div>
 
     <div class="mt-5 mx-auto">
@@ -56,3 +55,28 @@
     </div>
 
 </div>
+
+@section Scripts{
+
+    @if (TempData["TempForgot"] != null)
+    {
+        @Html.Raw(TempData["TempForgot"])
+    }
+    
+    @if (TempData["TempReset"] != null)
+    {
+        @Html.Raw(TempData["TempReset"])
+    }
+
+}
+
+<script>
+    function showLoading() {
+        event.preventDefault();
+        $(".loader").removeClass("hidden");
+        setTimeout(function () {
+            $("form").submit();
+        }, 1);
+        return true;
+    }
+</script>

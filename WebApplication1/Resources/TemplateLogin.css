@@ -63,7 +63,20 @@ body{
     object-fit:cover;
 }
 
-#btLogin {
+#btSubmit {
     background-color: #4f89e0;
+    color: white;
 }
 
+#btSubmit:hover{
+    background-color: #97c1ff;
+    font-weight: bold;
+}
+
+.redirect{
+    text-decoration: none;
+}
+
+.redirect:hover{
+    text-decoration: underline;
+}

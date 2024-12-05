@@ -568,7 +568,7 @@ namespace WebApplication1.Controllers
             {
                 string resetCode = Guid.NewGuid().ToString();
                 SendVeficationLink(account.Email, resetCode, "ResetPassword");
-                account.ResetPasswordExpiry = DateTime.Now.AddSeconds(30);
+                account.ResetPasswordExpiry = DateTime.Now.AddMinutes(30);
                 account.ResetPasswordCode = resetCode;
                 db.SaveChanges();
 
@@ -620,7 +620,7 @@ namespace WebApplication1.Controllers
         }
 
 
-        // GET: Users/ResetPassword
+        //GET: Users/ResetPassword
 
         public ActionResult ResetPassword(string id)
         {
@@ -642,9 +642,9 @@ namespace WebApplication1.Controllers
             return HttpNotFound();
         }
 
-        // POST: Users/ResetPassword
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        //POST: Users/ResetPassword
+       [HttpPost]
+       [ValidateAntiForgeryToken]
 
         public ActionResult ResetPassword(ResetPassword model)
         {
@@ -663,7 +663,7 @@ namespace WebApplication1.Controllers
                         user.ResetPasswordCode = "";
                         db.Configuration.ValidateOnSaveEnabled = false;
                         db.SaveChanges();
-                        
+
                     }
                     else
                     {
@@ -770,6 +770,120 @@ namespace WebApplication1.Controllers
             }
             return View();
         }
+     
+
+        public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")
+        {
+            string verifyURL = "/Users/" + emailFor + "/" + ActivationCode;
+            string link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyURL);
+
+            var fromEmail = new MailAddress("pobletemar6@gmail.com", "EmailSender");
+            var toEmail = new MailAddress(Email);
+            var fromEmailPassword = "rgyn spwl vops yyoo";
+
+            string subject = emailFor == "VerifyAccount" ? "Your Account is Successfully Created" : "Reset Password";
+            string body = emailFor == "VerifyAccount"
+                ? $"<br/><br/> PH NET<br/>Please click on the link below to verify your account:<br/><a href='{link}'>{link}</a>"
+                : $"Hi,<br/><br/>We received a request to reset your password. Please click the link below:<br/><a href='{link}'>Reset Password Link</a>";
+
+            using (var smtp = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword),
+                EnableSsl = true
+            })
+            using (var message = new MailMessage(fromEmail, toEmail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+            {
+                smtp.Send(message);
+            }
+        }
+
+
+        //TEMPLATE METHODS
+
+        //TemplateForgot
+        #region
+
+        // GET: Users/TemplateForgot
+        [HttpGet]
+
+        public ActionResult TemplateForgot()
+        {
+            return View();
+        }
+
+        // POST: Users/TemplateForgot
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult TemplateForgot(string Email)
+
+        {
+
+            var account = db.Users.FirstOrDefault(a => a.Email == Email);
+
+            if (account != null)
+            {
+                string resetCode = Guid.NewGuid().ToString();
+                SendVeficationLink(account.Email, resetCode, "TemplateReset");
+                account.ResetPasswordExpiry = DateTime.Now.AddSeconds(30);
+                account.ResetPasswordCode = resetCode;
+                db.SaveChanges();
+
+                TempData["TempForgot"] = "<script>Swal.fire({icon: 'success', title: 'Password Reset Link Sent!'});</script>";
+
+                var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                               where nic.OperationalStatus == OperationalStatus.Up
+                               select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+                //Audit Logs
+
+                //Start Audit
+
+                var user_id = account.UserId;
+                var audit = new MOVEHIST
+                {
+                    Id = user_id,
+                    OLD_DATA = $"Username={account.Username}, Email={account.Email}",
+                    NEW_DATA = $"Username={account.Username}, Email={account.Email}",
+                    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                    DESCRIPTION = "User Change Password",
+                    ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                    MAC_ADDRESS = macAddr,
+                    TYPE = "Account Forgot Password",
+                    NEW_SAL = "0",
+                    OLD_SAL = "0"
+                };
+
+                // Add and save the audit record
+
+                db.MOVEHISTs.Add(audit);
+                db.SaveChanges();
+
+                //End Audit
+
+                return RedirectToAction("TemplateLogin", "Users");
+
+            }
+
+            else
+
+            {
+                TempData["TempForgotErr"] = "<script>Swal.fire({icon: 'error', title: 'Account not found!'});</script>";
+
+                return View();
+            }
+
+        }
+
+        #endregion
+
+        //TemplateLogin
+        #region
 
         [HttpGet]
         public ActionResult TemplateLogin()
@@ -870,35 +984,86 @@ namespace WebApplication1.Controllers
             return View();
         }
 
-        public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")
+        #endregion
+
+
+        //TemplateReset
+        #region
+
+        // GET: Users/ResetPassword
+
+        public ActionResult TemplateReset(string id)
         {
-            string verifyURL = "/Users/" + emailFor + "/" + ActivationCode;
-            string link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyURL);
+            var query = db.Users.FirstOrDefault(x => x.ResetPasswordCode == id);
 
-            var fromEmail = new MailAddress("pobletemar6@gmail.com", "EmailSender");
-            var toEmail = new MailAddress(Email);
-            var fromEmailPassword = "rgyn spwl vops yyoo";
-
-            string subject = emailFor == "VerifyAccount" ? "Your Account is Successfully Created" : "Reset Password";
-            string body = emailFor == "VerifyAccount"
-                ? $"<br/><br/> PH NET<br/>Please click on the link below to verify your account:<br/><a href='{link}'>{link}</a>"
-                : $"Hi,<br/><br/>We received a request to reset your password. Please click the link below:<br/><a href='{link}'>Reset Password Link</a>";
-
-            using (var smtp = new SmtpClient("smtp.gmail.com", 587)
+            if (query != null)
             {
-                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword),
-                EnableSsl = true
-            })
-            using (var message = new MailMessage(fromEmail, toEmail)
-            {
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            })
-            {
-                smtp.Send(message);
+                if (query.ResetPasswordExpiry.HasValue && query.ResetPasswordExpiry.Value > DateTime.Now)
+                {
+                    ResetPassword model = new ResetPassword { ResetCode = id };
+                    return View(model);
+                }
+                else
+                {
+                    return View("LinkExpired");
+                }
             }
+
+            return HttpNotFound();
         }
+
+        // POST: Users/ResetPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public ActionResult TemplateReset(ResetPassword model)
+        {
+            string message = "";
+
+            if (ModelState.IsValid)
+            {
+                var user = db.Users.FirstOrDefault(a => a.ResetPasswordCode == model.ResetCode);
+
+                if (user != null)
+                {
+                    if (user.ResetPasswordExpiry.HasValue && user.ResetPasswordExpiry.Value > DateTime.Now)
+                    {
+                        user.PasswordHash = Hashing.Hash(model.PasswordHash);
+                        user.ResetPasswordExpiry = null;
+                        user.ResetPasswordCode = "";
+                        db.Configuration.ValidateOnSaveEnabled = false;
+                        db.SaveChanges();
+
+                    }
+                    else
+                    {
+                        message = "Reset Link Expired";
+                        return View("LinkExpired");
+                    }
+                }
+                else
+                {
+                    message = "Invalid reset link.";
+                    return View("LinkExpired");
+                }
+            }
+            else
+            {
+                message = "Invalid data.";
+                return View(model);
+            }
+
+
+            ViewBag.Message = message;
+
+            TempData["TempReset"] = "<script>Swal.fire({icon: 'success', title: 'Reset Password Success!'});</script>";
+
+            //Redirect to Login
+            return RedirectToAction("TemplateLogin", "Users");
+            //return View(model);
+        }
+
+        #endregion
     }
 }
 

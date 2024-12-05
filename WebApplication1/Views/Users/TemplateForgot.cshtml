@@ -1,0 +1,70 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutNone.cshtml";
+    ViewBag.Title = "Template Forgot Password";
+}
+
+
+<div class="d-flex flex-column loginContainer">
+
+    <div class="loginBox">
+
+        <div class="loader hidden"></div>
+        <div class="p-5 d-flex justify-content-center m-auto">
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="text-center">
+                    <img src="~/Resources/dvproLogo.png" alt="DVPRO Icon" />
+                </div>
+
+                <div class="col-md-12">
+                    <h4 class="text-center mt-5">Forgot Password</h4>
+                    <div class="small fst-italic mb-3 opacity-75">A password reset link will be sent to your email.</div>
+                    <label for="PasswordHash">Email</label>
+                    <div class="mb-2">
+                        @Html.TextBox("Email", "", new { @class = "form-control" })
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="submit" value="Submit" onclick="showLoading()" class="btn mt-4 px-4 col-md-12 text-light" id="btSubmit" />
+                    </div>
+                </div>
+
+                <div class="d-flex col-md-12 mx-auto text-center flex-column mt-4">
+                    @Html.ActionLink("Back to Log In", "TemplateLogin", "Users", new { are = "" }, new { @class = "text-primary redirect" })
+                </div>
+
+            }
+        </div>
+    </div>
+
+    <div class="mt-5 mx-auto">
+        <p>© @DateTime.Now.Year - Powered by DVPRO Solutions, Inc.</p>
+    </div>
+
+</div>
+
+@section Scripts{
+
+    @if (TempData["TempForgotErr"] != null)
+    {
+        @Html.Raw(TempData["TempForgotErr"])
+    }
+
+}
+
+<script>
+
+    function showLoading() {
+        event.preventDefault();
+        $(".loader").removeClass("hidden");
+        setTimeout(function () {
+            $("form").submit();
+        }, 1);
+        return true;
+    }
+
+</script>

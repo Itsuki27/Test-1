@@ -4,9 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Alerts -->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Custom CSS -->
 
     <link href="~/Resources/TemplateLogin.css" rel="stylesheet" />
+    <link href="~/Resources/TemplateLoader.css" rel="stylesheet" />
 
     <!-- Navigation Icons -->
     <title>@ViewBag.Title - CRUD Application</title>
@@ -20,6 +25,12 @@
     <div id="nonOpaque"></div>
     @RenderBody()
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/fontawesome")
+
+    @RenderSection("scripts", required: false)
 </body>
 
 </html>
