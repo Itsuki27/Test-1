@@ -11,11 +11,22 @@ body{
     justify-content: center;
     align-content: center;
 
-    background-image: url(dvproIcon65.png);
+    background-image: url(dvproIcon.png);
     background-repeat: no-repeat;
     background-size: 90%;
     background-attachment: fixed;
     background-position-x: -200%;
+}
+
+#nonOpaque{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1000;
+    background-color: whitesmoke;
+    opacity: 0.75;
 }
 
 .loginContainer{
