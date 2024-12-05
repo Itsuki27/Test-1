@@ -480,11 +480,11 @@ namespace WebApplication1.Controllers
                 return View();
             }
 
-            if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.PasswordHash))
+            if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.PasswordHash))
             {
-                if (string.IsNullOrEmpty(user.Username))
+                if (string.IsNullOrEmpty(user.Email))
                 {
-                    ModelState.AddModelError("Username", "Username field is empty");
+                    ModelState.AddModelError("Email", "Email field is empty");
                 }
                 if (string.IsNullOrEmpty(user.PasswordHash))
                 {
@@ -495,7 +495,7 @@ namespace WebApplication1.Controllers
             }
 
             var hashedPassword = Hashing.Hash(user.PasswordHash);
-            var query = db.Users.SingleOrDefault(x => x.Username == user.Username && x.PasswordHash == hashedPassword);
+            var query = db.Users.SingleOrDefault(x => x.Email == user.Email && x.PasswordHash == hashedPassword);
 
             if (query != null)
             {
@@ -768,6 +768,105 @@ namespace WebApplication1.Controllers
             {
                 return RedirectToAction("Login", "Users");
             }
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult TemplateLogin()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult TemplateLogin([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword")] MyLogin user)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(WebConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString))
+                {
+                    connection.Open();
+
+
+                    if (connection.State == ConnectionState.Open)
+                    {
+                        // Success (connection opened)
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Connection Error! Invalid Database";
+                        return View();
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                Response.Write("<script>alert('Wrong Connection Error! Invalid Database')</script>");
+                return View();
+            }
+
+            if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.PasswordHash))
+            {
+                if (string.IsNullOrEmpty(user.Email))
+                {
+                    ModelState.AddModelError("Email", "Email field is empty");
+                }
+                if (string.IsNullOrEmpty(user.PasswordHash))
+                {
+                    ModelState.AddModelError("PasswordHash", "Password field is empty");
+                }
+
+                return View();
+            }
+
+            var hashedPassword = Hashing.Hash(user.PasswordHash);
+            var query = db.Users.SingleOrDefault(x => x.Email == user.Email && x.PasswordHash == hashedPassword);
+
+            if (query != null)
+            {
+                Session["UserId"] = query.UserId;
+                Session["Username"] = query.Username.ToString();
+                Session["Email"] = query.Email.ToString();
+
+                TempData["user_id"] = query.UserId;
+
+                var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                               where nic.OperationalStatus == OperationalStatus.Up
+                               select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
+
+
+                //Audit Logs
+                //Start Audit
+                var user_id = query.UserId;
+                var audit = new MOVEHIST
+                {
+                    Id = user_id,
+                    OLD_DATA = $"Username={query.Username}, Email={query.Email}",
+                    NEW_DATA = $"Username={query.Username}, Email={query.Email}",
+                    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                    DESCRIPTION = "User Logged In",
+                    ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                    MAC_ADDRESS = macAddr,
+                    TYPE = "Account Login",
+                    NEW_SAL = "0",
+                    OLD_SAL = "0"
+                };
+
+                // Add and save the audit record
+                db.MOVEHISTs.Add(audit);
+                db.SaveChanges();
+                //End Audit
+
+                TempData["UserLogin"] = "<script>Swal.fire({icon: 'success', title: 'Login Success!'});</script>";
+
+                return RedirectToAction("Index", "Users");
+            }
+            else
+            {
+                ViewBag.LoginError = "Invalid credentials!";
+            }
+
             return View();
         }
 

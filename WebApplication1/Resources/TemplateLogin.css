@@ -1,0 +1,58 @@
+﻿*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0%;
+    padding: 0%;
+    background-color: whitesmoke;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+
+    background-image: url(dvproIcon65.png);
+    background-repeat: no-repeat;
+    background-size: 90%;
+    background-attachment: fixed;
+    background-position-x: -200%;
+}
+
+.loginContainer{
+    margin-top: 5%;
+}
+
+.loginBox{
+    background-color: rgba(255, 255, 255, 0.816);
+    width: 550px;
+    box-shadow: rgba(128, 128, 128, 0.553) -1px 3px 15px 2px;
+    padding: 20px;
+    border-radius: 1%;
+    border: rgba(128, 128, 128, 0.41) solid 0.5px;
+}
+
+#bgContainer{
+    background-color: transparent;
+    position: absolute;
+    top: 10%;
+    right: 20%;
+    height: 90%;
+    z-index: -1000;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: left;
+    
+}
+
+#backLogo{
+    opacity: 20%;
+    position: static;
+    object-fit:cover;
+}
+
+#btLogin {
+    background-color: #4f89e0;
+}
+

@@ -50,6 +50,11 @@ namespace WebApplication1
                 url: "Users/Edit/{id}",
                 defaults: new { controller = "Users", action = "Edit", id = UrlParameter.Optional }
             );
+            routes.MapRoute(
+                name: "TemplateLogin",
+                url: "Users/TemplateLogin",
+                defaults: new { controller = "Users", action = "TemplateLogin", id = UrlParameter.Optional }
+            );
         }
     }
 }

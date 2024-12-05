@@ -201,6 +201,9 @@
     <Content Include="Resources\arrow_back_2_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png" />
     <Content Include="Resources\Dashboard.css" />
     <Content Include="Resources\Dashboard.js" />
+    <Content Include="Resources\dvproIcon.png" />
+    <Content Include="Resources\dvproIconCircle.png" />
+    <Content Include="Resources\dvproLogo.png" />
     <Content Include="Resources\edit_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\home_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Resources\imgHandshake.jpg" />
@@ -217,6 +220,7 @@
     <Content Include="Resources\Sidebar.css" />
     <Content Include="Resources\Shared.js" />
     <Content Include="Resources\summarize_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
+    <Content Include="Resources\TemplateLogin.css" />
     <Content Include="Resources\view_timeline_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -279,9 +283,11 @@
     <Content Include="Views\DEPTs\Edit.cshtml" />
     <Content Include="Views\DEPTs\Index.cshtml" />
     <Content Include="Views\Users\Reports.cshtml" />
-    <Content Include="Views\Shared\_LayoutNoSession.cshtml" />
     <Content Include="Views\Users\LinkExpired.cshtml" />
     <Content Include="Views\Users\Dashboard.cshtml" />
+    <Content Include="Views\Users\TemplateLogin.cshtml" />
+    <Content Include="Views\Shared\_LayoutNoSession.cshtml" />
+    <Content Include="Views\Shared\_LayoutNone.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
