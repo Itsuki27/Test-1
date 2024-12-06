@@ -16,7 +16,7 @@ namespace WebApplication1
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Users", action = "TemplateLogin", id = UrlParameter.Optional }
+                defaults: new { controller = "Users", action = "Login", id = UrlParameter.Optional }
             );
 
             routes.MapRoute(
@@ -50,11 +50,18 @@ namespace WebApplication1
                 url: "Users/Edit/{id}",
                 defaults: new { controller = "Users", action = "Edit", id = UrlParameter.Optional }
             );
-            //routes.MapRoute(
-            //    name: "TemplateLogin",
-            //    url: "Users/TemplateLogin",
-            //    defaults: new { controller = "Users", action = "TemplateLogin", id = UrlParameter.Optional }
-            //);
+            routes.MapRoute(
+                name: "NotFound",
+                url: "Users/NotFound",
+                defaults: new { controller = "Users", action = "NotFound", id = UrlParameter.Optional }
+            );
+
+            //TEMPLATES
+            routes.MapRoute(
+                name: "TemplateLogin",
+                url: "Users/TemplateLogin",
+                defaults: new { controller = "Users", action = "TemplateLogin", id = UrlParameter.Optional }
+            );
             routes.MapRoute(
                 name: "TemplateForgot",
                 url: "Users/TemplateForgot",

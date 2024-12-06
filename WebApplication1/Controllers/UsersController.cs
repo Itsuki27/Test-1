@@ -47,13 +47,13 @@ namespace WebApplication1.Controllers
         {
             if (id == null)
             {
-                return View("Error");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             User user = db.Users.Find(id);
             if (user == null)
             {
-                return View("Error");
+                return View("NotFound");
             }
 
             if (Session["Username"] == null)
@@ -130,21 +130,30 @@ namespace WebApplication1.Controllers
                     {
                         ModelState.AddModelError("Email", "Email field is empty");
                     }
-                    if (string.IsNullOrEmpty(user.ConfirmPassword))
-                    {
-                        ModelState.AddModelError("ConfirmPassword", "Confirm Password field is empty");
-                    }
                     if (string.IsNullOrEmpty(user.PasswordHash))
                     {
                         ModelState.AddModelError("PasswordHash", "Password field is empty");
                     }
-                    return View();
+                    else if (user.PasswordHash.Length < 8)
+                    {
+                        ModelState.AddModelError("PasswordHash", "Must be at least 8 characters");
+                    }
+                    if (string.IsNullOrEmpty(user.ConfirmPassword))
+                    {
+                        ModelState.AddModelError("ConfirmPassword", "Confirm Password field is empty");
+                    }
+                    else if (user.ConfirmPassword.Length < 8)
+                    {
+                        ModelState.AddModelError("ConfirmPassword", "Must be at least 8 characters");
+                    }
+
+                        return View();
                 }
 
-                if (user.PasswordHash.Length < 8 || user.ConfirmPassword.Length < 8)
+                if (user.PasswordHash.Length < 8 )
                 {
-                    ModelState.AddModelError("PasswordHash", "Password must be at least 8 characters");
-                    ModelState.AddModelError("ConfirmPassword", "Password must be at least 8 characters");
+                    ModelState.AddModelError("PasswordHash", "Must be at least 8 characters");
+                    //ModelState.AddModelError("ConfirmPassword", "Must be at least 8 characters");
                     return View(user);
                 }
 
@@ -216,6 +225,8 @@ namespace WebApplication1.Controllers
 
         public ActionResult Edit(int? id)
         {
+
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -224,13 +235,16 @@ namespace WebApplication1.Controllers
             User user = db.Users.Find(id);
             if (user == null)
             {
-                return HttpNotFound();
+                //return HttpNotFound();
+                return View("NotFound");
             }
 
             if (Session["Username"] == null)
             {
                 return RedirectToAction("Login", "Users");
             }
+
+
 
             user.ConfirmPassword = user.PasswordHash;
 
@@ -372,7 +386,8 @@ namespace WebApplication1.Controllers
             User user = db.Users.Find(id);
             if (user == null)
             {
-                return HttpNotFound();
+                //return HttpNotFound();
+                return View("NotFound");
             }
             if (Session["Username"] == null)
             {
@@ -539,7 +554,7 @@ namespace WebApplication1.Controllers
             }
             else
             {
-                ViewBag.LoginError = "Invalid credentials!";
+                ViewBag.LoginError = "Invalid Email or Password!";
             }
 
             return View();
@@ -698,11 +713,16 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+        public ActionResult NotFound()
+        {
+            return View();
+        }
+
         public ActionResult Logout([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword,DEPT_ID,DEPT1")] User user)
         {
             var existingUser = db.Users.SingleOrDefault(x => x.UserId == user.UserId);
 
-            if (Session["Userid"] == null)
+            if (Session["UserId"] == null)
             {
                 return RedirectToAction("Login", "Users");
             }
@@ -748,6 +768,7 @@ namespace WebApplication1.Controllers
 
             // Redirect to the login page or any other page
             return RedirectToAction("Login", "Users");
+
         }
 
 
@@ -978,7 +999,7 @@ namespace WebApplication1.Controllers
             }
             else
             {
-                ViewBag.LoginError = "Invalid credentials!";
+                ViewBag.LoginError = "Invalid Email or Password!";
             }
 
             return View();

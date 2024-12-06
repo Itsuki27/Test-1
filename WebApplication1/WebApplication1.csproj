@@ -291,6 +291,7 @@
     <Content Include="Views\Shared\_LayoutNone.cshtml" />
     <Content Include="Views\Users\TemplateForgot.cshtml" />
     <Content Include="Views\Users\TemplateReset.cshtml" />
+    <Content Include="Views\Users\NotFound.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
