@@ -11,6 +11,8 @@ namespace WebApplication1.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Runtime.InteropServices;
 
     public partial class User
     {
@@ -18,6 +20,8 @@ namespace WebApplication1.Models
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string ConfirmPassword { get; set; }
+
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; } = DateTime.Now;
         public Nullable<bool> IsActive { get; set; } = true;

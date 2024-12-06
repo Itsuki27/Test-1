@@ -9,7 +9,7 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="loader hidden"></div>
+    <div id="loader" class="loader"></div>
 
     <div class="form-horizontal d-flex p-4">
         <div class="col-7 d-none d-xl-none d-lg-block p-4">
@@ -94,12 +94,20 @@
 }
 
 <script>
+    const loader = document.getElementById('loader');
+    const btLogin = document.getElementById('btLogin');
+
+    document.addEventListener("DOMContentLoaded", function () {
+        loader.setAttribute("class", "hidden");
+    });
+
     function showLoading() {
         event.preventDefault();
-        $(".loader").removeClass("hidden");
+        $("#loader").removeClass("hidden");
         setTimeout(function () {
             $("form").submit();
         }, 1);
+        btLogin.setAttribute("disabled", "");
         return true;
     }
 </script>

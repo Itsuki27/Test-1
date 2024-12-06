@@ -80,20 +80,20 @@
             confirmButtonText: 'Delete User'
         }).then((result) => {
             if (result.value) {
-                nowLoading();
+                showLoading();
                 form.submit();
             }
         });
     });
 
-    function nowLoading() {
+    function showLoading() {
         event.preventDefault();
         $(".loader").removeClass("hidden");
         return true;
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        loader.style.display = "none";
+        loader.setAttribute("class", "hidden");
     });
 
 </script>

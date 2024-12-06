@@ -17,9 +17,10 @@ namespace WebApplication1.Models
 
         public string PasswordHash { get; set; }
 
+        [Required(ErrorMessage = "Confirm Password required", AllowEmptyStrings = false)]
         [DataType(DataType.Password)]
         [Compare("PasswordHash", ErrorMessage = "Password does not match")]
-        [StringLength(255, MinimumLength = 8, ErrorMessage = "Must be at least 8 characters.")]
+        //[StringLength(255, MinimumLength = 8, ErrorMessage = "Must be at least 8 characters.")]
         public string ConfirmPassword { get; set; }
 
     }

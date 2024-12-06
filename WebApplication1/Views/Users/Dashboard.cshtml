@@ -2,6 +2,9 @@
     ViewBag.Title = "Dashboard";
 }
 <div class="m-4">
+
+    <div class="loader hidden"></div>
+
     <h2 class="text-center">Dashboard</h2>
     <hr />
 
@@ -20,3 +23,9 @@
 
 <link rel="stylesheet" type="text/css" href="~/Resources/Dashboard.css" />
 <script src="~/Resources/Dashboard.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loader.style.display = "none";
+    });
+</script>

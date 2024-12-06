@@ -49,6 +49,13 @@ body{
     transition: 300ms ease-in-out;
 }
 
+.sidebar-small ul li a span a{
+    display: none;
+    opacity: 0%;
+    overflow: hidden;
+    transition: 300ms ease-in-out;
+}
+
 .logoNone{
     display: none;
     transition: 300ms ease-in-out;

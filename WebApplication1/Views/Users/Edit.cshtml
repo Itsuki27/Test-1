@@ -88,7 +88,7 @@
 
             <div class="form-group d-flex flex-column text-center">
                 <div class="col-md-12 justify-content-center">
-                    <input type="submit" value="Save Changes" class="btn btn-success my-2" />
+                    <input type="submit" value="Save Changes" onclick="nowLoading()" class="btn btn-success my-2" id="btEdit" />
                 </div>
                 <div class="col-md-12 justify-content-center">
                     @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-outline-primary" })
@@ -105,8 +105,21 @@
 
 <script>
     const loader = document.getElementById('loader');
+    const btEdit = document.getElementById('btEdit');
 
     document.addEventListener("DOMContentLoaded", function () {
-        loader.style.display = "none";
+        loader.setAttribute("class", "hidden");
     });
+
+    function nowLoading() {
+        event.preventDefault();
+        $("#loader").removeClass("hidden");
+        setTimeout(function () {
+            $("form").submit();
+        }, 1);
+        btEdit.setAttribute("disabled", "");
+        return true;
+    }
+
+
 </script>
