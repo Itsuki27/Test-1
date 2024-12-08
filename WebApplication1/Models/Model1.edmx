@@ -44,6 +44,8 @@
           <Property Name="IsActive" Type="bit" />
           <Property Name="ResetPasswordCode" Type="nvarchar" MaxLength="100" />
           <Property Name="ResetPasswordExpiry" Type="datetime" />
+          <Property Name="ActivationCode" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="IsEmailVerified" Type="bit" Nullable="false" />
           <Property Name="DEPT_ID" Type="int" />
         </EntityType>
         <Association Name="FK_DeptUserId">
@@ -113,6 +115,8 @@
           <Property Name="ResetPasswordExpiry" Type="DateTime" Precision="3" />
           <Property Name="DEPT_ID" Type="Int32" />
           <NavigationProperty Name="DEPT" Relationship="Self.FK_DeptUserId" FromRole="Users" ToRole="DEPTS" />
+          <Property Name="ActivationCode" Type="Guid" Nullable="false" />
+          <Property Name="IsEmailVerified" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_DeptUserId">
           <End Role="DEPTS" Type="Self.DEPT" Multiplicity="0..1" />
@@ -173,6 +177,8 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="MyStartDBModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="IsEmailVerified" ColumnName="IsEmailVerified" />
+                <ScalarProperty Name="ActivationCode" ColumnName="ActivationCode" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />

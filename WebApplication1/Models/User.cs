@@ -12,8 +12,6 @@ namespace WebApplication1.Models
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Runtime.InteropServices;
-
     public partial class User
     {
         public int UserId { get; set; }
@@ -28,8 +26,11 @@ namespace WebApplication1.Models
         public string ResetPasswordCode { get; set; }
         public Nullable<int> DEPT_ID { get; set; } = 1;
 
-        public DateTime? ResetPasswordExpiry { get; set; }
+        public System.Guid ActivationCode { get; set; }
 
+        public DateTime? ResetPasswordExpiry { get; set; }
+        public bool IsEmailVerified { get; set; }
+    
         public virtual DEPT DEPT { get; set; }
     }
 }

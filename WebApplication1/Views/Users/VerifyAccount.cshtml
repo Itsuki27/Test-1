@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "VerifyAccount";
+    Layout = "~/Views/Shared/_LayoutNoSession.cshtml";
+}
+
+
+@if (ViewBag.Status != null && Convert.ToBoolean(ViewBag.Status))
+{
+    <div class="container text-center mt-5">
+        <div class="alert alert-success" role="alert">
+            <h1 class="display-4">Verify Account</h1>
+            <strong>Success!</strong>Your account has been activated successfully.Click here to @Html.ActionLink("Login", "Login", "Users")
+        </div>
+    </div>
+}
+else
+{
+    <div class="container text-center mt-5">
+        <div class="alert alert-danger">
+            <strong>Error!</strong> @ViewBag.Message
+        </div>
+    </div>
+}
+

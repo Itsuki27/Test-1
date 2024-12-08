@@ -74,9 +74,11 @@ namespace WebApplication1.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode")] User user)
+        public ActionResult Create([Bind(Include = "UserId,Username,PasswordHash,ConfirmPassword,Email,CreatedDate,IsActive,ActivationCode,IsEmailVerified")] User user)
         {
 
+            bool Status = false;
+            string message = "";
             try
             {
                 using (var connection = new SqlConnection(WebConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString))
@@ -120,7 +122,7 @@ namespace WebApplication1.Controllers
                 // Check for empty fields
                 if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Email) || string.IsNullOrWhiteSpace(user.PasswordHash))
                 {
-                   
+
 
                     if (string.IsNullOrEmpty(user.Username))
                     {
@@ -147,15 +149,16 @@ namespace WebApplication1.Controllers
                         ModelState.AddModelError("ConfirmPassword", "Must be at least 8 characters");
                     }
 
-                        return View();
+                    return View();
                 }
 
-                if (user.PasswordHash.Length < 8 )
+                if (user.PasswordHash.Length < 8)
                 {
                     ModelState.AddModelError("PasswordHash", "Must be at least 8 characters");
                     //ModelState.AddModelError("ConfirmPassword", "Must be at least 8 characters");
                     return View(user);
                 }
+
 
                 if (user.DEPT_ID == null)
                 {
@@ -170,10 +173,24 @@ namespace WebApplication1.Controllers
                     user.PasswordHash = Hashing.Hash(user.PasswordHash);
                     user.ConfirmPassword = Hashing.Hash(user.ConfirmPassword);
                     #endregion
+                    user.IsEmailVerified = false;
+                    user.CreatedDate = DateTime.Now;
+                    user.IsActive = true;
 
+
+                    #region Generate Activation Code
+                    user.ActivationCode = Guid.NewGuid();
+                    #endregion
+                    
+                    //
                     //Add User
-                    db.Users.Add(user);
-                    db.SaveChanges();
+                  
+                        db.Users.Add(user);
+                        db.SaveChanges();
+
+                        //Send Email to User
+                        SendVerificationLink(user.Email, user.ActivationCode.ToString());
+                   
 
                     //MAC ADDRESS
                     var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
@@ -204,8 +221,14 @@ namespace WebApplication1.Controllers
                     db.SaveChanges();
                     //End Audit
 
-                    TempData["UserCreate"] = "<script>Swal.fire({icon: 'success', title: 'Account Creation Success!'});</script>";
-
+                    TempData["UserCreate"] = 
+                    $@"<script>
+                        Swal.fire({{
+                        icon: 'success',
+                        title: 'Account Creation Success!',
+                        html: 'Account activation link has been sent to your Email: {user.Email}'
+                        }});
+                    </script>";
                     return RedirectToAction("Login");
 
                 }
@@ -220,6 +243,35 @@ namespace WebApplication1.Controllers
 
             return View(user);
         }
+
+        [HttpGet]
+        public ActionResult VerifyAccount(string id)
+        {
+            bool Status = false;
+
+            using (MyStartDBEntities db = new MyStartDBEntities())
+            {
+                //avoid Confirmpassword does not match issue on save changes
+                db.Configuration.ValidateOnSaveEnabled = false;
+
+                var verAccount = db.Users.Where(x => x.ActivationCode == new Guid(id)).FirstOrDefault();
+
+                if (verAccount != null)
+                {
+                    verAccount.IsEmailVerified = true;
+                    db.SaveChanges();
+                    Status = true;
+                }
+                else
+                {
+                    ViewBag.Message = "Invalid Request";
+                }
+
+            }
+            ViewBag.Status = true;
+            return View();
+        }
+
 
         // GET: Users/Edit/5
 
@@ -469,7 +521,7 @@ namespace WebApplication1.Controllers
         // POST: Users/Login
         [HttpPost]
 
-        public ActionResult Login([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword")] MyLogin user)
+        public ActionResult Login([Bind(Include = "UserId,Username,PasswordHash,Email,CreatedDate,IsActive,ConfirmPassword,ActivationCode,IsEmailVerified")] MyLogin user)
         {
             try
             {
@@ -512,45 +564,54 @@ namespace WebApplication1.Controllers
             var hashedPassword = Hashing.Hash(user.PasswordHash);
             var query = db.Users.SingleOrDefault(x => x.Email == user.Email && x.PasswordHash == hashedPassword);
 
+
             if (query != null)
             {
-                Session["UserId"] = query.UserId;
-                Session["Username"] = query.Username.ToString();
-                Session["Email"] = query.Email.ToString();
-
-                TempData["user_id"] = query.UserId;
-
-                var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
-                               where nic.OperationalStatus == OperationalStatus.Up
-                               select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
-
-
-                //Audit Logs
-                //Start Audit
-                var user_id = query.UserId;
-                var audit = new MOVEHIST
+                if (query.IsEmailVerified == true)
                 {
-                    Id = user_id,
-                    OLD_DATA = $"Username={query.Username}, Email={query.Email}",
-                    NEW_DATA = $"Username={query.Username}, Email={query.Email}",
-                    D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
-                    T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
-                    DESCRIPTION = "User Logged In",
-                    ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
-                    MAC_ADDRESS = macAddr,
-                    TYPE = "Account Login",
-                    NEW_SAL = "0",
-                    OLD_SAL = "0"
-                };
+                    Session["UserId"] = query.UserId;
+                    Session["Username"] = query.Username.ToString();
+                    Session["Email"] = query.Email.ToString();
 
-                // Add and save the audit record
-                db.MOVEHISTs.Add(audit);
-                db.SaveChanges();
-                //End Audit
+                    TempData["user_id"] = query.UserId;
 
-                TempData["UserLogin"] = "<script>Swal.fire({icon: 'success', title: 'Login Success!'});</script>";
+                    var macAddr = (from nic in NetworkInterface.GetAllNetworkInterfaces()
+                                   where nic.OperationalStatus == OperationalStatus.Up
+                                   select nic.GetPhysicalAddress().ToString()).FirstOrDefault() ?? "Unknown";
 
-                return RedirectToAction("Index", "Users");
+
+                    //Audit Logs
+                    //Start Audit
+                    var user_id = query.UserId;
+                    var audit = new MOVEHIST
+                    {
+                        Id = user_id,
+                        OLD_DATA = $"Username={query.Username}, Email={query.Email}",
+                        NEW_DATA = $"Username={query.Username}, Email={query.Email}",
+                        D_ACTION = DateTime.Now.ToString("MM/dd/yyyy"),
+                        T_ACTION = DateTime.Now.ToString("HH:mm:ss"),
+                        DESCRIPTION = "User Logged In",
+                        ACTION_BY = Session["Username"]?.ToString() ?? "Unknown",
+                        MAC_ADDRESS = macAddr,
+                        TYPE = "Account Login",
+                        NEW_SAL = "0",
+                        OLD_SAL = "0"
+                    };
+
+                    // Add and save the audit record
+                    db.MOVEHISTs.Add(audit);
+                    db.SaveChanges();
+                    //End Audit
+
+                    TempData["UserLogin"] = "<script>Swal.fire({icon: 'success', title: 'Login Success!'});</script>";
+
+                    return RedirectToAction("Index", "Users");
+                }
+                else
+                {
+                  
+                    ViewBag.LoginError = "Please verify your email to activate your account";
+                }
             }
             else
             {
@@ -582,8 +643,8 @@ namespace WebApplication1.Controllers
             if (account != null)
             {
                 string resetCode = Guid.NewGuid().ToString();
-                SendVeficationLink(account.Email, resetCode, "ResetPassword");
-                account.ResetPasswordExpiry = DateTime.Now.AddMinutes(30);
+                SendVerificationLink(account.Email, resetCode, "ResetPassword");
+                account.ResetPasswordExpiry = DateTime.Now.AddMinutes(10);
                 account.ResetPasswordCode = resetCode;
                 db.SaveChanges();
 
@@ -793,7 +854,7 @@ namespace WebApplication1.Controllers
         }
      
 
-        public void SendVeficationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")
+        public void SendVerificationLink(string Email, string ActivationCode, string emailFor = "VerifyAccount")
         {
             string verifyURL = "/Users/" + emailFor + "/" + ActivationCode;
             string link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyURL);
@@ -804,8 +865,8 @@ namespace WebApplication1.Controllers
 
             string subject = emailFor == "VerifyAccount" ? "Your Account is Successfully Created" : "Reset Password";
             string body = emailFor == "VerifyAccount"
-                ? $"<br/><br/> PH NET<br/>Please click on the link below to verify your account:<br/><a href='{link}'>{link}</a>"
-                : $"Hi,<br/><br/>We received a request to reset your password. Please click the link below:<br/><a href='{link}'>Reset Password Link</a>";
+                ? $"<br/><br/> DVPRO<br/><br/>We are excited to tell you that your Account is successfully created.<br/><br/>Please click on the below link to verify your account:<br/><a href='{link}'>{link}</a>"
+                : $"Hi,<br/><br/>We received a request to reset your password. Please click the link below:<br/><a href='{link}'>Reset Password Link</a><br/><br/> This link will expire within 10 minutes";
 
             using (var smtp = new SmtpClient("smtp.gmail.com", 587)
             {
@@ -849,7 +910,7 @@ namespace WebApplication1.Controllers
             if (account != null)
             {
                 string resetCode = Guid.NewGuid().ToString();
-                SendVeficationLink(account.Email, resetCode, "TemplateReset");
+                SendVerificationLink(account.Email, resetCode, "TemplateReset");
                 account.ResetPasswordExpiry = DateTime.Now.AddSeconds(30);
                 account.ResetPasswordCode = resetCode;
                 db.SaveChanges();
